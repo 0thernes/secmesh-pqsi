@@ -7,4 +7,5 @@ public import SecMeshPQSI.InfoTheoretic
 public import SecMeshPQSI.ThresholdPIR
 public import SecMeshPQSI.QuantumGeometry
 public import SecMeshPQSI.LatticeBandwidth
+public import SecMeshPQSI.SpinDefenseCryptosymbology
 public import SecMeshPQSI.NonVacuity

@@ -2,7 +2,7 @@
 ;; Copyright (c) 2026 Alexander S. Donahue
 ;;
 ;; Eshkol v1.3.6 Quantum Geometric Tensor (QGTL) Concurrence Surplus Module
-;; Verifies Theorem T4a via Eshkol exact AD:
+;; Verifies Theorem T4b via Eshkol exact AD:
 ;;   det(g) - (1/4) * Omega^2 == (C^2 / 4) * sin^2(theta / 2)
 ;; where C = |sin(2*alpha)| is Wootters concurrence and S_max = 2*sqrt(1 + C^2).
 
@@ -23,7 +23,7 @@
         (om    (qgt-omega-tp theta alpha)))
     (- det-g (* 0.25 (* om om)))))
 
-;; Exact Theorem T4a closed form: (sin^2(2*alpha) / 4) * sin^2(theta / 2)
+;; Exact Theorem T4b closed form: (sin^2(2*alpha) / 4) * sin^2(theta / 2)
 (define (qgt-surplus-closed theta alpha)
   (let ((c  (sin (* 2.0 alpha)))
         (sh (sin (* 0.5 theta))))

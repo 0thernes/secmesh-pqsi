@@ -58,8 +58,15 @@ int secmesh_ct_memeq(const uint8_t *a, const uint8_t *b, size_t len) {
 int secmesh_os_csprng(uint8_t *out, size_t len) {
     if (!out || len == 0) return -1;
 #ifdef _WIN32
-    NTSTATUS st = BCryptGenRandom(NULL, out, (ULONG)len, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
-    return (st >= 0) ? 0 : -1;
+    size_t done = 0;
+    while (done < len) {
+        size_t rem = len - done;
+        ULONG chunk = (rem > 0x40000000ULL) ? (ULONG)0x40000000UL : (ULONG)rem;
+        NTSTATUS st = BCryptGenRandom(NULL, out + done, chunk, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+        if (st < 0) return -1;
+        done += (size_t)chunk;
+    }
+    return 0;
 #elif defined(__linux__)
     size_t done = 0;
     while (done < len) {

@@ -45,8 +45,9 @@
   <div>
     <h1>⬡ SecMesh-PQSI v2.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
     <div style="margin-top:0.3rem">
-      <span class="badge good">Lean 4.35 · 6 Kernels</span>
-      <span class="badge">Moonlab FIPS 203 + QGTL + BB144</span>
+      <span class="badge good">Lean 4.35 · 25 Theorems · 6 Kernels</span>
+      <span class="badge">Moonlab FIPS 203 + QGTL + libirrep + BB144</span>
+      <span class="badge"><a href="blueprint.html" style="color:inherit;text-decoration:none">Interactive Proof Blueprint →</a></span>
       <span class="badge warn">Browser Mode: Client-Side Analytic Simulator (No Physical QKD)</span>
     </div>
   </div>
@@ -58,7 +59,7 @@
 <main>
   <section class="card wide">
     <div class="notice">
-      <strong>Epistemic Honesty Boundary:</strong> This browser console evaluates exact closed-form mathematics (Composable Finite-Key DI-QKD Gate v2 vs. defective legacy SecMesh v1, QGTL Concurrence Surplus Theorem T4a, and $K_N$ Post-Quantum Wire-Bandwidth Ceilings). Real cryptographic key exchange (X25519 + ML-KEM-768 + Ed25519 + ML-DSA-65 + SLH-DSA-128s + GF(2^128) Carter–Wegman IT-MAC) runs in the native C11 and Node.js 25 CLI engines; software simulation never substitutes for physical photonic QKD hardware.
+      <strong>Epistemic Honesty Boundary:</strong> This browser console evaluates exact closed-form mathematics (Composable Finite-Key DI-QKD Gate v2 vs. defective legacy SecMesh v1, QGTL Concurrence Surplus Theorem T4b, Topological Chern–Concurrence–Entropy Law T4d, Ising Cheeger Expander Barrier T6a, and K<sub>N</sub> Post-Quantum Wire-Bandwidth Ceilings T5d). Real cryptographic key exchange (X25519 + ML-KEM-768 + Ed25519 + ML-DSA-65 + SLH-DSA-128s + anti-replay GF(2<sup>128</sup>) Carter–Wegman IT-MAC) runs in the native C11 and Node.js 25 CLI engines; software simulation never substitutes for physical photonic QKD hardware.
     </div>
   </section>
 
@@ -85,9 +86,9 @@
     <canvas id="cvEnt" aria-label="Pironio DI min-entropy vs Acin-Pironio von Neumann entropy curve"></canvas>
   </section>
 
-  <!-- 2. QGTL Concurrence Surplus Witness (Theorem T4a) -->
+  <!-- 2. QGTL Concurrence Surplus & Chern-Entropy Witness (Theorems T4b & T4d) -->
   <section class="card">
-    <h2>2. QGTL Entanglement Surplus Witness (Theorem T4a)</h2>
+    <h2>2. QGTL Surplus &amp; Chern–Monopole Witness (T4b / T4d)</h2>
     <label for="inAlpha">Entanglement Angle α (0=Separable, π/4=Singlet) <span id="lblAlpha">0.785</span></label>
     <input id="inAlpha" type="range" min="0" max="0.7854" step="0.01" value="0.7854">
 
@@ -96,11 +97,11 @@
 
     <div class="kpi-grid">
       <div class="kpi"><div class="lbl">Concurrence C</div><div id="kConc" class="val violet">—</div></div>
+      <div class="kpi"><div class="lbl">Berry Flux |c_eff|</div><div id="kChern" class="val warn">—</div></div>
+      <div class="kpi"><div class="lbl">H_min(c_eff) T4d</div><div id="kHminChern" class="val good">—</div></div>
       <div class="kpi"><div class="lbl">Horodecki S_max</div><div id="kSMax" class="val">—</div></div>
-      <div class="kpi"><div class="lbl">det(g)</div><div id="kDetG" class="val">—</div></div>
-      <div class="kpi"><div class="lbl">(1/4) Ω²</div><div id="kOmRhs" class="val">—</div></div>
       <div class="kpi"><div class="lbl">QGT Surplus</div><div id="kSurp" class="val good">—</div></div>
-      <div class="kpi"><div class="lbl">T4a Closed Form</div><div id="kClosed" class="val good">—</div></div>
+      <div class="kpi"><div class="lbl">T4b Closed Form</div><div id="kClosed" class="val good">—</div></div>
     </div>
     <canvas id="cvQgt" aria-label="QGTL determinant surplus versus entanglement angle"></canvas>
   </section>
@@ -293,10 +294,12 @@ function update() {
   const rhs = 0.25 * om * om;
   const surp = detG - rhs;
   const closed = 0.25 * C * C * sh * sh;
+  const cEffAbs = Math.abs(Math.cos(2 * alpha));
+  const hMinChern = Math.max(0, 1 - Math.log2(1 + cEffAbs));
   document.getElementById('kConc').textContent = C.toFixed(4);
+  document.getElementById('kChern').textContent = cEffAbs.toFixed(4);
+  document.getElementById('kHminChern').textContent = hMinChern.toFixed(4);
   document.getElementById('kSMax').textContent = (2 * Math.sqrt(1 + C * C)).toFixed(4);
-  document.getElementById('kDetG').textContent = detG.toFixed(6);
-  document.getElementById('kOmRhs').textContent = rhs.toFixed(6);
   document.getElementById('kSurp').textContent = surp.toFixed(6);
   document.getElementById('kClosed').textContent = closed.toFixed(6);
   drawQgtCanvas(alpha, theta);

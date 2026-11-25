@@ -1,5 +1,5 @@
 {
-  "schema": "secmesh-pqsi/exact-verification/v1",
+  "schema": "secmesh-pqsi/exact-verification/v2",
   "platform": "Windows-11-10.0.29704-SP0",
   "python": "3.12.10",
   "T1_finite_key_forensics": {
@@ -36,20 +36,29 @@
     },
     "status": "PASS"
   },
-  "T4_qgtl_and_bb144": {
-    "t4b_50digit_max_surplus_residual": 3.3e-60,
+  "T4_qgtl_chern_ghz_bb144": {
+    "t4b_60digit_max_surplus_residual": 3.3e-60,
     "t4c_bb144_rank_hx": 66,
     "t4c_bb144_rank_hz": 66,
     "t4c_bb144_logical_k": 12,
+    "t4d_60digit_max_chern_conservation_err": 1e-59,
+    "t4d_60digit_max_chern_entropy_err": 4.19894584e-51,
+    "t4e_ghz_heisenberg_threshold_verified": true,
     "status": "PASS"
   },
   "T5_fips203_and_bandwidth": {
     "t5a_q3329_zeta17_exact_order": 256,
     "t5b_montgomery_checked_points": 14295,
     "t5c_compress1_exhaustive_margin": 831,
-    "t5c_compress1_tightness_fail_at": 833,
+    "t5c_compress1_tightness_fail_at": 832,
     "t5d_c11_pqsi_one_way_bytes": 6685,
     "t5d_c11_pqsi_100mbps_ceiling": 1870,
+    "status": "PASS"
+  },
+  "T6_ising_and_cryptosymbology": {
+    "t6a_ising_exhaustive_states_verified": 64,
+    "t6a_ground_state_unique_healthy": true,
+    "t6b_threshold_hedged_bijection_k6": true,
     "status": "PASS"
   },
   "empirical_preregistered_ab": {

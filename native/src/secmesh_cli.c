@@ -189,9 +189,42 @@ static int cmd_entropy_status(void) {
     return 0;
 }
 
+static int cmd_chern_law(int argc, char **argv) {
+    double alpha = (argc > 2) ? atof(argv[2]) : 0.7853981633974483; /* pi/4 */
+    uint32_t nq  = (argc > 3) ? (uint32_t)strtoul(argv[3], NULL, 10) : 8u;
+    secmesh_chern_ghz_result_t r;
+    secmesh_chern_concurrence_ghz(alpha, nq, &r);
+    printf("{\"op\":\"chern_concurrence_ghz\",\"alpha\":%.12f,\"n_qubits\":%u,"
+           "\"c_eff\":%.12f,\"concurrence\":%.12f,\"conservation_err\":%.3e,"
+           "\"horodecki_s_max\":%.12f,\"h_min_from_chern\":%.12f,\"h_min_from_chsh\":%.12f,"
+           "\"h_vn_from_conc\":%.12f,\"tau_n\":%.12f,\"qfi_ghz\":%.12f,\"qfi_sql\":%.12f,"
+           "\"casimir_4j_jp1\":%llu,\"beats_sql\":%s}\n",
+           r.alpha, r.n_qubits, r.c_eff, r.concurrence, r.conservation_err,
+           r.horodecki_s_max, r.h_min_from_chern, r.h_min_from_chsh,
+           r.h_vn_from_conc, r.tau_n, r.qfi_ghz, r.qfi_sql,
+           (unsigned long long)r.casimir_4j_jp1, r.beats_sql ? "true" : "false");
+    return (r.conservation_err < 1e-12) ? 0 : 1;
+}
+
+static int cmd_ising_barrier(int argc, char **argv) {
+    uint32_t n  = (argc > 2) ? (uint32_t)strtoul(argv[2], NULL, 10) : 60u;
+    uint32_t k  = (argc > 3) ? (uint32_t)strtoul(argv[3], NULL, 10) : 10u;
+    double jv   = (argc > 4) ? atof(argv[4]) : 1.0;
+    double phi  = (argc > 5) ? atof(argv[5]) : 2.0;
+    double hv   = (argc > 6) ? atof(argv[6]) : 0.7;
+    secmesh_ising_barrier_t b;
+    secmesh_ising_eval_expander_barrier(n, k, jv, phi, hv, &b);
+    printf("{\"op\":\"ising_expander_barrier\",\"n_nodes\":%u,\"compromised_k\":%u,"
+           "\"coupling_j\":%.6f,\"edge_expansion_phi\":%.6f,\"firewall_h\":%.6f,"
+           "\"min_work_barrier\":%.6f}\n",
+           b.n_nodes, b.compromised_k, b.coupling_j, b.edge_expansion_phi,
+           b.firewall_h, b.min_work_barrier);
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: secmesh_core <mlkem-kat|mlkem-encaps <ek_hex> <m_hex>|finite-key [S N QBER eps di]|qgt [theta phi]|bb144|bandwidth [bps sec]|entropy-status>\n");
+        fprintf(stderr, "Usage: secmesh_core <mlkem-kat|mlkem-encaps <ek_hex> <m_hex>|finite-key [S N QBER eps di]|qgt [theta phi alpha]|chern-law [alpha N]|ising-barrier [N k J phi h]|bb144|bandwidth [bps sec]|entropy-status>\n");
         return 1;
     }
     const char *cmd = argv[1];
@@ -199,6 +232,8 @@ int main(int argc, char **argv) {
     if (strcmp(cmd, "mlkem-encaps") == 0 && argc >= 4) return cmd_mlkem_decap_check(argv[2], argv[3]);
     if (strcmp(cmd, "finite-key") == 0) return cmd_finite_key(argc, argv);
     if (strcmp(cmd, "qgt") == 0) return cmd_qgt(argc, argv);
+    if (strcmp(cmd, "chern-law") == 0) return cmd_chern_law(argc, argv);
+    if (strcmp(cmd, "ising-barrier") == 0) return cmd_ising_barrier(argc, argv);
     if (strcmp(cmd, "bb144") == 0) return cmd_bb144();
     if (strcmp(cmd, "bandwidth") == 0) {
         uint64_t bps = (argc > 2) ? (uint64_t)strtoull(argv[2], NULL, 10) : 100000000ULL;

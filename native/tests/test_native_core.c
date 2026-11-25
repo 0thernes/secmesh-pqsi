@@ -226,7 +226,7 @@ static void test_finite_key_qgt_bb144_bw(void) {
           qgt_part.inequality_holds == 1 && fabs(qgt_part.surplus - 0.03125) < 1e-12 &&
           qgt_sing.inequality_holds == 1 && fabs(qgt_sing.omega_tp) < 1e-12 &&
           fabs(qgt_sing.surplus - 0.0625) < 1e-12,
-          "QGTL Theorem T4a: det(g)-(1/4)Omega^2 == (C^2/4)sin^2(theta/2) exact across C=0, 1/sqrt(2), 1");
+          "QGTL Theorem T4b: det(g)-(1/4)Omega^2 == (C^2/4)sin^2(theta/2) exact across C=0, 1/sqrt(2), 1");
 
     /* Bivariate-Bicycle [[144, 12, 12]] CSS orthogonality */
     secmesh_bb144_audit_t bb;
@@ -242,6 +242,67 @@ static void test_finite_key_qgt_bb144_bw(void) {
           "PQSI K_N wire-bandwidth profile & ceiling exact");
 }
 
+static void test_chern_ghz_ising_and_null_hardening(void) {
+    /* Theorem T4d & T4e: Chern-Concurrence-Entropy Conservation & GHZ Heisenberg QFI */
+    secmesh_chern_ghz_result_t cg_sep, cg_mid, cg_sing;
+    secmesh_chern_concurrence_ghz(0.0, 8, &cg_sep);
+    CHECK(fabs(fabs(cg_sep.c_eff) - 1.0) < 1e-12 && fabs(cg_sep.concurrence) < 1e-12,
+          "T4d separable state carries unit Dirac monopole |c_eff|=1 and C=0");
+    CHECK(fabs(cg_sep.h_min_from_chern) < 1e-12 && cg_sep.beats_sql == 0,
+          "T4d/T4e separable state has H_min^DI=0 and does not beat SQL");
+
+    secmesh_chern_concurrence_ghz(0.39269908169872414, 8, &cg_mid); /* alpha = pi/8, C = 1/sqrt(2) */
+    CHECK(cg_mid.conservation_err < 1e-14,
+          "T4d Chern-Concurrence conservation c_eff^2 + C^2 == 1 at alpha=pi/8");
+    CHECK(fabs(cg_mid.h_min_from_chern - cg_mid.h_min_from_chsh) < 1e-12,
+          "T4d Monopole formula 1-log2(1+|c_eff|) matches Pironio H_min^DI(S_max)");
+    CHECK(cg_mid.beats_sql == 1 && fabs(cg_mid.qfi_ghz - 32.0) < 1e-11 && cg_mid.casimir_4j_jp1 == 80ULL,
+          "T4e 8-qubit GHZ (tau=0.5) beats SQL (QFI=32 > 8) with 4j(j+1)=80");
+
+    secmesh_chern_concurrence_ghz(0.7853981633974483, 8, &cg_sing); /* alpha = pi/4, singlet */
+    CHECK(fabs(cg_sing.c_eff) < 1e-14 && fabs(cg_sing.concurrence - 1.0) < 1e-14 &&
+          fabs(cg_sing.h_min_from_chern - 1.0) < 1e-14,
+          "T4d Monopole-free singlet (c_eff=0) achieves full H_min^DI=1");
+    CHECK(fabs(cg_sing.qfi_ghz - 64.0) < 1e-11,
+          "T4e Maximal 8-qubit GHZ attains exact Heisenberg ceiling N^2=64");
+
+    /* Theorem T6a: Discrete Laplacian PSD, Ising Cut Identity & Cheeger Expander Barrier */
+    int64_t J4[16] = {
+        0, 2, 0, 2,
+        2, 0, 2, 0,
+        0, 2, 0, 2,
+        2, 0, 2, 0
+    };
+    int64_t h4[4] = {3, 3, 3, 3};
+    int8_t sig_ok[4]  = {1, 1, 1, 1};
+    int8_t sig_atk[4] = {-1, -1, 1, 1};
+    int64_t dir0 = -1, lap0 = -1, cut0 = -1;
+    int64_t dir1 = -1, lap1 = -1, cut1 = -1;
+    CHECK(secmesh_ising_graph_energy(4, J4, h4, sig_ok, &dir0, &lap0, &cut0) == 0 &&
+          dir0 == 0 && lap0 == 0 && cut0 == 0,
+          "T6a All-healthy configuration sigma=+1 is exact zero-excitation ground state");
+    CHECK(secmesh_ising_graph_energy(4, J4, h4, sig_atk, &dir1, &lap1, &cut1) == 0 &&
+          dir1 == 2 * lap1 && dir1 == 32 && cut1 == 40,
+          "T6a Exact Discrete Laplacian identity dirichlet=2*laplacianQuad=32 and cut=40");
+
+    secmesh_ising_barrier_t bar;
+    secmesh_ising_eval_expander_barrier(60, 10, 1.0, 2.0, 0.7, &bar);
+    CHECK(fabs(bar.min_work_barrier - 54.0) < 1e-12,
+          "T6a Cheeger expander contagion barrier 2*10*(1.0*2.0 + 0.7) == 54.0");
+
+    /* Regression: NULL-pointer safety & uint32_t overflow defense in Shamir/QGT/BB144/CW-128 */
+    secmesh_qgt_entangled_manifold(1.0, 0.5, 0.5, NULL);
+    secmesh_bb144_verify_css(NULL);
+    secmesh_cw_mac_compute(NULL, NULL, NULL, NULL, 0);
+    CHECK(secmesh_cw_mac_verify(NULL, NULL, NULL, NULL, 0) == 0,
+          "Hardening: NULL guards on QGT, BB144, and CW-128 do not crash");
+    uint64_t dummy_sec = 0;
+    secmesh_share_t sh[4] = {{1,1},{2,2},{3,3},{4,4}};
+    CHECK(secmesh_shamir_reconstruct_byzantine(sh, 4, 2, 0x80000000u, &dummy_sec, NULL) == -1 &&
+          secmesh_shamir_reconstruct_byzantine(sh, 300, 2, 1, &dummy_sec, NULL) == -1,
+          "Hardening: Shamir Byzantine rejects uint32_t overflow and num_shares > 256");
+}
+
 int main(void) {
     printf("=== SecMesh-PQSI Native C11 Verification Suite ===\n");
     test_fips202_and_fips197();
@@ -250,6 +311,7 @@ int main(void) {
     test_carter_wegman_and_combiner();
     test_shamir_byzantine();
     test_finite_key_qgt_bb144_bw();
+    test_chern_ghz_ising_and_null_hardening();
     printf("=== Summary: %d passed, %d failed ===\n", g_pass, g_fail);
     return g_fail == 0 ? 0 : 1;
 }

@@ -1,6 +1,6 @@
 # SecMesh-PQSI
 
-> Clean-room Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) cryptographic mesh defense engine rebuilt atop Tsotchke's stack, backed by 21 zero-Mathlib Lean 4.35.0 theorems verified across 5 distinct proof kernels and two companion AMS-LaTeX white papers.
+> Clean-room Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) cryptographic mesh defense engine (`v2.0.0`) rebuilt atop Tsotchke's stack, backed by 25 zero-Mathlib Lean 4.35.0 theorems verified across all 6 distinct proof kernels via `lake comparator --paranoid` and two companion AMS-LaTeX white papers.
 
 ## Core Entrypoints
 - [README.md](README.md): Overview, verbatim `#print axioms` 5-second proof, quickstart, and honest scope.
@@ -18,7 +18,7 @@
 ## Software Implementation
 - [Native C11 Moonlab Core](native/include/secmesh_pqsi.h)
 - [Node.js 25 PQSI Handshake](node/src/pqsi-handshake.mjs) | [Hardened Guardian v2](node/src/mesh-guardian-v2.mjs)
-- [Eshkol v1.3.6 AD Modules](eshkol/finite_key_ad.esk)
-- [Python Exact Verification](python/secmesh_verify/exact_audit.py)
-- [Tsotchke 30-Repo Integration Map](docs/tsotchke-stack-map.md)
-- [Interactive Defense Console](app/index.html)
+- [Eshkol v1.3.6 AD Modules & Live Runtime](node/src/eshkol-ad-runtime.mjs) | [Chern/Ising AD](eshkol/chern_ising_ad.esk)
+- [Python Exact Verification](python/secmesh_verify/exact_audit.py) | [README Axiom Auditor](scripts/check_readme_axioms.py)
+- [Tsotchke Complete 27-Repo Audit Map](docs/tsotchke-stack-map.md)
+- [Interactive Defense Console](app/index.html) | [Lean Proof Blueprint DAG](app/blueprint.html)

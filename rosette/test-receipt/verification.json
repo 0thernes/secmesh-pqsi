@@ -2,7 +2,7 @@
   "schema": "rosette-wire/verification/v1",
   "compositionId": "unit-test-v2",
   "compositionSha256": "73c5ffbb4bb8a6472eada1ca09d78d7c6538e7e1b43eb7b328ee6c34e2e402c9",
-  "receiptSha256": "3205162474c521dc989e6600b49938a404fa1103a9337e2d7de1ab8b3ad04763",
+  "receiptSha256": "53c4204d2306bff86d5d9677d9ef3316427510e7c4ec723b67c806f748c426b9",
   "verdict": "VERIFIED",
   "checks": [
     {

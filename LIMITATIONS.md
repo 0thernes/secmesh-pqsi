@@ -9,7 +9,7 @@ This document states explicitly what `secmesh-pqsi` does **not** prove, claim, o
 2. **Post-Super-Intelligence (PSI) secrecy requires an independent physical or pre-shared pad:**
    Theorems `T2a` and `T2b` prove unconditional secrecy against computationally unbounded adversaries **if and only if** the information-theoretic key factor $K_{\mathrm{IT}}$ is statistically uniform and independent of adversary knowledge (e.g., from a certified physical QRNG or physically distributed one-time pad). When operated without an external pad, confidentiality rests strictly on the strongest surviving computational primitive (`ML-KEM-768` or `X25519`), and the system never misrepresents computational keys as information-theoretic.
 3. **One-time pad discipline for Carter–Wegman $\mathbb{F}_{2^{128}}$ IT-MAC:**
-   Theorem `T2d` ($\le d/2^{128}$ forgery bound) assumes a fresh one-time pad mask $s$ per authenticated frame. Reusing $(r, s)$ across two distinct frames allows an adversary to recover $r$ algebraically.
+   Theorem `T2d` ($\le d/2^{128}$ forgery bound) assumes a fresh one-time pad mask $s$ per authenticated frame. `secmesh-pqsi v2.0.0` enforces monotonic 64-bit sequence numbers and strict replay rejection (`verifyCwFrame`) across all Guardian v2 frames; when operated with a pre-shared pad pool (`padPool`), each frame consumes a single-use IT pad (unconditional PSI mode), whereas `padSeed` mode derives per-frame pads via `SHAKE256` (computational Wegman–Carter mode, explicitly distinguished from unconditional PSI).
 4. **No hardware side-channel or FIPS 140-3 certification:**
    While constant-time comparison (`secmesh_ct_memeq`) and zeroization (`secmesh_secure_zero`) are implemented in C11, Lean 4 verifies mathematical specifications rather than compiled assembly timing, cache, power, or EM leakage on specific microarchitectures. `secmesh-pqsi` is a research reference implementation, not a FIPS 140-3 validated module.
 5. **Simulated mesh defense telemetry vs. live network pentesting:**
@@ -19,12 +19,10 @@ This document states explicitly what `secmesh-pqsi` does **not** prove, claim, o
 
 1. **Zero-Mathlib algebraic boundary:**
    To eliminate Mathlib from the Lean 4.35.0 trusted computing base, transcendental curves (Hoeffding exponential, binary entropy $h(p)$, Bernoulli KL inversion, and trigonometric $\cos/\sin$) are formalized via cleared-denominator integer/rational identities (`T1a`, `T1b`, `T1c`, `T4b`) and cross-verified to 60-digit `Decimal` precision in Python and differentially against C11 and Node.js 25 (`< 1e-11`).
-2. **Upstream Windows `lean4lean.exe` limitation (`problem`):**
-   The bundled `lean4lean.exe` in the Windows `leanprover--lean4---v4.35.0` toolchain failed locally with `incompatible header` when reading valid `.olean` files. Accordingly, `lean4lean` is **excluded** from our reported count of 5 completed local kernel implementations (`lean`, `leanchecker`, `leanchecker-paranoid`, `con-leche --verified`, `con-ron --verified`, `nanoda_bin 0.4.19`).
-3. **Linux namespace requirement for `lake comparator` (`problem`):**
-   Lean 4.35's `lake comparator --config palomar_comparator.json --paranoid` requires POSIX `bwrap` namespaces unavailable natively on Windows and is executed in Linux (`ubuntu-latest`) CI (`.github/workflows/ci.yml`).
-4. **Eshkol v1.3.6 compiler availability:**
-   The three Eshkol AD modules (`eshkol/*.esk`) are verified for balanced S-expression syntax and cross-checked mathematically against Python/C11 gradients, as the native LLVM `eshkol` compiler binary is not pre-installed on this Windows host.
+2. **Platform split for Lean 4.35 `lean4lean` & `lake comparator` (`problem`):**
+   On Windows hosts, the bundled `lean4lean.exe` in `leanprover--lean4---v4.35.0` fails with `incompatible header` and `lake comparator` requires Linux `bwrap` namespaces. Accordingly, Windows local verification runs **5 distinct kernel implementations** (`lean`, `leanchecker`, `leanchecker-paranoid`, `con-leche --verified`, `con-ron --verified`, `nanoda_bin 0.4.19`), while Ubuntu Linux GitHub Actions CI executes `lake comparator --config palomar_comparator.json --paranoid` verifying **all 6 distinct kernels** (including `lean4lean`).
+3. **Eshkol v1.3.6 native LLVM binary vs. portable dual-number AD runtime (`problem`):**
+   While a Windows `eshkol-run.exe` binary exists on this workstation (`Z:\Tools\eshkol\current\bin`), it exited with `0xC0000135` (`STATUS_DLL_NOT_FOUND`) due to missing runtime DLLs. Rather than leaving the 4 Eshkol modules unexecuted, `secmesh-pqsi v2.0.0` ships a portable, zero-dependency forward-mode dual-number AD & OALR `(with-region ...)` evaluator (`node/src/eshkol-ad-runtime.mjs`) that parses and executes all four `eshkol/*.esk` modules live and verifies every AD derivative to `< 1e-12` against closed-form calculus. This portable evaluator is transparently labeled as a reference AD interpreter rather than Tsotchke's native LLVM AOT compiler.
 
 ## 3. Open Conjectures & Peer Review Status
 

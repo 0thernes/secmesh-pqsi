@@ -15,12 +15,22 @@
 'SecMeshPQSI.Solution.t4b_qgt_concurrence_surplus_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Solution.t4c1_general_bb_commutation' does not depend on any axioms
 'SecMeshPQSI.Solution.t4c2_bravyi_gross_bb144_certified' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SecMeshPQSI.Solution.t4d_chern_concurrence_entropy_conservation' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'SecMeshPQSI.Solution.t4e_libirrep_ghz_heisenberg_qfi_scaling' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
 'SecMeshPQSI.Solution.t5a_fips203_ntt_prime_and_root' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.t5b_montgomery_reduction_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Solution.t5c_mlkem_compress1_margin' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.t5d_kn_mesh_bandwidth_and_hedge_overhead' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
+'SecMeshPQSI.Solution.t6a_ising_laplacian_psd_and_cheeger_barrier' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.prove_all_secmesh_theorems' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.NonVacuity.nonvac_all_hypotheses' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation' does not depend on any axioms
@@ -40,9 +50,17 @@
 'SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Palomar.t4c1_general_bb_commutation' depends on axioms: [propext]
 'SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SecMeshPQSI.Palomar.t4d_chern_concurrence_entropy_conservation' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'SecMeshPQSI.Palomar.t4e_libirrep_ghz_heisenberg_qfi_scaling' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Palomar.t5a_fips203_ntt_prime_and_root' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Palomar.t5c_mlkem_compress1_margin' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
+'SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]

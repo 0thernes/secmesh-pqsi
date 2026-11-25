@@ -149,11 +149,50 @@ typedef struct {
 
 /* Exact QGT evaluation on the local-SU(2)-rotated two-qubit entangled manifold
  * |psi(theta, phi; alpha)> = (U(theta, phi) x I) (cos(alpha)|01> - sin(alpha)|10>).
- * Theorem T4a proves: det(g) - (1/4)*Omega^2 == (sin^2(2*alpha) / 4) * sin^2(theta/2),
+ * Theorem T4b proves: det(g) - (1/4)*Omega^2 == (sin^2(2*alpha) / 4) * sin^2(theta/2),
  * linking QGTL determinant surplus directly to Wootters concurrence C and Horodecki S_max! */
 void secmesh_qgt_entangled_manifold(double theta, double phi, double alpha,
                                     secmesh_qgt_result_t *out);
 void secmesh_qgt_singlet_manifold(double theta, double phi, secmesh_qgt_result_t *out);
+
+/* Theorem T4d (Chern-Concurrence-Entropy Conservation Law) &
+ * Theorem T4e (libirrep SU(2) Spin-j N-Qubit GHZ Heisenberg QFI Scaling). */
+typedef struct {
+    double   alpha;
+    uint32_t n_qubits;
+    double   c_eff;            /* Integrated local Berry-Chern flux -(cos^2 a - sin^2 a) = -cos(2a) */
+    double   concurrence;      /* Wootters concurrence C = |sin(2*alpha)| */
+    double   conservation_err; /* |c_eff^2 + C^2 - 1.0| (exact = 0) */
+    double   horodecki_s_max;  /* 2 * sqrt(1 + C^2) = 2 * sqrt(2 - c_eff^2) */
+    double   h_min_from_chern; /* 1 - log2(1 + |c_eff|) == H_min^DI(S_max) */
+    double   h_min_from_chsh;  /* Pironio H_min^DI(S_max) */
+    double   h_vn_from_conc;   /* 1 - h((1 + C)/2) == H_vN^DI(S_max) */
+    double   tau_n;            /* N-tangle C^2 */
+    double   qfi_ghz;          /* Collective SU(2) spin-j QFI = N^2 * tau_n */
+    double   qfi_sql;          /* Standard Quantum Limit = N */
+    uint64_t casimir_4j_jp1;   /* Exact 4*j*(j+1) = N*(N+2) for j = N/2 */
+    int      beats_sql;        /* 1 iff N * tau_n > 1.0 */
+} secmesh_chern_ghz_result_t;
+
+void secmesh_chern_concurrence_ghz(double alpha, uint32_t n_qubits,
+                                   secmesh_chern_ghz_result_t *out);
+
+/* Theorem T6a (Ising Spin-Glass Hamiltonian, Discrete Laplacian PSD & Cheeger Barrier). */
+typedef struct {
+    uint32_t n_nodes;
+    uint32_t compromised_k;
+    double   coupling_j;
+    double   edge_expansion_phi;
+    double   firewall_h;
+    double   min_work_barrier; /* 2 * k * (J * phi + h) */
+} secmesh_ising_barrier_t;
+
+int  secmesh_ising_graph_energy(uint32_t n, const int64_t *J_flat, const int64_t *h_vec,
+                                const int8_t *sig, int64_t *dirichlet_out,
+                                int64_t *laplacian_quad_out, int64_t *ising_cut_out);
+void secmesh_ising_eval_expander_barrier(uint32_t n_nodes, uint32_t compromised_k,
+                                         double coupling_j, double edge_expansion_phi,
+                                         double firewall_h, secmesh_ising_barrier_t *out);
 
 /* Bravyi et al. (Nature 2024) [[144, 12, 12]] Bivariate-Bicycle qLDPC code:
  * ell = 12, m = 6, A = x^3 + y + y^2, B = y^3 + x + x^2 over F_2[Z_12 x Z_6].

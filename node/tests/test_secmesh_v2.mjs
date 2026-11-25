@@ -17,12 +17,15 @@ import { fileURLToPath } from 'node:url';
 import {
   carterWegmanMac,
   carterWegmanVerify,
+  sealCwFrame,
+  thresholdHedgedNonce,
   dualSurvivabilityCombine,
   generatePeerIdentity,
   runPQSIHandshake,
   sealRecord,
   openRecord,
 } from '../src/pqsi-handshake.mjs';
+import { evaluateEshkolFile } from '../src/eshkol-ad-runtime.mjs';
 import {
   TSIRELSON,
   P_ANTI_EXACT,
@@ -172,8 +175,8 @@ await test('Seeded E91 Simulation: honest admits, Classical/Aligned/Parked Eve a
   assert.equal(prk.verdict, 'ABORT');
 });
 
-await test('Hardened Mesh Guardian v2: CW-128 auth enforcement, no wildcard CORS, no UDP amplification, no key leak', async () => {
-  const cwKey = { r: crypto.randomBytes(16), b: crypto.randomBytes(16) };
+await test('Hardened Mesh Guardian v2: CW-128 anti-replay & per-frame pad enforcement, no wildcard CORS, no UDP amp, no key leak', async () => {
+  const cwKey = { r: crypto.randomBytes(16), padSeed: crypto.randomBytes(32) };
   const guard = createHardenedGuardian({
     host: '127.0.0.1',
     listenPort: 0,
@@ -183,21 +186,38 @@ await test('Hardened Mesh Guardian v2: CW-128 auth enforcement, no wildcard CORS
     cwControlKey: cwKey,
     allowedOrigin: 'http://127.0.0.1:8080',
   });
-  const { tcpPort, statusPort } = await guard.start();
+  const { tcpPort, statusPort, udpPort } = await guard.start();
   try {
-    // 1. Send valid CW-128 authenticated frame
+    // 1. Send valid sequence-bound CW-128 authenticated frame (seq = 1)
     const payload = Buffer.from('PING-AUTH');
-    const tag = carterWegmanMac(cwKey.r, cwKey.b, payload);
+    const frame1 = sealCwFrame(cwKey.r, cwKey.padSeed, 1n, payload);
     const ack = await new Promise((resolve, reject) => {
-      const s = net.connect(tcpPort, '127.0.0.1', () => s.write(Buffer.concat([tag, payload])));
+      const s = net.connect(tcpPort, '127.0.0.1', () => s.write(frame1));
       s.once('data', d => { s.end(); resolve(d.toString()); });
       s.once('error', reject);
     });
     assert.equal(JSON.parse(ack).ok, true);
 
+    // 1b. Negative (Theorem T2d anti-replay / pad-reuse defense): replaying seq = 1 MUST be rejected!
+    await new Promise((resolve) => {
+      const s = net.connect(tcpPort, '127.0.0.1', () => s.write(frame1));
+      s.on('close', resolve);
+      s.on('error', () => {});
+    });
+    assert.ok((guard.state.byVector['cw-replay-reject'] || 0) >= 1, 'replayed seq=1 must be rejected');
+
+    // 1c. Fresh seq = 2 frame with distinct per-frame pad succeeds cleanly
+    const frame2 = sealCwFrame(cwKey.r, cwKey.padSeed, 2n, Buffer.from('PING-AUTH-2'));
+    const ack2 = await new Promise((resolve, reject) => {
+      const s = net.connect(tcpPort, '127.0.0.1', () => s.write(frame2));
+      s.once('data', d => { s.end(); resolve(d.toString()); });
+      s.once('error', reject);
+    });
+    assert.equal(JSON.parse(ack2).ok, true);
+
     // 2. Negative: Unauthenticated frame MUST be rejected & tallied
     await new Promise((resolve) => {
-      const s = net.connect(tcpPort, '127.0.0.1', () => s.write(Buffer.from('FORGED-FRAME-WITHOUT-MAC-12345')));
+      const s = net.connect(tcpPort, '127.0.0.1', () => s.write(Buffer.from('FORGED-FRAME-WITHOUT-MAC-12345-PAD')));
       s.on('close', resolve);
       s.on('error', () => {});
     });
@@ -207,7 +227,7 @@ await test('Hardened Mesh Guardian v2: CW-128 auth enforcement, no wildcard CORS
     const udpCli = dgram.createSocket('udp4');
     let echoed = false;
     udpCli.on('message', () => { echoed = true; });
-    await new Promise(r => udpCli.send(Buffer.from('UDP-AMP-PROBE'), tcpPort, '127.0.0.1', r));
+    await new Promise(r => udpCli.send(Buffer.from('UDP-AMP-PROBE'), udpPort, '127.0.0.1', r));
     await new Promise(r => setTimeout(r, 80));
     udpCli.close();
     assert.equal(echoed, false, 'UDP must NOT echo/amplify');
@@ -252,6 +272,60 @@ await test('Rosette-Wire Verifiable Receipt Bundle: create & independent replay 
   const ver = verifyRosetteBundleDir(dir);
   assert.equal(ver.ok, true);
   assert.equal(ver.verdict, 'VERIFIED');
+});
+
+await test('Theorem T6b: Cryptosymbology threshold-hedged nonce XOR dual-closure', () => {
+  const rSignerMalicious = Buffer.alloc(32, 0x5A); // adversarial subliminal payload
+  const rAuditor = crypto.randomBytes(32);
+  const rEff = thresholdHedgedNonce(rSignerMalicious, rAuditor);
+  // Exact inverse recovery verifies bijection on {0,1}^256
+  assert.ok(thresholdHedgedNonce(rEff, rSignerMalicious).equals(rAuditor));
+  assert.ok(thresholdHedgedNonce(rEff, rAuditor).equals(rSignerMalicious));
+  assert.throws(() => thresholdHedgedNonce(Buffer.alloc(16), Buffer.alloc(32)));
+});
+
+await test('Eshkol v1.3.6 Forward-Mode Dual-Number AD Execution across all 4 .esk modules', () => {
+  const eskDir = path.join(REPO_ROOT, 'eshkol');
+  const rFk = evaluateEshkolFile(path.join(eskDir, 'finite_key_ad.esk'));
+  assert.ok(rFk.regions.includes('secmesh-finite-key-ad'));
+  // Analytical check of dH_min^DI/dS at S=2.5: S / (4 * ln(2) * sqrt(2 - S^2/4) * (1 + sqrt(2 - S^2/4)))
+  const s0 = 2.5;
+  const v = Math.sqrt(2 - 0.25 * s0 * s0);
+  const expectedDHmin = s0 / (4 * Math.LN2 * v * (1 + v));
+  const mFk = rFk.lines.find(l => l.includes('dH_min^DI / dS = '));
+  assert.ok(Math.abs(parseFloat(mFk.split('= ')[1]) - expectedDHmin) < 1e-12);
+
+  const rQgt = evaluateEshkolFile(path.join(eskDir, 'qgt_geodesic.esk'));
+  assert.ok(rQgt.regions.includes('secmesh-qgt-entanglement-ad'));
+  const mResid = rQgt.lines.find(l => l.includes('Identity residual'));
+  assert.ok(Math.abs(parseFloat(mResid.split('= ')[1])) < 1e-15);
+  const mDsurpDt = rQgt.lines.find(l => l.includes('d(surplus)/d(theta)'));
+  // At singlet (C=1), d/dtheta [(1/4) sin^2(theta/2)] = (1/8) sin(theta)
+  assert.ok(Math.abs(parseFloat(mDsurpDt.split('= ')[1]) - Math.sin(Math.PI / 3) / 8) < 1e-12);
+
+  const rBw = evaluateEshkolFile(path.join(eskDir, 'bandwidth_opt.esk'));
+  assert.ok(rBw.regions.includes('secmesh-bandwidth-ad'));
+  const mDbw = rBw.lines.find(l => l.includes('d(total bytes)/dN'));
+  // d/dN [0.5*N*(N-1)*13274] at N=32 = 31.5 * 13274 = 418131
+  assert.ok(Math.abs(parseFloat(mDbw.split('= ')[1]) - 31.5 * 13274) < 1e-9);
+
+  const rCi = evaluateEshkolFile(path.join(eskDir, 'chern_ising_ad.esk'));
+  assert.ok(rCi.regions.includes('secmesh-chern-ising-ad'));
+  const mCons = rCi.lines.find(l => l.includes('conservation err'));
+  assert.ok(Math.abs(parseFloat(mCons.split('= ')[1])) < 1e-15);
+  const mDbar = rCi.lines.find(l => l.includes('d(IsingBarrier)/d(phi0)'));
+  assert.ok(Math.abs(parseFloat(mDbar.split('= ')[1]) - 20.0) < 1e-12);
+});
+
+await test('Differential C11: Chern-Concurrence-GHZ (T4d/T4e) & Ising Expander Barrier (T6a)', () => {
+  const cg = JSON.parse(execFileSync(NATIVE_BIN, ['chern-law', String(Math.PI / 8), '8'], { encoding: 'utf8' }));
+  assert.ok(cg.conservation_err < 1e-14);
+  assert.ok(Math.abs(cg.h_min_from_chern - cg.h_min_from_chsh) < 1e-12);
+  assert.equal(cg.beats_sql, true);
+  assert.equal(cg.casimir_4j_jp1, 80);
+
+  const bar = JSON.parse(execFileSync(NATIVE_BIN, ['ising-barrier', '60', '10', '1.0', '2.0', '0.7'], { encoding: 'utf8' }));
+  assert.ok(Math.abs(bar.min_work_barrier - 54.0) < 1e-12);
 });
 
 console.log(`=== Node.js Suite Summary: ${passed}/${passed} passed ===`);

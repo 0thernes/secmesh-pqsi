@@ -1,7 +1,7 @@
 {
   "name": "secmesh-pqsi",
-  "version": "1.0.1",
-  "description": "Post-Quantum & Post-Super-Intelligence (Information-Theoretic) Cryptographic Mesh Defense Suite with Multi-Kernel Lean 4.35 Proofs",
+  "version": "2.0.0",
+  "description": "Post-Quantum & Post-Super-Intelligence (Information-Theoretic) Cryptographic Mesh Defense Suite with Six-Kernel Lean 4.35 Proofs",
   "type": "module",
   "license": "Apache-2.0",
   "author": "Alexander S. Donahue <0_0@0thernes.art>",
@@ -18,7 +18,7 @@
   "scripts": {
     "test": "node node/tests/test_secmesh_v2.mjs",
     "audit": "node node/src/secmesh-cli.mjs audit",
-    "handshake": "node node/src/secmesh-cli.mjs handshake",
-    "status": "node node/src/secmesh-cli.mjs status"
+    "handshake": "node node/src/secmesh-cli.mjs handshake --hedged",
+    "interop": "node node/src/secmesh-cli.mjs interop"
   }
 }

@@ -1,0 +1,48 @@
+;; SPDX-License-Identifier: Apache-2.0
+;; Copyright (c) 2026 Alexander S. Donahue
+;;
+;; Eshkol v1.3.6 Topological Chern-Concurrence-Entropy Conservation (T4d),
+;; libirrep Spin-j GHZ Heisenberg QFI (T4e), & Ising Cheeger Contagion Barrier (T6a).
+
+(define *ln2* (log 2.0))
+(define (log2 x) (/ (log x) *ln2*))
+
+;; Local Berry-Chern topological flux c_eff(alpha) = -cos(2*alpha)
+(define (chern-flux alpha) (- (cos (* 2.0 alpha))))
+
+;; Wootters concurrence C(alpha) = sin(2*alpha) for alpha in [0, pi/4]
+(define (concurrence alpha) (sin (* 2.0 alpha)))
+
+;; Exact Conservation Sum c_eff^2 + C^2 == 1 (Theorem T4d)
+(define (chern-conc-sum alpha)
+  (let ((ce (chern-flux alpha))
+        (c  (concurrence alpha)))
+    (+ (* ce ce) (* c c))))
+
+;; Monopole-Free Randomness Law (Theorem T4d):
+;;   H_min^DI(S_max(alpha)) = 1 - log2(1 + cos(2*alpha)) on [0, pi/4]
+(define (h-min-from-chern alpha)
+  (- 1.0 (log2 (+ 1.0 (cos (* 2.0 alpha))))))
+
+;; Collective SU(2) Spin-j (j = N/2) N-Qubit GHZ QFI (Theorem T4e):
+;;   F_Q^GHZ(N, alpha) = N^2 * sin^2(2*alpha)
+(define (ghz-qfi n alpha)
+  (let ((c (concurrence alpha)))
+    (* (* n n) (* c c))))
+
+;; Cheeger Expander Ising Contagion Barrier (Theorem T6a):
+;;   W_min(k, J, phi0, h) = 2 * k * (J * phi0 + h)
+(define (ising-expander-barrier k j-coup phi0 h-fw)
+  (* (* 2.0 k) (+ (* j-coup phi0) h-fw)))
+
+(with-region 'secmesh-chern-ising-ad
+  (let* ((a0 0.39269908169872414) ;; pi / 8
+         (cons-err (- (chern-conc-sum a0) 1.0))
+         (dh-da (derivative h-min-from-chern a0))
+         (dqfi-da (derivative (lambda (a) (ghz-qfi 8.0 a)) a0))
+         (dbar-dphi (derivative (lambda (p) (ising-expander-barrier 10.0 1.0 p 0.7)) 2.0)))
+    (display "SecMesh-PQSI Eshkol Chern-GHZ-Ising AD Report") (newline)
+    (display "  Chern-Concurrence conservation err  = ") (display cons-err) (newline)
+    (display "  dH_min(Chern)/d(alpha) at pi/8      = ") (display dh-da) (newline)
+    (display "  d(QFI_GHZ, N=8)/d(alpha) at pi/8    = ") (display dqfi-da) (newline)
+    (display "  d(IsingBarrier)/d(phi0) at k=10,J=1 = ") (display dbar-dphi) (newline)))

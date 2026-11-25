@@ -231,13 +231,73 @@ def fig4_kn_pq_bandwidth_ceilings() -> None:
     plt.close(fig)
 
 
+def fig5_chern_concurrence_ising_barrier() -> None:
+    alphas = np.linspace(0.0, math.pi / 4.0, 250)
+    c_eff_abs = np.abs(np.cos(2.0 * alphas))
+    conc = np.sin(2.0 * alphas)
+    h_min_chern = 1.0 - np.log2(1.0 + c_eff_abs)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.2, 3.4), gridspec_kw={"wspace": 0.28})
+
+    # Panel (a): Theorem T4d Chern-Concurrence-Entropy Conservation Law
+    deg = np.degrees(alphas)
+    ax1.plot(deg, c_eff_abs, "--", color="#dc2626", lw=2.0, label="$|c_{\\mathrm{eff}}|=|\\cos 2\\alpha|$")
+    ax1.plot(deg, conc, "-.", color="#7c3aed", lw=2.0, label="$\\mathcal{C}=\\sin 2\\alpha$")
+    ax1.plot(deg, h_min_chern, "-", color="#059669", lw=2.3, label="$H_{\\min}^{\\mathrm{DI}}(|c_{\\mathrm{eff}}|)$")
+    ax1.scatter([0, 45], [0, 1], color=["#dc2626", "#059669"], zorder=5, s=30)
+    ax1.annotate(
+        "Dirac monopole\n$|c_{\\mathrm{eff}}|=1, H_{\\min}=0$",
+        xy=(0.6, 0.015),
+        xytext=(14.5, 0.02),
+        arrowprops={"arrowstyle": "->", "color": "#991b1b", "lw": 0.95},
+        fontsize=7.0,
+        color="#7f1d1d",
+        bbox={"boxstyle": "round,pad=0.22", "fc": "#fff5f5", "ec": "#fca5a5", "lw": 0.65},
+    )
+    ax1.annotate(
+        "Monopole-free singlet\n$c_{\\mathrm{eff}}=0, H_{\\min}=1$",
+        xy=(44.3, 1.005),
+        xytext=(24.0, 1.13),
+        arrowprops={"arrowstyle": "->", "color": "#065f46", "lw": 0.95},
+        fontsize=7.0,
+        color="#065f46",
+        bbox={"boxstyle": "round,pad=0.22", "fc": "#ecfdf5", "ec": "#6ee7b7", "lw": 0.65},
+    )
+    ax1.set_xlabel("Entanglement Angle $\\alpha$ (degrees)")
+    ax1.set_ylabel("Dimensionless Magnitude / Entropy (bits)")
+    ax1.set_title("(a) T4d: $c_{\\mathrm{eff}}^2 + \\mathcal{C}^2 = 1$ Law")
+    ax1.set_xlim(-1, 47)
+    ax1.set_ylim(-0.04, 1.36)
+    ax1.legend(loc="upper left", fontsize=6.9, frameon=True, framealpha=0.95)
+
+    # Panel (b): Theorem T6a Ising Expander Contagion Barrier across mesh topologies
+    ks = np.arange(0, 31)
+    for phi0, lbl, col, ls in [
+        (0.10, "Ring / 1D Lattice ($\\phi_0=0.1$)", "#dc2626", ":"),
+        (0.45, "2D Torus Grid ($\\phi_0=0.45$)", "#d97706", "--"),
+        (1.20, "Random 4-Regular ($\\phi_0=1.2$)", "#2563eb", "-."),
+        (2.00, "Ramanujan 6-Expander ($\\phi_0=2.0$)", "#059669", "-"),
+    ]:
+        barrier = 2.0 * ks * (1.0 * phi0 + 0.7)
+        ax2.plot(ks, barrier, ls=ls, color=col, lw=2.0, label=lbl)
+    ax2.set_xlabel("Compromised Cluster Size $k \\leq N/2$")
+    ax2.set_ylabel("Minimum Ising Work Barrier $W_{\\min}(k)$")
+    ax2.set_title("(b) T6a: Cheeger Expander Barrier")
+    ax2.set_ylim(-5, 205)
+    ax2.legend(loc="upper left", fontsize=7.0, frameon=True, framealpha=0.95)
+
+    fig.savefig(FIG_DIR / "fig5_chern_concurrence_ising_barrier.pdf", bbox_inches="tight", pad_inches=0.06)
+    plt.close(fig)
+
+
 def main() -> int:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     fig1_finite_key_contrast()
     fig2_di_entropy_duality()
     fig3_qgt_concurrence_surplus()
     fig4_kn_pq_bandwidth_ceilings()
-    print(f"Generated 4 vector PDF figures in {FIG_DIR}")
+    fig5_chern_concurrence_ising_barrier()
+    print(f"Generated 5 vector PDF figures in {FIG_DIR}")
     return 0
 
 

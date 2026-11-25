@@ -8,7 +8,7 @@ import PalomarSolution
 /-!
 # Strict Axiom Allowlist Audit
 
-Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (21 individual
+Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (25 individual
 theorems + master conjunction) plus the non-vacuity witness
 `SecMeshPQSI.NonVacuity.nonvac_all_hypotheses` must depend strictly on a subset of the
 three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
@@ -31,10 +31,14 @@ three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 #print axioms SecMeshPQSI.Solution.t4b_qgt_concurrence_surplus_identity
 #print axioms SecMeshPQSI.Solution.t4c1_general_bb_commutation
 #print axioms SecMeshPQSI.Solution.t4c2_bravyi_gross_bb144_certified
+#print axioms SecMeshPQSI.Solution.t4d_chern_concurrence_entropy_conservation
+#print axioms SecMeshPQSI.Solution.t4e_libirrep_ghz_heisenberg_qfi_scaling
 #print axioms SecMeshPQSI.Solution.t5a_fips203_ntt_prime_and_root
 #print axioms SecMeshPQSI.Solution.t5b_montgomery_reduction_exact
 #print axioms SecMeshPQSI.Solution.t5c_mlkem_compress1_margin
 #print axioms SecMeshPQSI.Solution.t5d_kn_mesh_bandwidth_and_hedge_overhead
+#print axioms SecMeshPQSI.Solution.t6a_ising_laplacian_psd_and_cheeger_barrier
+#print axioms SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure
 #print axioms SecMeshPQSI.Solution.prove_all_secmesh_theorems
 #print axioms SecMeshPQSI.NonVacuity.nonvac_all_hypotheses
 #print axioms SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation
@@ -54,7 +58,11 @@ three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 #print axioms SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity
 #print axioms SecMeshPQSI.Palomar.t4c1_general_bb_commutation
 #print axioms SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified
+#print axioms SecMeshPQSI.Palomar.t4d_chern_concurrence_entropy_conservation
+#print axioms SecMeshPQSI.Palomar.t4e_libirrep_ghz_heisenberg_qfi_scaling
 #print axioms SecMeshPQSI.Palomar.t5a_fips203_ntt_prime_and_root
 #print axioms SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact
 #print axioms SecMeshPQSI.Palomar.t5c_mlkem_compress1_margin
 #print axioms SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead
+#print axioms SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier
+#print axioms SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure

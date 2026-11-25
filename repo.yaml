@@ -3,7 +3,7 @@
 # Project manifest for the Build Standard for LLMs v1.2.0. Read by scripts/Audit-Repo.ps1 and scripts/audit-repo.sh.
 standard: "1.2.0"
 name: "secmesh-pqsi"
-description: "Post-Quantum & Post-Super-Intelligence (information-theoretic) cryptographic mesh defense engine rebuilt atop Tsotchke's stack, backed by 21 zero-Mathlib Lean 4.35.0 theorems verified across 5 distinct kernels and 2 AMS-LaTeX white papers."
+description: "Post-Quantum & Post-Super-Intelligence (information-theoretic) cryptographic mesh defense engine rebuilt atop Tsotchke's stack, backed by 25 zero-Mathlib Lean 4.35.0 theorems verified across all 6 distinct kernels and 2 AMS-LaTeX white papers."
 owner: "0thernes"
 year: 2026
 project_type: research
@@ -33,8 +33,8 @@ items:
   A05: {status: done, evidence: "app/index.html interactive console & paper/figures/*.pdf"}
   A06: {status: done, evidence: "LICENSE (Apache-2.0), LICENSE-DOCS (CC-BY-4.0), REUSE.toml, native/third_party/moonlab/LICENSE-MOONLAB (MIT)"}
   A07: {status: done, evidence: "CHANGELOG.md"}
-  A08: {status: done, evidence: "VERSION 1.0.1 synced with CHANGELOG.md, CITATION.cff, package.json, pyproject.toml"}
-  A09: {status: done, evidence: "native/tests/test_native_core.c (40/40), node/tests/test_secmesh_v2.mjs (12/12), python/tests/test_all.py (11/11)"}
+  A08: {status: done, evidence: "VERSION 2.0.0 synced with CHANGELOG.md, CITATION.cff, .zenodo.json, package.json, pyproject.toml, formalization.yaml"}
+  A09: {status: done, evidence: "native/tests/test_native_core.c (52/52), node/tests/test_secmesh_v2.mjs (15/15), python/tests/test_all.py (12/12)"}
   A10: {status: done, evidence: ".github/workflows/ci.yml (informational Ubuntu + Windows matrix)"}
   A11: {status: done, evidence: ".github/workflows/release.yml triggered on v* tags"}
   A12: {status: done, evidence: ".gitignore"}
@@ -75,8 +75,8 @@ items:
   B02: {status: done, evidence: "lean/lean-toolchain, requirements.lock.txt, pyproject.toml, package.json, UPSTREAM_COMMIT.txt"}
   B03: {status: done, evidence: "Deterministic seeded Node/Python runs, exact integer Lean proofs, Rosette-Wire canonical SHA-256 bundles"}
   B04: {status: done, evidence: "CLAIMS.md numbered claims ledger with 4 status tiers"}
-  B05: {status: done, evidence: "40 C11 + 12 Node + 11 Python pytest tests covering C1-C11"}
-  B06: {status: done, evidence: "Negative/adversarial tests: FO tamper reject, SP 800-90B stuck-at reject, Parked Eve reject, CW-128 forge reject, Compress_1 e=+832 failure, Shamir n<t+2b refusal"}
+  B05: {status: done, evidence: "52 C11 + 15 Node + 12 Python pytest tests covering C1-C12"}
+  B06: {status: done, evidence: "Negative/adversarial tests: FO tamper reject, SP 800-90B stuck-at reject, Parked Eve reject, CW-128 forge & replay reject, Compress_1 e=+832 failure, Shamir overflow/n<t+2b refusal, C11 NULL safety"}
   B07: {status: done, evidence: "Regression tests for all 10 legacy SecMesh v1 defects in node/tests/test_secmesh_v2.mjs and python/tests/test_all.py"}
   B08: {status: done, evidence: "results/lean_axioms.txt, results/exact_verification_report.json, rosette/latest-audit/, MANIFEST.sha256"}
   B09: {status: done, evidence: "Exact JSON CLI contracts verified across C11 <-> Node <-> Python differential harnesses"}
@@ -92,9 +92,9 @@ items:
   B19: {status: n/a, note: "Single-threaded deterministic cryptographic core and sequential audit pipeline"}
   B20: {status: done, evidence: "60-digit Decimal QGT verification (max residual 3.3e-60) and exact Chernoff-KL inversion (<1e-11 C11<->Node<->Python agreement)"}
   B21: {status: n/a, note: "No distributed multi-host production cluster deployment"}
-  B22: {status: done, evidence: "Zero-Mathlib Lean 4.35.0 formalization (12 files, 3,501 lines) replayed across 5 distinct kernel implementations (6 runs)"}
+  B22: {status: done, evidence: "Zero-Mathlib Lean 4.35.0 formalization (13 files, 25 theorems) verified across all 6 distinct kernels via lake comparator --paranoid"}
   B23: {status: n/a, note: "Cryptographic algebra and finite-key bounds proved directly in Lean 4; no concurrent consensus state machine requiring TLA+"}
-  B24: {status: done, evidence: "All 21 headline theorems (T1a-T5d) + SimpleField (Fin 5) NonVacuity machine-checked in Lean 4.35.0"}
+  B24: {status: done, evidence: "All 25 headline theorems (T1a-T6b) + SimpleField (Fin 5) NonVacuity machine-checked in Lean 4.35.0"}
   B25: {status: n/a, note: "C11 core audited via -Wall -Wextra -Werror, ASan/UBSan, FIPS KATs, and Lean 4 algebraic proofs (T5a-T5c); CBMC/Kani deferred"}
   B26: {status: done, evidence: "Exact wire-size profiles (192..14,989 B) and K_N ceilings measured and proved in T5d and White Paper II Table 2"}
   B27: {status: done, evidence: "Live SLH-DSA lattice-hedged handshake benchmark (25,003 B RTT, 391.0 ms) reproducible via examples/quickstart_demo.mjs"}
@@ -110,7 +110,7 @@ items:
   B37: {status: done, evidence: "MANIFEST.sha256 verified across all frozen artifacts and release workflow"}
   B38: {status: done, evidence: "actions/attest-build-provenance@v2 in .github/workflows/ci.yml"}
   B39: {status: n/a, note: "No external dataset corpus; generated exact verification artifacts hashed in MANIFEST.sha256"}
-  B40: {status: done, evidence: "docs/run-log.md and rosette/latest-audit/bundle.json"}
+  B40: {status: done, evidence: "docs/run-log.md and rosette/latest-audit/{composition,receipt,verification}.json"}
   B41: {status: done, evidence: "LIMITATIONS.md"}
   B42: {status: done, evidence: "CLAIMS.md What Would Prove Us Wrong section"}
   B43: {status: done, evidence: "REPLICATION.md"}

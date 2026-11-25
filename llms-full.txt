@@ -2,9 +2,9 @@
 
 Author: Alexander S. Donahue (Independent Researcher, Spokane, WA, USA; ORCID 0009-0006-8168-9648; 0_0@0thernes.art)
 License: Apache-2.0 (code), MIT (vendored native/third_party/moonlab), CC-BY-4.0 (manuscripts & docs)
-Version: 1.0.0 (2026-11-25)
+Version: 2.0.0 (2026-11-25)
 
-## 1. Summary of 21 Machine-Checked Lean 4.35.0 Theorems
+## 1. Summary of 25 Machine-Checked Lean 4.35.0 Theorems
 - T1a (`t1a_v1_tsirelson_violation`, 0 axioms): Legacy SecMesh v1 `CELL_P=[0.146,0.854]` gives expected `S = 354/125 = 2.832 > 2*sqrt(2)` (`354^2 - 8*125^2 = 316`).
 - T1b (`t1b_hoeffding_range2_factor4`): Range-2 `±1` Hoeffding requires 4x sample factor vs range-1; v1 inflates per-cell failure at `eps=1e-6` from `2.5e-7` to `0.0285744 > 1/50`.
 - T1c (`t1c_di_quarter_circle_duality`): Exact quarter-circle duality `u^2 + v^2 = 1` separating Acin-Pironio collective von Neumann `H_vN^DI(S)` from Pironio strict min-entropy `H_min^DI(S)` (`H_min(2.5) < H_vN(2.5)`; numerical max gap `+0.235703` bits/round at `S = 2.699192`).
@@ -19,18 +19,22 @@ Version: 1.0.0 (2026-11-25)
 - T3b (`t3b_byzantine_singleton_tightness`): Unique Byzantine recovery for `n >= t + 2b` and exact distance `d = 2b` ambiguity at `n = t + 2b - 1`.
 - T3c (`t3c_pir_byzantine_capacity_gap`): Mega Atlas `CS-053` positive-rate threshold `N >= K + T + 2B` and exact `T^2 > 0` strict excess of Banawan-Ulukus `M=2` capacity over linear star-product rate.
 - T4a (`t4a_qgt_psd_lagrange_and_trace`): Exact D-dimensional complex QGT Lagrange and trace uncertainty inequalities `4*(g11*g22 - g12^2) >= Omega^2` and `(g11+g22)^2 >= Omega^2`.
-- T4b (`t4b_qgt_concurrence_surplus_identity`): New exact ring identity `det(g) - (1/4)*Omega^2 = (C^2/4)*sin^2(theta/2)` linking Tsotchke's QGTL to Wootters concurrence `C` and Horodecki CHSH `S_max = 2*sqrt(1+C^2)`.
+- T4b (`t4b_qgt_concurrence_surplus_identity`): Exact ring identity `det(g) - (1/4)*Omega^2 = (C^2/4)*sin^2(theta/2)` linking Tsotchke's QGTL to Wootters concurrence `C` and Horodecki CHSH `S_max = 2*sqrt(1+C^2)`.
 - T4c1 (`t4c1_general_bb_commutation`, 0 axioms): `AB = BA => H_X * H_Z^T = 0 (mod 2)` for bivariate-bicycle CSS codes.
 - T4c2 (`t4c2_bravyi_gross_bb144_certified`): Group-algebra involution + kernel check certifying all `5,184` CSS products and weight `6` stabilizers of Bravyi's `[[144,12,12]]` Gross code.
+- T4d (`t4d_chern_concurrence_entropy_conservation`): Exact topological conservation law `c_eff^2 + C^2 = 1` and `c_eff^2 + (S_max/2)^2 = 2`, proving Pironio's `H_min^DI(S_max) = 1 - log2(1 + |c_eff|)` reaches 1 bit iff the local Berry monopole vanishes.
+- T4e (`t4e_libirrep_ghz_heisenberg_qfi_scaling`): Collective `libirrep` `SU(2)` spin-`j` (`j = N/2`) GHZ Heisenberg QFI `F_Q = N^2 * tau_N > N <-> N * tau_N > 1` plus exact Casimir identity `4*N*(N+2) - 4*N^2 = 8*N`.
 - T5a (`t5a_fips203_ntt_prime_and_root`): `q = 3329` prime, `3329 = 13*256+1`, primitive 256-th root `zeta = 17`.
 - T5b (`t5b_montgomery_reduction_exact`): Zero-overflow exact Montgomery reduction across `|a| < 32768 * 3329`.
 - T5c (`t5c_mlkem_compress1_margin`): Exact FIPS 203 `Compress_1` decoding for `|e| <= 831` (strictly tight at `e = +832`).
 - T5d (`t5d_kn_mesh_bandwidth_and_hedge_overhead`): Complete-graph `K_N` ceiling `N_max = B/S + 1` and `< 1.75%` wire overhead (`+112 B`) for Ed25519 + CW-128 IT-MAC hedging.
+- T6a (`t6a_ising_laplacian_psd_and_cheeger_barrier`): Exact Discrete Laplacian PSD `sum w_ij (x_i - x_j)^2 >= 0`, Ising ground-state optimality `2*Delta H(sigma) >= 0`, and Cheeger expander cyber-contagion work barrier `2*cut(S) + 2*field(S) >= 2*k*(J_min*phi_0 + h_min)`.
+- T6b (`t6b_cryptosymbology_subliminal_and_threshold_closure`): Simmons zero subliminal capacity for deterministic signatures, `2^k`-message kleptographic bijection for randomized nonces, and threshold-hedged XOR dual-closure `r_eff = r_signer XOR r_auditor`.
 
 ## 2. Multi-Kernel Verification Summary
-5 distinct Lean 4.35.0 kernel implementations (6 runs: `lean v4.35.0`, `leanchecker`, `leanchecker-paranoid`, `con-leche --verified`, `con-ron --verified`, `nanoda_bin 0.4.19`) accepted both `Solution` (3,505 decls) and `PalomarSolution` (3,545 decls) with 0 errors and strict axiom allowlist `[propext, Classical.choice, Quot.sound]`.
+All 6 distinct Lean 4.35.0 kernel implementations in Ubuntu CI (`lake comparator --config palomar_comparator.json --paranoid`: `Lean paranoid`, `lean4lean`, `nanoda`, `con-leche --verified`, `con-ron --verified`, `Lean default`) and 5 distinct local Windows kernels accepted both `Solution` (3,587 decls) and `PalomarSolution` (3,630 decls) with 0 errors and all 52 audited declarations strictly inside `[propext, Classical.choice, Quot.sound]`.
 
 ## 3. Executable Verification Summary
-- Native C11 (`native/build/test_native_core`): 40/40 passed (`-std=c11 -O2 -Wall -Wextra -Werror`).
-- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 12/12 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop and live 25,003 B lattice-hedged PQSI handshake (391.0 ms).
-- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `ruff`, `mypy`, `check_citations.py --online`): 11/11 pytest passed, 0 ruff errors, 0 mypy errors, 32/32 live citations HTTP 200.
+- Native C11 (`native/build/test_native_core`): 52/52 passed (`-std=c11 -O2 -Wall -Wextra -Werror`, GCC 16.1.0) + 500/500 standalone fuzz inputs passed.
+- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 15/15 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop, live 25,007 B lattice-hedged PQSI handshake, anti-replay CW-128 Guardian v2, `T6b` XOR closure, and live forward-mode dual-number AD execution of all 4 Eshkol `.esk` modules via `node/src/eshkol-ad-runtime.mjs`.
+- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `scripts/check_readme_axioms.py`, `ruff`, `mypy`, `check_citations.py --online`): 12/12 pytest passed, 0 ruff errors, 0 mypy errors, 39/39 live citations HTTP 200.

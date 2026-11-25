@@ -64,7 +64,7 @@ def test_t1c_quarter_circle_duality_and_vn_overestimate():
         assert h_vn > h_min
     # Boundary cases: S = 2 => both 0; S = 2*sqrt(2) => both 1
     assert abs(1.0 - math.log2(1.0 + math.sqrt(2.0 - 1.0))) < 1e-15
-    assert abs(1.0 - math.log2(1.0 + math.sqrt(max(0.0, 2.0 - 2.0)))) - 1.0 < 1e-15
+    assert abs((1.0 - math.log2(1.0 + math.sqrt(max(0.0, 2.0 - 2.0)))) - 1.0) < 1e-15
 
 
 def test_t1d_denoise_majority_bias_exhaustive():
@@ -172,15 +172,16 @@ def test_differential_node_suite_and_report():
         text=True,
         check=True,
     )
-    assert "Node.js Suite Summary: 12/12 passed" in proc.stdout
+    assert "Node.js Suite Summary: 15/15 passed" in proc.stdout
     assert RESULTS_REPORT.exists()
     data = json.loads(RESULTS_REPORT.read_text(encoding="utf-8"))
     for key in [
         "T1_finite_key_forensics",
         "T2_info_theoretic_psi",
         "T3_shamir_byzantine_pir",
-        "T4_qgtl_and_bb144",
+        "T4_qgtl_chern_ghz_bb144",
         "T5_fips203_and_bandwidth",
+        "T6_ising_and_cryptosymbology",
         "empirical_preregistered_ab",
     ]:
         assert data[key]["status"] == "PASS"
@@ -215,28 +216,57 @@ def _strip_lean_comments(src: str) -> str:
 
 def test_lean_zero_forbidden_tokens_and_axioms():
     lean_dir = REPO_ROOT / "lean"
-    forbidden = re.compile(r"\b(sorry|admit|native_decide|implemented_by)\b|^\s*axiom\b|@\[extern", re.MULTILINE)
+    forbidden = re.compile(
+        r"\b(sorry|admit|native_decide|implemented_by)\b|^\s*((private|protected|noncomputable)\s+)*axiom\b|@\[extern",
+        re.MULTILINE,
+    )
     proof_files = [
         p for p in lean_dir.rglob("*.lean")
         if ".lake" not in p.parts and p.name != "PalomarChallenge.lean"
     ]
-    assert len(proof_files) >= 10
+    assert len(proof_files) >= 12
     for pf in proof_files:
         cleaned = _strip_lean_comments(pf.read_text(encoding="utf-8"))
         m = forbidden.search(cleaned)
         assert m is None, f"Forbidden token {m.group(0)!r} in {pf}"
 
+    # Strict allowlist parsing of every #print axioms entry (catches custom & Lean 4.29+ ._native. axioms!)
     axioms_txt = (REPO_ROOT / "results" / "lean_axioms.txt").read_text(encoding="utf-8")
-    assert "sorryAx" not in axioms_txt
-    assert "Lean.ofReduceBool" not in axioms_txt
-    assert "Lean.trustCompiler" not in axioms_txt
-    assert "SecMeshPQSI.Solution.prove_all_secmesh_theorems" in axioms_txt
-    assert "SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead" in axioms_txt
+    allowed = {"propext", "Classical.choice", "Quot.sound"}
+    # Collapse multi-line bracketed lists
+    normalized = re.sub(r",\s*\n\s*", ", ", axioms_txt)
+    decl_lines = [ln.strip() for ln in normalized.splitlines() if ln.strip().startswith("'SecMeshPQSI.")]
+    assert len(decl_lines) >= 52, f"Expected >= 52 audited declarations, got {len(decl_lines)}"
+    for ln in decl_lines:
+        if "does not depend on any axioms" in ln:
+            continue
+        m_ax = re.search(r"depends on axioms:\s*\[([^\]]*)\]", ln)
+        assert m_ax is not None, f"Unexpected axiom line format: {ln}"
+        used = {a.strip() for a in m_ax.group(1).split(",") if a.strip()}
+        assert used <= allowed, f"Disallowed axiom(s) {used - allowed} in {ln}"
+    assert "SecMeshPQSI.Solution.prove_all_secmesh_theorems" in normalized
+    assert "SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure" in normalized
+
+
+def test_t4de_and_t6_high_precision_invariants():
+    from fractions import Fraction
+    # Theorem T4d: Exact rational Chern-Concurrence conservation on Pythagorean triples
+    for ca, sa, r in [(3, 4, 5), (5, 12, 13), (8, 15, 17), (0, 1, 1), (1, 0, 1)]:
+        c_eff = Fraction(-(ca * ca - sa * sa), r * r)
+        conc = Fraction(2 * ca * sa, r * r)
+        assert c_eff * c_eff + conc * conc == Fraction(1, 1)
+        s_half_sq = Fraction(1, 1) + conc * conc
+        assert c_eff * c_eff + s_half_sq == Fraction(2, 1)
+    # Theorem T4e: GHZ QFI Heisenberg ceiling & Casimir
+    for nq in (1, 4, 8, 16):
+        assert 4 * nq * (nq + 2) - 4 * nq * nq == 8 * nq
+    # Theorem T6a: Cheeger expander barrier monotonicity
+    assert 2 * 10 * (1.0 * 2.0 + 0.7) > 2 * 10 * (1.0 * 0.4 + 0.7)
 
 
 def test_eshkol_modules_balanced_sexprs():
     esk_files = sorted((REPO_ROOT / "eshkol").glob("*.esk"))
-    assert len(esk_files) == 3
+    assert len(esk_files) == 4
     for ef in esk_files:
         text = ef.read_text(encoding="utf-8")
         # Strip `;` line comments and string literals before checking parenthesis balance

@@ -1,6 +1,6 @@
 # SecMesh-PQSI Documentation Index (`docs/index.md`)
 
-Welcome to the documentation hub for `secmesh-pqsi` v1.0.0.
+Welcome to the documentation hub for `secmesh-pqsi` v2.0.0.
 
 ## Start Here
 - [Repository Overview & Quickstart](../README.md)
@@ -10,7 +10,9 @@ Welcome to the documentation hub for `secmesh-pqsi` v1.0.0.
 
 ## Technical & Cryptographic Guides
 - [System Architecture (`architecture.md`)](architecture.md)
-- [Tsotchke 30-Repo Stack Map (`tsotchke-stack-map.md`)](tsotchke-stack-map.md)
+- [Tsotchke Complete 27-Repo Audit Map (`tsotchke-stack-map.md`)](tsotchke-stack-map.md)
+- [Literature & Prior-Art Search Log (`literature-search-log.md`)](literature-search-log.md)
+- [Export-Control Self-Screen (`export-control-self-screen.md`)](export-control-self-screen.md)
 - [STRIDE + Post-Quantum + PSI Threat Model (`threat-model.md`)](threat-model.md)
 - [Multi-Kernel Formal & Differential Verification (`verification.md`)](verification.md)
 - [Configuration Reference (`configuration.md`)](configuration.md)

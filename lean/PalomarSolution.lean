@@ -8,7 +8,7 @@ public import Solution
 /-!
 # Palomar Comparator Solution (`secmesh-pqsi`)
 
-Complete zero-`sorry` implementation of all 21 Palomar Registry Comparator theorems (`T1a`–`T5d`),
+Complete zero-`sorry` implementation of all 25 Palomar Registry Comparator theorems (`T1a`–`T6b`),
 discharged directly from the verified `SecMeshPQSI.*` proof library.
 The definition block matches `PalomarChallenge.lean` verbatim.
 -/
@@ -156,6 +156,18 @@ def mlkemCompress1 (y : Int) : Int :=
 def completeEdges (N : Nat) : Nat := N * (N - 1) / 2
 def meshCeiling (B S : Nat) : Nat := B / S + 1
 
+def sumInt2 (n : Nat) (f : Nat → Nat → Int) : Int :=
+  sumInt n (fun i => sumInt n (fun j => f i j))
+
+def dirichletEnergy (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int) : Int :=
+  sumInt2 n (fun i j => w i j * ((x i - x j) * (x i - x j)))
+
+def laplacianQuad (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int) : Int :=
+  sumInt2 n (fun i j => w i j * x i * (x i - x j))
+
+def isingCutEnergy (n : Nat) (J : Nat → Nat → Int) (h : Nat → Int) (sig : Nat → Int) : Int :=
+  sumInt2 n (fun i j => J i j * (1 - sig i * sig j)) + 2 * sumInt n (fun i => h i * (1 - sig i))
+
 -- ============================================================================
 -- Private Structural Bridges to SecMeshPQSI.*
 -- ============================================================================
@@ -279,8 +291,30 @@ private theorem powMod_eq (b e m : Nat) :
   | zero => rfl
   | succ k ih => simp [powMod, SecMeshPQSI.LatticeBandwidth.powMod, ih]
 
+private theorem sumInt2_eq (n : Nat) (f : Nat → Nat → Int) :
+    sumInt2 n f = SecMeshPQSI.SpinDefenseCryptosymbology.sumInt2 n f := by
+  unfold sumInt2 SecMeshPQSI.SpinDefenseCryptosymbology.sumInt2
+  rw [sumInt_eq]
+  have h : (fun i => sumInt n (fun j => f i j)) =
+      (fun i => SecMeshPQSI.InfoTheoretic.sumInt n (fun j => f i j)) := by
+    funext i; exact sumInt_eq n (fun j => f i j)
+  rw [h]
+
+private theorem dirichletEnergy_eq (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int) :
+    dirichletEnergy n w x = SecMeshPQSI.SpinDefenseCryptosymbology.dirichletEnergy n w x :=
+  sumInt2_eq n _
+
+private theorem laplacianQuad_eq (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int) :
+    laplacianQuad n w x = SecMeshPQSI.SpinDefenseCryptosymbology.laplacianQuad n w x :=
+  sumInt2_eq n _
+
+private theorem isingCutEnergy_eq (n : Nat) (J : Nat → Nat → Int) (h sig : Nat → Int) :
+    isingCutEnergy n J h sig = SecMeshPQSI.SpinDefenseCryptosymbology.isingCutEnergy n J h sig := by
+  unfold isingCutEnergy SecMeshPQSI.SpinDefenseCryptosymbology.isingCutEnergy
+  rw [sumInt2_eq, sumInt_eq]
+
 -- ============================================================================
--- 21 Zero-Sorry Theorem Proofs
+-- 25 Zero-Sorry Theorem Proofs
 -- ============================================================================
 
 theorem t1a_v1_tsirelson_violation :
@@ -484,6 +518,31 @@ theorem t4c2_bravyi_gross_bb144_certified :
     simp only [matMulT, SecMeshPQSI.QuantumGeometry.matMulT, xorN_eq]
     rfl
 
+theorem t4d_chern_concurrence_entropy_conservation (ca sa R : Int)
+    (ha : ca * ca + sa * sa = R * R) :
+    let c_eff := -(ca * ca - sa * sa)
+    let C := 2 * ca * sa
+    let R4 := R * R * R * R
+    let s_half_sq := R4 + C * C
+    c_eff * c_eff + C * C = R4 ∧
+    c_eff * c_eff + s_half_sq = 2 * R4 ∧
+    (2 * R4 - s_half_sq = c_eff * c_eff ∧ s_half_sq - R4 = C * C) ∧
+    (c_eff = 0 → C * C = R4 ∧ s_half_sq = 2 * R4) ∧
+    (C = 0 → c_eff * c_eff = R4 ∧ s_half_sq = R4) :=
+  SecMeshPQSI.QuantumGeometry.t4d_chern_concurrence_entropy_conservation ca sa R ha
+
+theorem t4e_libirrep_ghz_heisenberg_qfi_scaling (N : Nat) (hN : 1 ≤ N)
+    (ca sa R : Int) (ha : ca * ca + sa * sa = R * R) :
+    let tau_N := (2 * ca * sa) * (2 * ca * sa)
+    let R4 := R * R * R * R
+    let qfi_ghz := (N : Int) * (N : Int) * tau_N
+    let qfi_sql := (N : Int) * R4
+    (qfi_ghz > qfi_sql ↔ (N : Int) * tau_N > R4) ∧
+    (ca * ca = sa * sa → tau_N = R4 ∧ qfi_ghz = (N : Int) * qfi_sql) ∧
+    qfi_ghz ≤ (N : Int) * (N : Int) * R4 ∧
+    4 * (N * (N + 2)) - 4 * (N * N) = 8 * N :=
+  SecMeshPQSI.QuantumGeometry.t4e_libirrep_ghz_heisenberg_qfi_scaling N hN ca sa R ha
+
 theorem t5a_fips203_ntt_prime_and_root :
     IsPrime 3329 ∧ 3329 = 13 * 256 + 1 ∧ powMod 17 128 3329 = 3328 ∧ powMod 17 256 3329 = 1 := by
   have h := SecMeshPQSI.LatticeBandwidth.t5a_fips203_ntt_prime_and_root
@@ -507,6 +566,50 @@ theorem t5d_kn_mesh_bandwidth_and_hedge_overhead :
     (∀ B S : Nat, 0 < S → (meshCeiling B S - 1) * S ≤ B ∧ B < meshCeiling B S * S) ∧
     (6573 + 96 + 16 = 6685 ∧ (96 + 16) * 400 < 7 * 6573) :=
   SecMeshPQSI.LatticeBandwidth.t5d_kn_mesh_bandwidth_and_hedge_overhead
+
+theorem t6a_ising_laplacian_psd_and_cheeger_barrier :
+    (∀ (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int),
+      (∀ i j, i < n → j < n → w i j = w j i) →
+      (∀ i j, i < n → j < n → 0 ≤ w i j) →
+      dirichletEnergy n w x = 2 * laplacianQuad n w x ∧ 0 ≤ dirichletEnergy n w x) ∧
+    (∀ (n : Nat) (J : Nat → Nat → Int) (h sig : Nat → Int),
+      (∀ i j, i < n → j < n → 0 ≤ J i j) →
+      (∀ i, i < n → 0 ≤ h i) →
+      (∀ i, i < n → sig i = 1 ∨ sig i = -1) →
+      2 * sumInt2 n (fun i j => J i j * (1 - sig i * sig j)) = dirichletEnergy n J sig ∧
+      0 ≤ isingCutEnergy n J h sig) ∧
+    (∀ (k phi0 Jmin hmin cutW fieldW : Int),
+      0 ≤ k → 0 ≤ phi0 → 0 ≤ Jmin → 0 ≤ hmin →
+      Jmin * (phi0 * k) ≤ cutW → hmin * k ≤ fieldW →
+      2 * k * (Jmin * phi0 + hmin) ≤ 2 * cutW + 2 * fieldW) := by
+  have h := SecMeshPQSI.SpinDefenseCryptosymbology.t6a_ising_laplacian_psd_and_cheeger_barrier
+  refine ⟨?_, ?_, h.2.2⟩
+  · intro n w x hsym hnn
+    rw [dirichletEnergy_eq, laplacianQuad_eq]
+    exact h.1 n w x hsym hnn
+  · intro n J h_field sig hJ hh hs
+    rw [sumInt2_eq, dirichletEnergy_eq, isingCutEnergy_eq]
+    exact h.2.1 n J h_field sig hJ hh hs
+
+theorem t6b_cryptosymbology_subliminal_and_threshold_closure :
+    (∀ (SK M Sig C : Type) (Valid : SK → M → Sig → Prop) (enc : SK → M → C → Sig),
+      (∀ sk m s1 s2, Valid sk m s1 → Valid sk m s2 → s1 = s2) →
+      (∀ sk m c, Valid sk m (enc sk m c)) →
+      ∀ sk m c1 c2, enc sk m c1 = enc sk m c2) ∧
+    (∀ (k : Nat) (Sig : Type) (signWithNonce : (Fin k → Bool) → Sig) (r0 : Fin k → Bool),
+      (∀ r1 r2, signWithNonce r1 = signWithNonce r2 → r1 = r2) →
+      ∀ c1 c2 : Fin k → Bool,
+        signWithNonce (bxor r0 c1) = signWithNonce (bxor r0 c2) → c1 = c2) ∧
+    (∀ (k : Nat),
+      (∀ (r_signer target : Fin k → Bool),
+        ∃ r_auditor : Fin k → Bool,
+          bxor r_signer r_auditor = target ∧
+          ∀ r', bxor r_signer r' = target → r' = r_auditor) ∧
+      (∀ (r_auditor target : Fin k → Bool),
+        ∃ r_signer : Fin k → Bool,
+          bxor r_signer r_auditor = target ∧
+          ∀ r', bxor r' r_auditor = target → r' = r_signer)) :=
+  SecMeshPQSI.SpinDefenseCryptosymbology.t6b_cryptosymbology_subliminal_and_threshold_closure
 
 end
 end SecMeshPQSI.Palomar

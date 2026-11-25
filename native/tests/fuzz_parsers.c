@@ -54,6 +54,31 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     if (fk.chsh_s <= 2.0 && (res.admitted || res.cert_bits > 0)) {
         __builtin_trap();
     }
+
+    /* 4. Fuzz Chern-Concurrence conservation (T4d) & Ising Laplacian PSD (T6a) */
+    secmesh_chern_ghz_result_t cg;
+    double alpha = ((double)data[4] / 255.0) * 1.5707963267948966;
+    uint32_t nq = (uint32_t)(data[5] % 64u) + 1u;
+    secmesh_chern_concurrence_ghz(alpha, nq, &cg);
+    if (cg.conservation_err > 1e-11) __builtin_trap();
+
+    int64_t J4[16] = {0};
+    int64_t h4[4];
+    int8_t sig4[4];
+    for (int i = 0; i < 4; i++) {
+        h4[i] = (int64_t)(data[6 + i] & 0x0Fu);
+        sig4[i] = (data[10 + i] & 1u) ? 1 : -1;
+        for (int j = i + 1; j < 4; j++) {
+            int64_t w = (int64_t)(data[14 + i * 4 + j] & 0x0Fu);
+            J4[i * 4 + j] = w;
+            J4[j * 4 + i] = w;
+        }
+    }
+    int64_t dir = 0, lap = 0, cut = 0;
+    if (secmesh_ising_graph_energy(4, J4, h4, sig4, &dir, &lap, &cut) != 0 ||
+        dir != 2 * lap || dir < 0 || cut < 0) {
+        __builtin_trap();
+    }
     return 0;
 }
 

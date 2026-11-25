@@ -14,7 +14,7 @@ import net from 'node:net';
 import dgram from 'node:dgram';
 import http from 'node:http';
 import crypto from 'node:crypto';
-import { carterWegmanVerify } from './pqsi-handshake.mjs';
+import { verifyCwFrame } from './pqsi-handshake.mjs';
 
 export const MAX_FRAME_BYTES = 65536;
 
@@ -110,6 +110,8 @@ export function createHardenedGuardian({
     recent: [],
   };
   const rates = new Map();
+  const seenCwSeqs = new Set();
+  const activeTcpSockets = new Set();
   let liveConns = 0;
 
   const record = (vector, src, blocked, detail) => {
@@ -135,10 +137,12 @@ export function createHardenedGuardian({
   };
 
   const tcpServer = net.createServer((sock) => {
+    activeTcpSockets.add(sock);
     liveConns++;
     const src = sock.remoteAddress || 'unknown';
     let closed = false;
     const decLive = () => {
+      activeTcpSockets.delete(sock);
       if (!closed) { closed = true; liveConns = Math.max(0, liveConns - 1); }
     };
 
@@ -171,16 +175,12 @@ export function createHardenedGuardian({
         return;
       }
       if (cwControlKey) {
-        // Expect 16-byte Carter-Wegman IT-MAC prefix + payload
-        if (chunk.length < 17) {
-          record('unauth-frame', src, true, 'frame shorter than CW-128 tag');
-          sock.destroy();
-          return;
-        }
-        const tag = chunk.subarray(0, 16);
-        const payload = chunk.subarray(16);
-        if (!carterWegmanVerify(tag, cwControlKey.r, cwControlKey.b, payload)) {
-          record('cw-mac-reject', src, true, 'Carter-Wegman IT-MAC mismatch');
+        // Expect [seq_u64be (8B) || CW-128 tag (16B) || payload] with strict anti-replay
+        // and fresh per-frame one-time pad discipline (Theorem T2d; never reuse (r, b)!)
+        const padSrc = cwControlKey.padPool || cwControlKey.padSeed || cwControlKey.b;
+        const ver = verifyCwFrame(chunk, cwControlKey.r, padSrc, seenCwSeqs);
+        if (!ver.ok) {
+          record(ver.reason, src, true, `CW-128 frame rejected (${ver.reason})`);
           sock.destroy();
           return;
         }
@@ -247,9 +247,17 @@ export function createHardenedGuardian({
         statusServer.listen(statusPort, host, () => {
           const stAddr = statusServer.address();
           if (udpServer) {
-            udpServer.bind(tcpAddr.port, host, () => resolve({ tcpPort: tcpAddr.port, statusPort: stAddr.port }));
+            // Avoid ephemeral TCP<->UDP port collision deadlock when listenPort === 0
+            const targetUdpPort = listenPort === 0 ? 0 : tcpAddr.port;
+            const onUdpStartErr = (err) => reject(err);
+            udpServer.once('error', onUdpStartErr);
+            udpServer.bind(targetUdpPort, host, () => {
+              udpServer.removeListener('error', onUdpStartErr);
+              const udpAddr = udpServer.address();
+              resolve({ tcpPort: tcpAddr.port, statusPort: stAddr.port, udpPort: udpAddr.port });
+            });
           } else {
-            resolve({ tcpPort: tcpAddr.port, statusPort: stAddr.port });
+            resolve({ tcpPort: tcpAddr.port, statusPort: stAddr.port, udpPort: null });
           }
         });
       });
@@ -258,6 +266,13 @@ export function createHardenedGuardian({
     }),
     stop: () => new Promise((resolve) => {
       try { if (udpServer) udpServer.close(); } catch { /* ignore */ }
+      for (const sock of activeTcpSockets) {
+        try { sock.destroy(); } catch { /* ignore */ }
+      }
+      activeTcpSockets.clear();
+      if (typeof statusServer.closeAllConnections === 'function') {
+        statusServer.closeAllConnections();
+      }
       tcpServer.close(() => statusServer.close(() => resolve()));
     }),
   };

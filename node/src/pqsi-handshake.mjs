@@ -72,6 +72,86 @@ export function carterWegmanVerify(tagBuf, rBuf, padBBuf, msgBuf) {
   return ok;
 }
 
+/**
+ * Per-frame one-time pad derivation for Carter-Wegman IT-MAC (strictly preventing
+ * two-frame pad reuse of `(r, b)` as required by Theorem T2d).
+ * If `padSource` is an Array of pre-shared 16-byte IT pads (PSI mode), consumes pad[seq]
+ * at most once; if it is a 32-byte master key Buffer (computational Wegman-Carter mode),
+ * derives a domain-separated unique 16-byte pad per monotonic sequence number `seq`.
+ */
+export function resolveCwFramePad(padSource, seqBigInt) {
+  if (Array.isArray(padSource)) {
+    const idx = Number(seqBigInt);
+    if (!Number.isInteger(idx) || idx < 0 || idx >= padSource.length) return null;
+    const pad = padSource[idx];
+    return Buffer.isBuffer(pad) && pad.length === 16 ? pad : null;
+  }
+  const seqBuf = Buffer.alloc(8);
+  seqBuf.writeBigUInt64BE(seqBigInt, 0);
+  return crypto
+    .createHash('shake256', { outputLength: 16 })
+    .update('SecMesh-PQSI-v2|CW128-FramePad|')
+    .update(seqBuf)
+    .update(padSource)
+    .digest();
+}
+
+/**
+ * Seal a length-and-sequence-bound Carter-Wegman frame: [seq_u64be (8B) || tag (16B) || payload].
+ * Prevents both forgery (<= d / 2^128) and pad-reuse/replay attacks across frames.
+ */
+export function sealCwFrame(rBuf, padSource, seq, payloadBuf) {
+  const seqBig = BigInt(seq);
+  const seqBuf = Buffer.alloc(8);
+  seqBuf.writeBigUInt64BE(seqBig, 0);
+  const padB = resolveCwFramePad(padSource, seqBig);
+  if (!padB) throw new Error(`No fresh CW-128 one-time pad available for seq=${seqBig}`);
+  const payload = Buffer.isBuffer(payloadBuf) ? payloadBuf : Buffer.from(payloadBuf);
+  const macInput = Buffer.concat([seqBuf, payload]);
+  const tag = carterWegmanMac(rBuf, padB, macInput);
+  return Buffer.concat([seqBuf, tag, payload]);
+}
+
+/**
+ * Verify and consume a Carter-Wegman frame with strict replay & pad-reuse protection.
+ */
+export function verifyCwFrame(frameBuf, rBuf, padSource, seenSeqs) {
+  if (!Buffer.isBuffer(frameBuf) || frameBuf.length < 25) {
+    return { ok: false, reason: 'unauth-frame' };
+  }
+  const seqBuf = frameBuf.subarray(0, 8);
+  const seqBig = seqBuf.readBigUInt64BE(0);
+  if (seenSeqs && seenSeqs.has(seqBig)) {
+    return { ok: false, reason: 'cw-replay-reject', seq: seqBig };
+  }
+  const padB = resolveCwFramePad(padSource, seqBig);
+  if (!padB) {
+    return { ok: false, reason: 'cw-pad-exhausted', seq: seqBig };
+  }
+  const tag = frameBuf.subarray(8, 24);
+  const payload = frameBuf.subarray(24);
+  const macInput = Buffer.concat([seqBuf, payload]);
+  if (!carterWegmanVerify(tag, rBuf, padB, macInput)) {
+    return { ok: false, reason: 'cw-mac-reject', seq: seqBig };
+  }
+  if (seenSeqs) seenSeqs.add(seqBig);
+  return { ok: true, seq: seqBig, payload };
+}
+
+/**
+ * Theorem T6b (Cryptosymbology / Threshold-Hedged Signing Randomness):
+ * Combines signer nonce and independent auditor/QRNG nonce via exact XOR bijection
+ * so neither a kleptographic signer nor a stalled auditor can bias effective entropy.
+ */
+export function thresholdHedgedNonce(rSignerBuf, rAuditorBuf) {
+  if (!Buffer.isBuffer(rSignerBuf) || !Buffer.isBuffer(rAuditorBuf) || rSignerBuf.length !== rAuditorBuf.length) {
+    throw new Error('thresholdHedgedNonce requires equal-length Buffers');
+  }
+  const out = Buffer.alloc(rSignerBuf.length);
+  for (let i = 0; i < rSignerBuf.length; i++) out[i] = rSignerBuf[i] ^ rAuditorBuf[i];
+  return out;
+}
+
 // ============================================================================
 // 2. Universal Dual-Survivability Hybrid PQ + IT Key Combiner (Theorem T2b)
 // ============================================================================
@@ -167,9 +247,13 @@ export function runPQSIHandshake(initiatorId, responderId, { preSharedItKey = nu
   const initXPubDer = initX.publicKey.export({ type: 'spki', format: 'der' });
   const initKemPubDer = initKem.publicKey.export({ type: 'spki', format: 'der' });
 
+  const initIdBuf = Buffer.from(initiatorId.nodeId, 'utf8');
+  const initIdLen = Buffer.alloc(2);
+  initIdLen.writeUInt16BE(initIdBuf.length, 0);
   const clientHelloBody = Buffer.concat([
     Buffer.from('SecMesh-PQSI-v2|CH|', 'utf8'),
-    Buffer.from(initiatorId.nodeId, 'utf8'),
+    initIdLen,
+    initIdBuf,
     initNonce,
     initXPubDer,
     initKemPubDer,
@@ -197,9 +281,13 @@ export function runPQSIHandshake(initiatorId, responderId, { preSharedItKey = nu
   const kX25519Resp = crypto.diffieHellman({ privateKey: respX.privateKey, publicKey: initXPubObj });
   const { ciphertext: kemCt, sharedKey: kMlKemResp } = crypto.encapsulate(initKemPubObj);
 
+  const respIdBuf = Buffer.from(responderId.nodeId, 'utf8');
+  const respIdLen = Buffer.alloc(2);
+  respIdLen.writeUInt16BE(respIdBuf.length, 0);
   const serverHelloBody = Buffer.concat([
     Buffer.from('SecMesh-PQSI-v2|SH|', 'utf8'),
-    Buffer.from(responderId.nodeId, 'utf8'),
+    respIdLen,
+    respIdBuf,
     respNonce,
     respXPubDer,
     kemCt,

@@ -18,7 +18,7 @@
  *    Fixes ALL 6 analytic bugs found in BoogerCheeseOnRye/SecMesh v1:
  *      (1) Range-2 Hoeffding radius t_c = sqrt(2 * ln(8 / eps_PE) / n_c)
  *      (2) Strict Pironio DI min-entropy H_min(S_LB) vs collective H_vN(S_LB)
- *      (3) Statistical QBER upper confidence bound qber_ub via Hoeffding
+ *      (3) Statistical QBER upper confidence bound qber_ub via exact Bernoulli Chernoff-KL inversion
  *      (4) Explicit error-correction syndrome leakage f_EC * n_key * h(qber_ub)
  *      (5) Correct Renner Leftover Hash penalty 2 * log2(1 / (2 * eps_PA))
  *      (6) Disjoint union-bound epsilon budget:
@@ -76,6 +76,7 @@ static double qber_kl_upper_bound(double p_hat, uint64_t m, double eps_qber) {
 }
 
 void secmesh_finite_key_eval(const secmesh_fk_input_t *in, secmesh_fk_result_t *out) {
+    if (!out) return;
     memset(out, 0, sizeof *out);
     if (!in || in->n_key == 0 || in->eps_total <= 0.0 || in->eps_total >= 1.0) return;
 
@@ -197,8 +198,8 @@ static double complex cvec_dot(const double complex a[4], const double complex b
 
 void secmesh_qgt_entangled_manifold(double theta, double phi, double alpha,
                                     secmesh_qgt_result_t *out) {
-    memset(out, 0, sizeof *out);
     if (!out) return;
+    memset(out, 0, sizeof *out);
 
     double complex psi[4], dt[4], dp[4];
     entangled_state_and_derivs(theta, phi, alpha, psi, dt, dp);
@@ -227,6 +228,84 @@ void secmesh_qgt_entangled_manifold(double theta, double phi, double alpha,
 
 void secmesh_qgt_singlet_manifold(double theta, double phi, secmesh_qgt_result_t *out) {
     secmesh_qgt_entangled_manifold(theta, phi, 0.78539816339744830962, out); /* alpha = pi/4 */
+}
+
+void secmesh_chern_concurrence_ghz(double alpha, uint32_t n_qubits,
+                                   secmesh_chern_ghz_result_t *out) {
+    if (!out) return;
+    memset(out, 0, sizeof *out);
+    if (n_qubits < 1) n_qubits = 1;
+    double c_eff = -cos(2.0 * alpha);
+    double conc  = fabs(sin(2.0 * alpha));
+    double s_max = 2.0 * sqrt(1.0 + conc * conc);
+    double h_min_c = 1.0 - log2(1.0 + fabs(c_eff));
+    if (h_min_c < 0.0) h_min_c = 0.0;
+    if (h_min_c > 1.0) h_min_c = 1.0;
+    double h_min_s = secmesh_h_min_from_chsh(s_max);
+    double h_vn_c  = 1.0 - secmesh_bin_entropy(0.5 * (1.0 + conc));
+    double tau_n   = conc * conc;
+    double nd      = (double)n_qubits;
+
+    out->alpha            = alpha;
+    out->n_qubits         = n_qubits;
+    out->c_eff            = c_eff;
+    out->concurrence      = conc;
+    out->conservation_err = fabs(c_eff * c_eff + conc * conc - 1.0);
+    out->horodecki_s_max  = s_max;
+    out->h_min_from_chern = h_min_c;
+    out->h_min_from_chsh  = h_min_s;
+    out->h_vn_from_conc   = h_vn_c;
+    out->tau_n            = tau_n;
+    out->qfi_ghz          = nd * nd * tau_n;
+    out->qfi_sql          = nd;
+    out->casimir_4j_jp1   = (uint64_t)n_qubits * ((uint64_t)n_qubits + 2ULL);
+    out->beats_sql        = (nd * tau_n > 1.0) ? 1 : 0;
+}
+
+int secmesh_ising_graph_energy(uint32_t n, const int64_t *J_flat, const int64_t *h_vec,
+                               const int8_t *sig, int64_t *dirichlet_out,
+                               int64_t *laplacian_quad_out, int64_t *ising_cut_out) {
+    if (!J_flat || !h_vec || !sig || !dirichlet_out || !laplacian_quad_out || !ising_cut_out) {
+        return -1;
+    }
+    if (n == 0 || n > 1024) return -2;
+    for (uint32_t i = 0; i < n; i++) {
+        if (sig[i] != 1 && sig[i] != -1) return -3;
+    }
+    int64_t dir = 0, lap = 0, cut_pair = 0, field = 0;
+    for (uint32_t i = 0; i < n; i++) {
+        int64_t si = (int64_t)sig[i];
+        field += h_vec[i] * (1 - si);
+        for (uint32_t j = 0; j < n; j++) {
+            int64_t sj = (int64_t)sig[j];
+            int64_t w  = J_flat[(size_t)i * n + j];
+            int64_t d  = si - sj;
+            dir += w * d * d;
+            lap += w * si * d;
+            cut_pair += w * (1 - si * sj);
+        }
+    }
+    *dirichlet_out      = dir;
+    *laplacian_quad_out = lap;
+    *ising_cut_out      = cut_pair + 2 * field;
+    return 0;
+}
+
+void secmesh_ising_eval_expander_barrier(uint32_t n_nodes, uint32_t compromised_k,
+                                         double coupling_j, double edge_expansion_phi,
+                                         double firewall_h, secmesh_ising_barrier_t *out) {
+    if (!out) return;
+    memset(out, 0, sizeof *out);
+    if (compromised_k > n_nodes / 2u) compromised_k = n_nodes / 2u;
+    if (coupling_j < 0.0) coupling_j = 0.0;
+    if (edge_expansion_phi < 0.0) edge_expansion_phi = 0.0;
+    if (firewall_h < 0.0) firewall_h = 0.0;
+    out->n_nodes            = n_nodes;
+    out->compromised_k      = compromised_k;
+    out->coupling_j         = coupling_j;
+    out->edge_expansion_phi = edge_expansion_phi;
+    out->firewall_h         = firewall_h;
+    out->min_work_barrier   = 2.0 * (double)compromised_k * (coupling_j * edge_expansion_phi + firewall_h);
 }
 
 /* =========================================================================
@@ -262,14 +341,15 @@ static uint32_t gf2_rank_72x144(uint8_t mat[72][144]) {
 }
 
 void secmesh_bb144_verify_css(secmesh_bb144_audit_t *out) {
-    memset(out, 0, sizeof *out);
     if (!out) return;
+    memset(out, 0, sizeof *out);
 
     enum { ELL = 12, M = 6, HALF = 72, NQ = 144 };
-    static uint8_t A[HALF][HALF];
-    static uint8_t B[HALF][HALF];
-    static uint8_t HX[HALF][NQ];
-    static uint8_t HZ[HALF][NQ];
+    /* Stack-allocated (31 KiB) for full thread safety & reentrancy */
+    uint8_t A[HALF][HALF];
+    uint8_t B[HALF][HALF];
+    uint8_t HX[HALF][NQ];
+    uint8_t HZ[HALF][NQ];
     memset(A, 0, sizeof A);
     memset(B, 0, sizeof B);
     memset(HX, 0, sizeof HX);

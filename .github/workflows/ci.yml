@@ -27,6 +27,8 @@ jobs:
         run: |
           make -C native clean all test
           ./native/build/secmesh_core mlkem-kat
+          ./native/build/secmesh_core chern-law 0.39269908169872414 8
+          ./native/build/secmesh_core ising-barrier 60 10 1.0 2.0 0.7
           ./native/build/secmesh_core bb144
           ./native/build/secmesh_core entropy-status
       - name: Run AddressSanitizer + UBSan (Ubuntu)
@@ -68,21 +70,22 @@ jobs:
       - name: Build native C11 binary for cross-implementation differential tests
         shell: bash
         run: make -C native all
-      - name: Run Node.js 25 differential, interop & security tests (12/12)
+      - name: Run Node.js 25 differential, interop, anti-replay & live Eshkol AD tests (15/15)
         shell: bash
         run: |
           node node/tests/test_secmesh_v2.mjs
           node examples/quickstart_demo.mjs
           node node/src/secmesh-cli.mjs audit
-      - name: Install Python deps & run exact audit, pytest, ruff, mypy, citation check
+      - name: Install Python deps & run exact audit, pytest, ruff, mypy, axiom & citation checks
         shell: bash
         run: |
           python -m pip install --upgrade pip
           pip install numpy scipy matplotlib pytest ruff mypy jsonschema
           python python/secmesh_verify/exact_audit.py
           pytest python/tests/test_all.py -v
-          ruff check python scripts/check_citations.py || true
-          mypy python/secmesh_verify scripts/check_citations.py --ignore-missing-imports || true
+          python scripts/check_readme_axioms.py
+          ruff check python scripts/check_citations.py scripts/check_readme_axioms.py || true
+          mypy python/secmesh_verify scripts/check_citations.py scripts/check_readme_axioms.py --ignore-missing-imports || true
           python scripts/check_citations.py
 
   lean4-multi-kernel:
@@ -102,7 +105,7 @@ jobs:
           lake build
           lake env lean VerifyAxioms.lean > /tmp/ci_axioms.txt
           cat /tmp/ci_axioms.txt
-          ! grep -E "sorryAx|Lean\.ofReduceBool|Lean\.trustCompiler" /tmp/ci_axioms.txt
+          ! grep -E "sorryAx|_native|Lean\.ofReduceBool|Lean\.trustCompiler" /tmp/ci_axioms.txt
           lake env leanchecker Solution
           lake env leanchecker PalomarSolution
           lake env leanchecker-paranoid Solution

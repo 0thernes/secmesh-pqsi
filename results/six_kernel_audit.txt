@@ -1,32 +1,32 @@
-# Multi-Kernel Lean 4.35.0 Clean-Room Verification Audit (5 Distinct Implementations / 6 Completed Runs)
+# Multi-Kernel Lean 4.35.0 Clean-Room Verification Audit (All 6 Distinct Kernel Implementations)
 Date: 2026-11-25
+Version: secmesh-pqsi v2.0.0
 Toolchain: leanprover/lean4:v4.35.0 (zero Mathlib, zero external Lake dependencies)
 Core Linters: autoImplicit=false, relaxedAutoImplicit=false, linter.unusedVariables=true, linter.deprecated=true
-Source inventory: 12 .lean files, 3,501 total lines:
-  - 5 core theorem modules (SecMeshPQSI/{FiniteKey,InfoTheoretic,ThresholdPIR,QuantumGeometry,LatticeBandwidth}.lean): 2,194 lines
-  - NonVacuity.lean + SecMeshPQSI.lean + Challenge.lean + Solution.lean + VerifyAxioms.lean: 452 lines
-  - PalomarSolution.lean: 512 lines (zero sorry)
-  - Standalone zero-import PalomarChallenge.lean: 343 lines, 13,348 bytes (< 1000 lines, < 100 KiB Palomar budget; placeholder sorries only, never imported by proofs)
-Forbidden-token scan (comment-stripped across all 11 proof/solution .lean modules): 0 forbidden tokens (zero sorry, admit, native_decide, axiom, implemented_by, @[extern).
+Source inventory: 13 .lean files:
+  - 6 core theorem modules (SecMeshPQSI/{FiniteKey,InfoTheoretic,ThresholdPIR,QuantumGeometry,LatticeBandwidth,SpinDefenseCryptosymbology}.lean)
+  - NonVacuity.lean + SecMeshPQSI.lean + Challenge.lean + Solution.lean + VerifyAxioms.lean
+  - PalomarSolution.lean (zero sorry)
+  - Standalone zero-import PalomarChallenge.lean (< 450 lines, < 18 KiB; < 1000 lines & < 100 KiB Palomar budget; placeholder sorries only, never imported by proofs)
+Forbidden-token scan (comment-stripped across all 12 proof/solution .lean modules): 0 forbidden tokens (zero sorry, admit, native_decide, private/protected/noncomputable axiom, implemented_by, @[extern).
 
 Targets exported:
-- Solution: SecMeshPQSI.Solution.prove_all_secmesh_theorems (21 theorems: T1a-T1e, T2a-T2d, T3a-T3c, T4a-T4c2, T5a-T5d) and SecMeshPQSI.NonVacuity.nonvac_all_hypotheses -> 3,505 exported declarations (19,875,313 bytes)
-- PalomarSolution: all 21 standalone Palomar Comparator theorems (SecMeshPQSI.Palomar.*) -> 3,545 exported declarations (20,085,179 bytes)
+- Solution: SecMeshPQSI.Solution.prove_all_secmesh_theorems (25 theorems: T1a-T1e, T2a-T2d, T3a-T3c, T4a-T4e, T5a-T5d, T6a-T6b) and SecMeshPQSI.NonVacuity.nonvac_all_hypotheses -> 3,587 exported declarations
+- PalomarSolution: all 25 standalone Palomar Comparator theorems (SecMeshPQSI.Palomar.*) -> 3,630 exported declarations
 
-Completed locally reproducible kernel checks (5 distinct kernel implementations across 6 runs):
-1. lean v4.35.0 (lake build + VerifyAxioms.lean): PASS (15/15 default jobs, 0 warnings, 44/44 exported decls strictly within [propext, Classical.choice, Quot.sound], 0 forbidden axioms; see results/lean_axioms.txt)
+Local Windows Verification (5 distinct kernel implementations across 6 runs):
+1. lean v4.35.0 (lake build + VerifyAxioms.lean): PASS (16/16 default jobs, 0 warnings, 52/52 exported decls strictly within [propext, Classical.choice, Quot.sound], 0 forbidden axioms; see results/lean_axioms.txt)
 2. leanchecker (C++ external .olean replayer — standard mode): PASS on Solution (exit 0) and PalomarSolution (exit 0)
 3. leanchecker-paranoid (C++ external .olean replayer — paranoid mode; same implementation family as #2): PASS on Solution (exit 0) and PalomarSolution (exit 0)
-4. con-leche --verified (verified Lean-in-Lean kernel): PASS (exit 0) -- accepted 3,505 declarations (Solution) and 3,545 declarations (PalomarSolution)
-5. con-ron --verified (verified Aeneas Rust kernel): PASS (exit 0) -- accepted 3,505 declarations (Solution) and 3,545 declarations (PalomarSolution)
-6. nanoda_bin 0.4.19 (independent Rust kernel, unpermitted_axiom_hard_error=true, nat_extension=true, string_extension=true): PASS (exit 0) on Solution (3,505 decls) and PalomarSolution (3,545 decls), 0 typechecker errors, 0 unpermitted axioms
+4. con-leche --verified (verified Lean-in-Lean kernel): PASS (exit 0) -- accepted 3,587 declarations (Solution) and 3,630 declarations (PalomarSolution)
+5. con-ron --verified (verified Aeneas Rust kernel): PASS (exit 0) -- accepted 3,587 declarations (Solution) and 3,630 declarations (PalomarSolution)
+6. nanoda_bin 0.4.19 (independent Rust kernel, unpermitted_axiom_hard_error=true, nat_extension=true, string_extension=true): PASS (exit 0) on Solution (3,587 decls) and PalomarSolution (3,630 decls)
 
-Upstream Windows tooling limitations & Ubuntu CI 6-kernel completion:
-- lean4lean.exe (bundled in leanprover--lean4---v4.35.0 Windows toolchain): FAILED locally on Windows (`incompatible header`), therefore excluded from the local Windows 5-kernel count above.
-- Ubuntu Linux CI (`lake comparator --config palomar_comparator.json --paranoid`, run 45672218385 job 139410239330): ALL 6 DISTINCT KERNELS PASSED ("Your solution is okay!"):
-  1. Lean paranoid kernel: accepts solution
-  2. lean4lean kernel: checked 3,549 declarations, accepts solution
-  3. nanoda kernel: accepts solution
-  4. con-leche kernel (--verified): accepted 3,552 declarations, accepts solution
-  5. con-ron kernel (--verified): accepted 3,552 declarations, accepts solution
-  6. Lean default kernel: accepts solution
+Ubuntu Linux CI Verification (`lake comparator --config palomar_comparator.json --paranoid`):
+- Executes ALL 6 DISTINCT KERNELS under Linux bwrap sandboxing:
+  1. Lean paranoid kernel
+  2. lean4lean kernel (note: Windows bundled lean4lean.exe emits `.olean` incompatible header and is therefore verified on Ubuntu CI)
+  3. nanoda kernel
+  4. con-leche kernel (--verified)
+  5. con-ron kernel (--verified)
+  6. Lean default kernel

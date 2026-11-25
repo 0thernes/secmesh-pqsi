@@ -34,6 +34,7 @@ static void store_be64(uint8_t p[8], uint64_t v) {
 }
 
 void secmesh_gf128_mul(uint8_t out[16], const uint8_t a[16], const uint8_t b[16]) {
+    if (!out || !a || !b) return;
     /* GHASH bit convention: MSB of byte 0 is x^0, LSB of byte 15 is x^127.
      * Reduction constant R = 0xE1 << 56 (representing 1 + x + x^2 + x^7). */
     uint64_t vh = load_be64(a);
@@ -67,6 +68,7 @@ void secmesh_cw_mac_compute(uint8_t tag[16],
                             const uint8_t pad_b[16],
                             const uint8_t *msg,
                             size_t msg_len) {
+    if (!tag || !r || !pad_b || (msg_len > 0 && !msg)) return;
     uint8_t acc[16];
     uint8_t blk[16];
     memset(acc, 0, 16);
@@ -98,6 +100,7 @@ int secmesh_cw_mac_verify(const uint8_t tag[16],
                           const uint8_t pad_b[16],
                           const uint8_t *msg,
                           size_t msg_len) {
+    if (!tag || !r || !pad_b || (msg_len > 0 && !msg)) return 0;
     uint8_t expected[16];
     secmesh_cw_mac_compute(expected, r, pad_b, msg, msg_len);
     int eq = secmesh_ct_memeq(expected, tag, 16);
@@ -308,9 +311,10 @@ int secmesh_shamir_reconstruct_byzantine(const secmesh_share_t *shares,
                                          uint32_t max_byzantine,
                                          uint64_t *secret_out,
                                          uint32_t *corrupted_detected_out) {
-    if (!shares || !secret_out || threshold < 1 || threshold > 64) return -1;
-    /* Enforce Theorem T3b Singleton-Byzantine condition: n >= t + 2b */
-    if (num_shares < threshold + 2u * max_byzantine) return -2;
+    if (!shares || !secret_out || threshold < 1 || threshold > 64 ||
+        num_shares > 256 || max_byzantine > 128) return -1;
+    /* Enforce Theorem T3b Singleton-Byzantine condition (overflow-safe uint64_t): n >= t + 2b */
+    if ((uint64_t)num_shares < (uint64_t)threshold + 2ULL * (uint64_t)max_byzantine) return -2;
 
     byz_search_t st;
     memset(&st, 0, sizeof st);

@@ -19,10 +19,14 @@
     "SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity",
     "SecMeshPQSI.Palomar.t4c1_general_bb_commutation",
     "SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified",
+    "SecMeshPQSI.Palomar.t4d_chern_concurrence_entropy_conservation",
+    "SecMeshPQSI.Palomar.t4e_libirrep_ghz_heisenberg_qfi_scaling",
     "SecMeshPQSI.Palomar.t5a_fips203_ntt_prime_and_root",
     "SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact",
     "SecMeshPQSI.Palomar.t5c_mlkem_compress1_margin",
-    "SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead"
+    "SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead",
+    "SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier",
+    "SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure"
   ],
   "definition_names": [],
   "permitted_axioms": [

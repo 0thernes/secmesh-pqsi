@@ -5,7 +5,7 @@ This file is the single canonical instruction set for all coding and research ag
 
 ## 1. Repository Purpose & Integrity Rules
 
-`secmesh-pqsi` is a clean-room cryptographic refactoring of `BoogerCheeseOnRye/SecMesh@aff7dc6` rebuilt atop Tsotchke's MIT/Apache-2.0 stack (`moonlab`, `quantum_geometric_tensor`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`) into a Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) mesh defense engine, backed by **21 zero-Mathlib Lean 4.35.0 theorems** verified across **5 distinct kernel implementations** (6 runs) and **two companion AMS-LaTeX white papers**.
+`secmesh-pqsi` (`v2.0.0`) is a clean-room cryptographic refactoring of `BoogerCheeseOnRye/SecMesh@aff7dc6` rebuilt atop Tsotchke's MIT/Apache-2.0 stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`) into a Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) mesh defense engine, backed by **25 zero-Mathlib Lean 4.35.0 theorems** verified across **all 6 distinct kernel implementations** (`lake comparator --paranoid`) and **two companion AMS-LaTeX white papers**.
 
 ### Non-Negotiable Integrity Boundaries
 - **Zero fabrication / zero sycophancy:** Every reported theorem, test count, byte count, latency, and hash MUST come from an actual run of current files in this repo.
@@ -27,32 +27,33 @@ This file is the single canonical instruction set for all coding and research ag
 ## 3. Repository Layout
 
 - `native/`: C11 Moonlab cryptographic core (`third_party/moonlab/`, `include/`, `src/`, `tests/test_native_core.c`, `Makefile`).
-- `node/`: Node.js 25 / OpenSSL 3.5.5 hybrid PQ+PSI handshake, Finite-Key v2, Hardened Guardian v2, Rosette-Wire receipts, CLI, and 12-test differential suite.
-- `eshkol/`: Three Eshkol v1.3.6 automatic differentiation modules (`finite_key_ad.esk`, `qgt_geodesic.esk`, `bandwidth_opt.esk`).
-- `lean/`: Zero-Mathlib Lean 4.35.0 proofs (`SecMeshPQSI/*.lean`, `Challenge.lean`, `Solution.lean`, `PalomarChallenge.lean`, `PalomarSolution.lean`, `VerifyAxioms.lean`, `formalization.yaml`, `palomar_comparator.json`).
-- `python/`: Exact-arithmetic audit (`secmesh_verify/exact_audit.py`), vector figure generator (`make_figures.py`), and `tests/test_all.py`.
-- `paper/`: AMS-LaTeX White Paper I (`main.tex`), White Paper II (`engineering/secmesh_architecture.tex`), verified bibliography (`refs.bib`), and vector figures (`figures/*.pdf`).
+- `node/`: Node.js 25 / OpenSSL 3.5.5 hybrid PQ+PSI handshake, Finite-Key v2, anti-replay CW-128 Hardened Guardian v2, portable Eshkol AD runtime (`eshkol-ad-runtime.mjs`), Rosette-Wire receipts, CLI, and 15-test differential suite.
+- `eshkol/`: Four Eshkol v1.3.6 automatic differentiation modules (`finite_key_ad.esk`, `qgt_geodesic.esk`, `bandwidth_opt.esk`, `chern_ising_ad.esk`).
+- `lean/`: Zero-Mathlib Lean 4.35.0 proofs (13 files, 25 theorems: `SecMeshPQSI/*.lean`, `Challenge.lean`, `Solution.lean`, `PalomarChallenge.lean`, `PalomarSolution.lean`, `VerifyAxioms.lean`, `formalization.yaml`, `palomar_comparator.json`).
+- `python/`: Exact-arithmetic audit (`secmesh_verify/exact_audit.py`), vector figure generator (`make_figures.py`), and `tests/test_all.py` (12 tests).
+- `paper/`: AMS-LaTeX White Paper I (`main.tex`), White Paper II (`engineering/secmesh_architecture.tex`), verified bibliography (`refs.bib`, 39/39 HTTP 200), and 5 vector figures (`figures/*.pdf`).
 - `dist/`: Frozen release PDFs (`Donahue_2026_secmesh_pqsi_formal_foundations.pdf`, `Donahue_2026_secmesh_pqsi_architecture.pdf`) and standalone `arxiv_submission.tar.gz`.
-- `app/`: Interactive client-side SecMesh-PQSI Defense Console (`index.html`, deployed to GitHub Pages).
-- `results/`, `rosette/`: Verbatim Lean axiom log, multi-kernel audit transcript, exact Python report, and Rosette-Wire audit receipt bundle.
+- `app/`: Interactive client-side SecMesh-PQSI Defense Console (`index.html`) and Lean Proof Blueprint DAG (`blueprint.html`, deployed to GitHub Pages).
+- `results/`, `rosette/`: Verbatim Lean axiom log (52 decls), 6-kernel audit transcript, exact Python report, and Rosette-Wire audit receipt bundle.
 
 ## 4. Essential Commands
 
 ```bash
-# Native C11 core (40/40 tests, -Wall -Wextra -Werror)
+# Native C11 core (52/52 tests, -Wall -Wextra -Werror)
 make -C native test
 
-# Node.js 25 differential, interop & security suite (12/12 tests)
+# Node.js 25 differential, interop, anti-replay & live Eshkol AD suite (15/15 tests)
 node node/tests/test_secmesh_v2.mjs
 
-# Zero-Mathlib Lean 4.35.0 full build & strict axiom allowlist audit
+# Zero-Mathlib Lean 4.35.0 full build, strict axiom allowlist & README drift check
 cd lean && lake build && lake env lean VerifyAxioms.lean
+cd .. && python scripts/check_readme_axioms.py
 
 # Python exact-arithmetic suite, pytest, ruff, mypy & citation audit
 python python/secmesh_verify/exact_audit.py
 pytest python/tests/test_all.py -v
-ruff check python scripts/check_citations.py
-mypy python/secmesh_verify scripts/check_citations.py --ignore-missing-imports
+ruff check python scripts/check_citations.py scripts/check_readme_axioms.py
+mypy python/secmesh_verify scripts/check_citations.py scripts/check_readme_axioms.py --ignore-missing-imports
 python scripts/check_citations.py
 
 # Compile both white papers (Tectonic 0.17+)
