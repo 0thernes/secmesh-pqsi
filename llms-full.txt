@@ -2,9 +2,9 @@
 
 Author: Alexander S. Donahue (Independent Researcher, Spokane, WA, USA; ORCID 0009-0006-8168-9648; 0_0@0thernes.art)
 License: Apache-2.0 (code), MIT (vendored native/third_party/moonlab), CC-BY-4.0 (manuscripts & docs)
-Version: 2.0.0 (2026-11-25)
+Version: 2.1.0 (2026-11-25)
 
-## 1. Summary of 25 Machine-Checked Lean 4.35.0 Theorems
+## 1. Summary of 27 Machine-Checked Lean 4.35.0 Theorems
 - T1a (`t1a_v1_tsirelson_violation`, 0 axioms): Legacy SecMesh v1 `CELL_P=[0.146,0.854]` gives expected `S = 354/125 = 2.832 > 2*sqrt(2)` (`354^2 - 8*125^2 = 316`).
 - T1b (`t1b_hoeffding_range2_factor4`): Range-2 `±1` Hoeffding requires 4x sample factor vs range-1; v1 inflates per-cell failure at `eps=1e-6` from `2.5e-7` to `0.0285744 > 1/50`.
 - T1c (`t1c_di_quarter_circle_duality`): Exact quarter-circle duality `u^2 + v^2 = 1` separating Acin-Pironio collective von Neumann `H_vN^DI(S)` from Pironio strict min-entropy `H_min^DI(S)` (`H_min(2.5) < H_vN(2.5)`; numerical max gap `+0.235703` bits/round at `S = 2.699192`).
@@ -30,11 +30,13 @@ Version: 2.0.0 (2026-11-25)
 - T5d (`t5d_kn_mesh_bandwidth_and_hedge_overhead`): Complete-graph `K_N` ceiling `N_max = B/S + 1` and `< 1.75%` wire overhead (`+112 B`) for Ed25519 + CW-128 IT-MAC hedging.
 - T6a (`t6a_ising_laplacian_psd_and_cheeger_barrier`): Exact Discrete Laplacian PSD `sum w_ij (x_i - x_j)^2 >= 0`, Ising ground-state optimality `2*Delta H(sigma) >= 0`, and Cheeger expander cyber-contagion work barrier `2*cut(S) + 2*field(S) >= 2*k*(J_min*phi_0 + h_min)`.
 - T6b (`t6b_cryptosymbology_subliminal_and_threshold_closure`): Simmons zero subliminal capacity for deterministic signatures, `2^k`-message kleptographic bijection for randomized nonces, and threshold-hedged XOR dual-closure `r_eff = r_signer XOR r_auditor`.
+- T7a (`t7a_toner_chsh_monogamy_and_eve_isolation`): First-principles Toner quantum CHSH monogamy `S_AB^2 + S_AE^2 <= 8` trapping any unbounded quantum eavesdropper below `2` whenever `S_AB > 2`, plus CKW tripartite Berry-monopole isolation (`c_AE = tau = r_A = 0` at singlet saturation).
+- T7b (`t7b_hiding_binding_conservation_nogo`): Exact Hiding-Binding Conservation Law `TV(P0,P1) + Overlap(P0,P1) = 1` proving unconditional bit-commitment impossibility and hybrid PQ+PSI architectural necessity.
 
 ## 2. Multi-Kernel Verification Summary
-All 6 distinct Lean 4.35.0 kernel implementations in Ubuntu CI (`lake comparator --config palomar_comparator.json --paranoid`: `Lean paranoid`, `lean4lean`, `nanoda`, `con-leche --verified`, `con-ron --verified`, `Lean default`) and 5 distinct local Windows kernels accepted both `Solution` (3,587 decls) and `PalomarSolution` (3,630 decls) with 0 errors and all 52 audited declarations strictly inside `[propext, Classical.choice, Quot.sound]`.
+All 6 distinct Lean 4.35.0 kernel implementations in Ubuntu CI (`lake comparator --config palomar_comparator.json --paranoid`: `Lean paranoid`, `lean4lean`, `nanoda`, `con-leche --verified`, `con-ron --verified`, `Lean default`) and 5 distinct local Windows kernels accepted both `Solution` (3,638 decls) and `PalomarSolution` (3,701 decls) with 0 errors and all 56 audited declarations strictly inside `[propext, Classical.choice, Quot.sound]`.
 
 ## 3. Executable Verification Summary
-- Native C11 (`native/build/test_native_core`): 52/52 passed (`-std=c11 -O2 -Wall -Wextra -Werror`, GCC 16.1.0) + 500/500 standalone fuzz inputs passed.
-- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 15/15 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop, live 25,007 B lattice-hedged PQSI handshake, anti-replay CW-128 Guardian v2, `T6b` XOR closure, and live forward-mode dual-number AD execution of all 4 Eshkol `.esk` modules via `node/src/eshkol-ad-runtime.mjs`.
-- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `scripts/check_readme_axioms.py`, `ruff`, `mypy`, `check_citations.py --online`): 12/12 pytest passed, 0 ruff errors, 0 mypy errors, 39/39 live citations HTTP 200.
+- Native C11 (`native/build/test_native_core`): 52/52 passed (`-std=c11 -D_DEFAULT_SOURCE -O2 -Wall -Wextra -Werror`, GCC 16.1.0) + 500/500 standalone fuzz inputs passed.
+- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 15/15 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop, live 25,007 B lattice-hedged PQSI handshake, anti-replay CW-128 & collision-free UDP Guardian v2, `T6b` XOR closure, and live forward-mode dual-number AD execution of all 4 Eshkol `.esk` modules via `node/src/eshkol-ad-runtime.mjs`.
+- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `scripts/check_readme_axioms.py`, `ruff`, `mypy`, `check_citations.py --online`): 12/12 pytest passed, 0 ruff errors, 0 mypy errors, 42/42 live citations HTTP 200.

@@ -164,16 +164,26 @@
         <text x="792" y="312" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">T6a Ising Barrier</text>
         <text x="792" y="328" text-anchor="middle" fill="#8ea0ba" font-size="10">Laplacian &amp; Cheeger</text>
       </a>
-      <!-- Non-Vacuity -->
+      <!-- Non-Vacuity + T7 -->
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/NonVacuity.lean">
         <rect x="20" y="362" width="135" height="46" rx="8" fill="#1e1635" stroke="#a78bfa" stroke-width="2"/>
         <text x="87" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">NonVacuity</text>
         <text x="87" y="398" text-anchor="middle" fill="#c4b5fd" font-size="10">SimpleField Fin 5</text>
       </a>
+      <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean">
+        <rect x="255" y="362" width="210" height="46" rx="8" fill="#0f2922" stroke="#34d399" stroke-width="2"/>
+        <text x="360" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">T7a Toner / CKW Monogamy</text>
+        <text x="360" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">S_AB² + S_AE² ≤ 8 (Eve Trapped)</text>
+      </a>
+      <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean">
+        <rect x="490" y="362" width="210" height="46" rx="8" fill="#0f2922" stroke="#34d399" stroke-width="2"/>
+        <text x="595" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">T7b Commitment No-Go</text>
+        <text x="595" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">TV(P₀,P₁) + Overlap = 1</text>
+      </a>
       <!-- Master Conjunction -->
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/Solution.lean">
         <rect x="950" y="175" width="150" height="86" rx="10" fill="#0b2e26" stroke="#34d399" stroke-width="2.5"/>
-        <text x="1025" y="205" text-anchor="middle" fill="#34d399" font-size="12.5" font-weight="700">All 25 Theorems</text>
+        <text x="1025" y="205" text-anchor="middle" fill="#34d399" font-size="12.5" font-weight="700">All 27 Theorems</text>
         <text x="1025" y="224" text-anchor="middle" fill="#e6edf7" font-size="10.5">Palomar Comparator</text>
         <text x="1025" y="242" text-anchor="middle" fill="#8ea0ba" font-size="10">6 / 6 Kernels PASS</text>
       </a>
@@ -181,7 +191,7 @@
   </section>
 
   <section class="card">
-    <h2>Complete 25-Theorem Inventory &amp; Axiom Footprints</h2>
+    <h2>Complete 27-Theorem Inventory &amp; Axiom Footprints</h2>
     <table>
       <thead>
         <tr><th>ID</th><th>Lean Declaration</th><th>Module</th><th>Axioms</th><th>Mathematical Statement</th></tr>
@@ -219,6 +229,8 @@ const DATA = [
   ['T5d', 't5d_kn_mesh_bandwidth_and_hedge_overhead', 'LatticeBandwidth.lean', 'PCQ', 'Complete-graph K_N ceiling optimality & +112 B (<1.75%) IT-hedge overhead.'],
   ['T6a', 't6a_ising_laplacian_psd_and_cheeger_barrier', 'SpinDefenseCryptosymbology.lean', 'PCQ', 'Discrete Laplacian PSD, Ising cut bijection & Cheeger contagion barrier.'],
   ['T6b', 't6b_cryptosymbology_subliminal_and_threshold_closure', 'SpinDefenseCryptosymbology.lean', 'PQ', 'Deterministic 0-capacity, 2^k kleptography & threshold-hedged XOR closure.'],
+  ['T7a', 't7a_toner_chsh_monogamy_and_eve_isolation', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Toner quantum CHSH monogamy S_AB²+S_AE² ≤ 8 & CKW Berry-monopole Eve isolation.'],
+  ['T7b', 't7b_hiding_binding_conservation_nogo', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Exact TV(P₀,P₁)+Overlap=1 proving unconditional commitment impossibility & hybrid necessity.'],
 ];
 document.getElementById('rows').innerHTML = DATA.map(([id, decl, mod, ax, desc]) => `
   <tr>

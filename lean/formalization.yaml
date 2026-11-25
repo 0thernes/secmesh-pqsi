@@ -166,6 +166,16 @@ status:
       sorry_count: 0
       axioms: ["propext", "Quot.sound"]
       comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
 
 automation:
   methods:
@@ -178,7 +188,7 @@ automation:
       notes: >-
         Assisted with formal Lean 4.35 proof engineering, C11/Node/Python/Eshkol
         implementation, differential testing, and manuscript drafting under human
-        supervision. All 25 theorems are verified independently by all 6 distinct Lean 4.35
+        supervision. All 27 theorems are verified independently by all 6 distinct Lean 4.35
         proof kernels (results/six_kernel_audit.txt).
 
 fidelity:

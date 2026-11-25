@@ -7,7 +7,7 @@ module
 
 Self-contained zero-import Lean 4.35.0 statement contract for Palomar Registry
 (`lake comparator --config palomar_comparator.json --paranoid`).
-All 25 theorems (`T1a`–`T6b`) are proved with ZERO `sorry`, ZERO `native_decide`,
+All 27 theorems (`T1a`–`T7b`) are proved with ZERO `sorry`, ZERO `native_decide`,
 and ZERO custom axioms in `PalomarSolution.lean` and `SecMeshPQSI.*`.
 -/
 
@@ -185,6 +185,13 @@ def laplacianQuad (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int) : Int :=
 
 def isingCutEnergy (n : Nat) (J : Nat → Nat → Int) (h : Nat → Int) (sig : Nat → Int) : Int :=
   sumInt2 n (fun i j => J i j * (1 - sig i * sig j)) + 2 * sumInt n (fun i => h i * (1 - sig i))
+
+def sumNat : Nat → (Nat → Nat) → Nat
+  | 0, _ => 0
+  | n + 1, f => sumNat n f + f n
+
+def absDiffNat (a b : Nat) : Nat :=
+  if a ≤ b then b - a else a - b
 
 -- ============================================================================
 -- 25 Compared Theorem Statements (T1a – T6b)
@@ -415,6 +422,37 @@ theorem t6b_cryptosymbology_subliminal_and_threshold_closure :
         ∃ r_signer : Fin k → Bool,
           bxor r_signer r_auditor = target ∧
           ∀ r', bxor r' r_auditor = target → r' = r_signer)) := by
+  sorry
+
+theorem t7a_toner_chsh_monogamy_and_eve_isolation :
+    (∀ (c s x1 x2 y1 y2 R : Int),
+      c * c + s * s = R * R →
+      x1 * x1 + y1 * y1 ≤ R * R →
+      x2 * x2 + y2 * y2 ≤ R * R →
+      let sAB := 2 * (c * x1 + s * x2)
+      let sAE := 2 * (c * y2 + s * y1)
+      let R4 := R * R * R * R
+      sAB * sAB + sAE * sAE ≤ 8 * R4 ∧
+      (4 * R4 < sAB * sAB → sAE * sAE < 4 * R4) ∧
+      (sAB * sAB = 8 * R4 → sAE = 0)) ∧
+    (∀ (cAB cAE tau rA R : Int),
+      0 ≤ tau →
+      cAB * cAB + cAE * cAE + tau + rA * rA = R * R →
+      cAE * cAE + tau + rA * rA = R * R - cAB * cAB ∧
+      cAE * cAE ≤ R * R - cAB * cAB ∧
+      (cAB * cAB = R * R → cAE = 0 ∧ tau = 0 ∧ rA = 0)) := by
+  sorry
+
+theorem t7b_hiding_binding_conservation_nogo :
+    ∀ (T D : Nat) (P0 P1 : Nat → Nat),
+      sumNat T P0 = D →
+      sumNat T P1 = D →
+      let tv2 := sumNat T (fun t => absDiffNat (P0 t) (P1 t))
+      let ov := sumNat T (fun t => min (P0 t) (P1 t))
+      tv2 + 2 * ov = 2 * D ∧
+      (0 < D → ¬ ((∀ t, t < T → P0 t = P1 t) ∧ (∀ t, t < T → P0 t = 0 ∨ P1 t = 0))) ∧
+      (∀ eps : Nat, tv2 ≤ 2 * eps → D - eps ≤ ov) ∧
+      ¬ (tv2 < D ∧ 2 * ov < D) := by
   sorry
 
 end

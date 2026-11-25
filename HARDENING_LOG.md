@@ -1,7 +1,7 @@
-# Six-Cycle Deep-Dive Hardening Log (`HARDENING_LOG.md`)
+# Seven-Cycle Deep-Dive Hardening Log (`HARDENING_LOG.md`)
 
-**Repository:** `secmesh-pqsi v2.0.0`
-**Methodology:** Six complete exhaustive hardening cycles (Cycles 1–3 for `v1.0.0`/`v1.0.1`; Cycles 4–6 for `v2.0.0`) across every directory, file, line, theorem, kernel, test harness, vector figure, LaTeX manuscript, Playbook v1.3 item, and Build Standard v1.2.0 item, classifying every finding strictly into one of the **10 finding classes** (`bug`, `error`, `issue`, `problem`, `concern`, `dilemma`, `conflict`, `gap`, `hole`, `blindspot`).
+**Repository:** `secmesh-pqsi v2.1.0`
+**Methodology:** Seven complete exhaustive hardening cycles (Cycles 1–3 for `v1.0.0`/`v1.0.1`; Cycles 4–6 for `v2.0.0`; Cycle 7 for `v2.1.0`) across every directory, file, line, theorem, kernel, test harness, vector figure, rendered PDF page, live GitHub metadata field, Playbook v1.3 item, and Build Standard v1.2.0 item, classifying every finding strictly into one of the **10 finding classes** (`bug`, `error`, `issue`, `problem`, `concern`, `dilemma`, `conflict`, `gap`, `hole`, `blindspot`).
 
 ---
 
@@ -11,8 +11,8 @@
 | --- | --- | --- | --- |
 | U01 | `bug` | `node-tests/entangle-qkd.mjs` | `CELL_P = [0.146, 0.854]` yields expected $S = 354/125 = 2.832 > 2\sqrt{2}$, violating Tsirelson's bound (`+316`). **Fixed** with exact $\sin^2(\pi/8)$ probabilities; proved in Lean `T1a`. |
 | U02 | `bug` | `entangle-qkd.mjs:151`, `finite-key-e91.tex:526` | Range-1 Hoeffding formula applied to $\pm 1$ range-2 variables ($4\times$ exponent error; true per-cell tail `0.02857 > 1/50` vs. claimed `2.5e-7`). **Fixed** with $t_c = \sqrt{2\ln(8/\varepsilon_{\mathrm{PE}})/n_c}$; proved in Lean `T1b`. |
-| U03 | `error` | `entangle-qkd.mjs` (`minEntropyFromChsh`) | Computes Acín–Pironio collective $\HvN(S)$ instead of Pironio strict $\Hmin(S)$, overestimating by up to `+0.235703` bits/round at $S \approx 2.6992$. **Fixed** with exact Pironio $\Hmin(S)$; quarter-circle duality proved in Lean `T1c`. |
-| U04 | `bug` | `entangle-qkd.mjs` | Point $\widehat{\QBER}$ and $h(\QBER)$ without upper confidence bound or syndrome inefficiency. **Fixed** with exact Bernoulli Chernoff–KL inversion $\QBER_{\mathrm{UB}}$ and $f_{\mathrm{EC}} = 1.16$. |
+| U03 | `error` | `entangle-qkd.mjs` (`minEntropyFromChsh`) | Computes Acín–Pironio collective $H_{\mathrm{vN}}^{\mathrm{DI}}(S)$ instead of Pironio strict $H_{\min}^{\mathrm{DI}}(S)$, overestimating by up to `+0.235703` bits/round at $S \approx 2.6992$. **Fixed** with exact Pironio $H_{\min}^{\mathrm{DI}}(S)$; quarter-circle duality proved in Lean `T1c`. |
+| U04 | `bug` | `entangle-qkd.mjs` | Point $\widehat{\mathrm{QBER}}$ and $h(\mathrm{QBER})$ without upper confidence bound or syndrome inefficiency. **Fixed** with exact Bernoulli Chernoff–KL inversion $\mathrm{QBER}_{\mathrm{UB}}$ and $f_{\mathrm{EC}} = 1.16$. |
 | U05 | `bug` | `entangle-qkd.mjs` (`deNoise`) | 8-bit majority vote (`ones >= 5`) biases uniform bytes to `93/256` ones and fails single flips on `70/256` weight-4 blocks. **Removed**; proved in Lean `T1d`. |
 | U06 | `hole` | `entangle-qkd.mjs:280` (`runLink`) | Transmitted cleartext `bitA`/`bitB` sifted key rounds over raw TCP JSON. **Eliminated**; zero secret bits ever leave key isolation. |
 | U07 | `bug` | `entangle-qkd.mjs` | Double-spent $\varepsilon_s$, omitted $\varepsilon_Q$ & $\varepsilon_{\mathrm{cor}}$, dropped factor of 2 in Renner LHL, used SHA-256 instead of 2-universal hashing. **Fixed** with 5-lane composable budget + Toeplitz extraction (`T1e`, `T2c1`, `T2c2`). |
@@ -106,3 +106,15 @@
 
 - **Zero-overfull AMS-LaTeX white papers:** Both White Paper I (`paper/main.tex`, 25 theorems, 5 vector figures, verbatim Mega Atlas Table 2) and White Paper II (`paper/engineering/secmesh_architecture.tex`, 27-repo audit, v2.0.0 controls) compiled with **0 overfull hboxes**, **0 undefined refs/citations**, and **39/39 live HTTP-200 bibliography citations**.
 - **Full verification battery:** `52/52` C11 tests (`-Wall -Wextra -Werror`, GCC 16.1.0), `500/500` fuzz inputs, `15/15` Node 25 tests (bit-exact ML-KEM-768 interop + CW-128 anti-replay + collision-free UDP guardian + 4 live Eshkol AD modules), `12/12` pytest, `0` ruff errors, `0` mypy issues, `scripts/check_readme_axioms.py` PASS (`52` decls, `13` verbatim README lines), `lake build` + 5 local Lean kernels (`3,587` / `3,630` decls) + Ubuntu CI 6-kernel `lake comparator --paranoid`, and Build Standard v1.2.0 `scripts/Audit-Repo.ps1` **100.0% PASS**.
+
+---
+
+## Hardening Cycle 7 (`v2.1.0`) — Full 24-Page Visual PDF Audit, Statistics-God-Emperor CI Rigor, GitHub MathJax/Metadata Sweep & Theorem Family `T7`
+
+| ID | Class | Location | Finding & Verified Resolution |
+| --- | --- | --- | --- |
+| H7.01 | `bug` | `README.md:60,63`, `CLAIMS.md:14,19`, `DEVIATIONS.md:7`, `HARDENING_LOG.md:14,15`, `docs/reviews/01-10-pass-review.md:10` | Custom LaTeX macros `\HvN`, `\Hmin`, `\QBER` are undefined in GitHub MathJax and rendered as red error text on the live repo page! **Replaced** everywhere with standard MathJax `H_{\mathrm{vN}}^{\mathrm{DI}}`, `H_{\min}^{\mathrm{DI}}`, `\mathrm{QBER}`. |
+| H7.02 | `concern` | `paper/engineering/secmesh_architecture.tex` Table 4, `python/secmesh_verify/exact_audit.py` | Parametric Student-$t$ 95% CI `[59.898, 60.035]` on bounded discrete `Admitted Intrusions` ($\in [0, 60]$) overshot the 60-node domain ceiling! **Upgraded** `exact_audit.py` and WP2 Table 4 with deterministic 10,000-resample nonparametric percentile bootstrap 95% CI `[59.900, 60.000]`, exact rank-biserial $r_{\mathrm{rb}} = 1.000$, and explicit discrete boundary footnote. |
+| H7.03 | `issue` | `paper/main.tex` (Page 1, Sec. 4, Tables 2–3), `paper/engineering/secmesh_architecture.tex` (Title, Page 6 stub) | Full 24-page `pypdfium2` PNG visual audit caught WP1 Page 1 blank-page abstract overflow, Table 2 `Verbatim Open Prob-lem` hyphenation, Table 3 header wrap, WP2 title orphan word, and WP2 3-reference stub Page 6. **Fixed all five** and visually re-verified every updated page (**0 overfull hboxes** on both papers; WP2 now 5 crisp pages). |
+| H7.04 | `error` | Live GitHub repo About description, `docs/media/social-preview.svg`, `.cursor/rules/build-standard.mdc`, `CONTRIBUTING.md`, `docs/adr/0002`, `repo.yaml` | Secondary files and live GitHub repo metadata still displayed `21 theorems`, `40/40 C11`, `12/12 Node`, `5 kernels`, `25,003 B`. **Synced 100%** across all files and live `gh repo edit`. |
+| H7.05 | `gap` | `lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean`, `exact_audit.py`, `paper/main.tex` Sec. 8, `app/blueprint.html`, `paper/refs.bib` | Added Theorem Family **`T7`** (`T7a` Toner quantum CHSH monogamy $S_{AB}^2 + S_{AE}^2 \le 8$ + CKW Berry-monopole Eve isolation, zero `Classical.choice`; `T7b` exact Hiding–Binding Conservation Law $\mathrm{TV}(P_0, P_1) + \mathrm{Overlap}(P_0, P_1) = 1$ proving unconditional commitment no-go & hybrid PQ+PSI architectural necessity), bringing the formalization to **27 zero-Mathlib Lean 4.35 theorems (`56` audited declarations, `14` `.lean` files)** across all 6 independent kernels + **42/42 live HTTP-200 citations**. |

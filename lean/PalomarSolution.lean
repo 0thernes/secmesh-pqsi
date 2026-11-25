@@ -8,7 +8,7 @@ public import Solution
 /-!
 # Palomar Comparator Solution (`secmesh-pqsi`)
 
-Complete zero-`sorry` implementation of all 25 Palomar Registry Comparator theorems (`T1a`–`T6b`),
+Complete zero-`sorry` implementation of all 27 Palomar Registry Comparator theorems (`T1a`–`T7b`),
 discharged directly from the verified `SecMeshPQSI.*` proof library.
 The definition block matches `PalomarChallenge.lean` verbatim.
 -/
@@ -167,6 +167,13 @@ def laplacianQuad (n : Nat) (w : Nat → Nat → Int) (x : Nat → Int) : Int :=
 
 def isingCutEnergy (n : Nat) (J : Nat → Nat → Int) (h : Nat → Int) (sig : Nat → Int) : Int :=
   sumInt2 n (fun i j => J i j * (1 - sig i * sig j)) + 2 * sumInt n (fun i => h i * (1 - sig i))
+
+def sumNat : Nat → (Nat → Nat) → Nat
+  | 0, _ => 0
+  | n + 1, f => sumNat n f + f n
+
+def absDiffNat (a b : Nat) : Nat :=
+  if a ≤ b then b - a else a - b
 
 -- ============================================================================
 -- Private Structural Bridges to SecMeshPQSI.*
@@ -610,6 +617,51 @@ theorem t6b_cryptosymbology_subliminal_and_threshold_closure :
           bxor r_signer r_auditor = target ∧
           ∀ r', bxor r' r_auditor = target → r' = r_signer)) :=
   SecMeshPQSI.SpinDefenseCryptosymbology.t6b_cryptosymbology_subliminal_and_threshold_closure
+
+private theorem sumNat_eq (n : Nat) (f : Nat → Nat) :
+    sumNat n f = SecMeshPQSI.MonogamyCommitmentNoGo.sumNat n f := by
+  induction n with
+  | zero => rfl
+  | succ k ih => simp [sumNat, SecMeshPQSI.MonogamyCommitmentNoGo.sumNat, ih]
+
+private theorem absDiffNat_eq (a b : Nat) :
+    absDiffNat a b = SecMeshPQSI.MonogamyCommitmentNoGo.absDiffNat a b := rfl
+
+theorem t7a_toner_chsh_monogamy_and_eve_isolation :
+    (∀ (c s x1 x2 y1 y2 R : Int),
+      c * c + s * s = R * R →
+      x1 * x1 + y1 * y1 ≤ R * R →
+      x2 * x2 + y2 * y2 ≤ R * R →
+      let sAB := 2 * (c * x1 + s * x2)
+      let sAE := 2 * (c * y2 + s * y1)
+      let R4 := R * R * R * R
+      sAB * sAB + sAE * sAE ≤ 8 * R4 ∧
+      (4 * R4 < sAB * sAB → sAE * sAE < 4 * R4) ∧
+      (sAB * sAB = 8 * R4 → sAE = 0)) ∧
+    (∀ (cAB cAE tau rA R : Int),
+      0 ≤ tau →
+      cAB * cAB + cAE * cAE + tau + rA * rA = R * R →
+      cAE * cAE + tau + rA * rA = R * R - cAB * cAB ∧
+      cAE * cAE ≤ R * R - cAB * cAB ∧
+      (cAB * cAB = R * R → cAE = 0 ∧ tau = 0 ∧ rA = 0)) :=
+  SecMeshPQSI.MonogamyCommitmentNoGo.t7a_toner_chsh_monogamy_and_eve_isolation
+
+theorem t7b_hiding_binding_conservation_nogo :
+    ∀ (T D : Nat) (P0 P1 : Nat → Nat),
+      sumNat T P0 = D →
+      sumNat T P1 = D →
+      let tv2 := sumNat T (fun t => absDiffNat (P0 t) (P1 t))
+      let ov := sumNat T (fun t => min (P0 t) (P1 t))
+      tv2 + 2 * ov = 2 * D ∧
+      (0 < D → ¬ ((∀ t, t < T → P0 t = P1 t) ∧ (∀ t, t < T → P0 t = 0 ∨ P1 t = 0))) ∧
+      (∀ eps : Nat, tv2 ≤ 2 * eps → D - eps ≤ ov) ∧
+      ¬ (tv2 < D ∧ 2 * ov < D) := by
+  intro T D P0 P1 h0 h1
+  rw [sumNat_eq] at h0 h1
+  have h := SecMeshPQSI.MonogamyCommitmentNoGo.t7b_hiding_binding_conservation_nogo T D P0 P1 h0 h1
+  dsimp only at h ⊢
+  rw [sumNat_eq, sumNat_eq]
+  simpa [absDiffNat_eq] using h
 
 end
 end SecMeshPQSI.Palomar

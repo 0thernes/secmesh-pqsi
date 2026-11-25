@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 [project]
 name = "secmesh-pqsi-verify"
-version = "2.0.0"
+version = "2.1.0"
 description = "Independent exact-arithmetic verification, differential tests, and figure generators for SecMesh-PQSI"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }

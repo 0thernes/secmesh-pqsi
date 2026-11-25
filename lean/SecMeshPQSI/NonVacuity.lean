@@ -75,10 +75,15 @@ theorem nonvac_all_hypotheses :
      (0 ≤ (3 : Int) ∧ 0 ≤ (2 : Int) ∧ (1 : Int) * (2 * 3) ≤ 8 ∧ (2 : Int) * 3 ≤ 6)) ∧
     -- T6b: Concrete deterministic unique signature verifier & injective nonce map on Fin 4
     ((∀ (_sk _m : Unit) (s1 s2 : Bool), (s1 = true) → (s2 = true) → s1 = s2) ∧
-     (∀ (r1 r2 : Fin 4 → Bool), r1 = r2 → r1 = r2)) := by
+     (∀ (r1 r2 : Fin 4 → Bool), r1 = r2 → r1 = r2)) ∧
+    -- T7a: Concrete Toner monogamy & CKW witness (c=3, s=4, R=5; singlet cAB=5, cAE=tau=rA=0)
+    ((3 * 3 + 4 * 4 = 5 * 5 ∧ 3 * 3 + 4 * 4 ≤ 5 * 5 ∧ 5 * 5 + 0 * 0 + 0 + 0 * 0 = 5 * 5) ∧
+    -- T7b: Concrete 2-transcript uniform commitment witness (P0 = P1 = [1, 1], D = 2 > 0)
+     (1 + 1 = 2 ∧ 0 < 2)) := by
   refine ⟨by simp [PairwiseNeq], ⟨1, by decide, by decide⟩, by decide, by decide, by decide,
     ⟨fun i j _ _ => by by_cases h : i = j <;> simp [h, eq_comm], by decide⟩,
-    ⟨fun _ _ s1 s2 h1 h2 => by rw [h1, h2], fun _ _ h => h⟩⟩
+    ⟨fun _ _ s1 s2 h1 h2 => by rw [h1, h2], fun _ _ h => h⟩,
+    ⟨by decide, by decide⟩⟩
 
 end
 end SecMeshPQSI.NonVacuity

@@ -6,7 +6,7 @@ public import Challenge
 public import SecMeshPQSI
 
 /-!
-# Verified Solutions to All 25 Formalized Theorems (`T1`–`T6`)
+# Verified Solutions to All 27 Formalized Theorems (`T1`–`T7`)
 
 Zero-Mathlib Lean 4.35.0 proofs depending strictly on a subset of
 `[propext, Classical.choice, Quot.sound]`, zero `sorry`, zero `native_decide`, zero custom axioms.
@@ -21,6 +21,7 @@ open SecMeshPQSI.ThresholdPIR
 open SecMeshPQSI.QuantumGeometry
 open SecMeshPQSI.LatticeBandwidth
 open SecMeshPQSI.SpinDefenseCryptosymbology
+open SecMeshPQSI.MonogamyCommitmentNoGo
 
 public theorem t1a_v1_tsirelson_violation : T1a_V1TsirelsonViolation :=
   FiniteKey.t1a_v1_tsirelson_violation
@@ -97,6 +98,12 @@ public theorem t6a_ising_laplacian_psd_and_cheeger_barrier : T6a_IsingLaplacianP
 public theorem t6b_cryptosymbology_subliminal_and_threshold_closure : T6b_CryptosymbologySubliminalAndThresholdClosure :=
   SpinDefenseCryptosymbology.t6b_cryptosymbology_subliminal_and_threshold_closure
 
+public theorem t7a_toner_chsh_monogamy_and_eve_isolation : T7a_TonerCHSHMonogamyAndEveIsolation :=
+  MonogamyCommitmentNoGo.t7a_toner_chsh_monogamy_and_eve_isolation
+
+public theorem t7b_hiding_binding_conservation_nogo : T7b_HidingBindingConservationNoGo :=
+  MonogamyCommitmentNoGo.t7b_hiding_binding_conservation_nogo
+
 public theorem prove_all_secmesh_theorems : AllSecMeshTheorems :=
   ⟨t1a_v1_tsirelson_violation,
    t1b_hoeffding_range2_factor4,
@@ -122,6 +129,8 @@ public theorem prove_all_secmesh_theorems : AllSecMeshTheorems :=
    t5c_mlkem_compress1_margin,
    t5d_kn_mesh_bandwidth_and_hedge_overhead,
    t6a_ising_laplacian_psd_and_cheeger_barrier,
-   t6b_cryptosymbology_subliminal_and_threshold_closure⟩
+   t6b_cryptosymbology_subliminal_and_threshold_closure,
+   t7a_toner_chsh_monogamy_and_eve_isolation,
+   t7b_hiding_binding_conservation_nogo⟩
 
 end SecMeshPQSI.Solution

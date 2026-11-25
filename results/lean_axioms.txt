@@ -31,6 +31,8 @@
  Classical.choice,
  Quot.sound]
 'SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Solution.t7a_toner_chsh_monogamy_and_eve_isolation' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Solution.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.prove_all_secmesh_theorems' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.NonVacuity.nonvac_all_hypotheses' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation' does not depend on any axioms
@@ -64,3 +66,5 @@
  Classical.choice,
  Quot.sound]
 'SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Classical.choice, Quot.sound]

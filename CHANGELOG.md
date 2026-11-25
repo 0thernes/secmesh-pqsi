@@ -2,6 +2,20 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] — 2026-11-25
+
+### Added
+- **Theorem Family `T7` (`lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean`, 14th Lean module → 27 total zero-Mathlib Lean 4.35.0 theorems, 56 audited declarations across all 6 kernels):**
+  - **`T7a` (`t7a_toner_chsh_monogamy_and_eve_isolation`, zero `Classical.choice`):** First-principles algebraic proof of Toner's quantum CHSH monogamy theorem ($S_{AB}^2 + S_{AE}^2 \le 8$) from anticommuting Jordan-block observables, together with CKW tripartite Berry-monopole conservation ($\mathcal{C}_{AB}^2 + \mathcal{C}_{AE}^2 + \tau_{ABE} + r_A^2 = 1$), trapping any computationally unbounded quantum eavesdropper strictly below $2$ whenever $S_{AB} > 2$ and forcing $S_{AE} = \mathcal{C}_{AE} = \tau_{ABE} = r_A = 0$ at Tsirelson saturation.
+  - **`T7b` (`t7b_hiding_binding_conservation_nogo`):** Exact finite-support Hiding–Binding Conservation Law ($\mathrm{TV}(P_0, P_1) + \mathrm{Overlap}(P_0, P_1) = 1$), proving unconditional impossibility of simultaneous statistical hiding & binding for bit commitments and establishing the mathematical necessity of SecMesh-PQSI's hybrid PQ+PSI architecture.
+- **Exact Python Verification & Citations:** Added `verify_t7()` (`3,211`-point Toner grid + `81,796`-pair exhaustive distribution conservation check), deterministic `10,000`-resample nonparametric percentile bootstrap 95% CIs & rank-biserial $r_{\mathrm{rb}}=1.000$ in `exact_audit.py`, and 3 verified DOIs (`toner2009`, `ckw2000`, `mayers1997` → **42/42 live HTTP-200 citations**).
+
+### Fixed (Cycle 7 Visual PDF, Statistical, GitHub MathJax & Metadata Hardening)
+- **GitHub Markdown Broken LaTeX Macros (`bug`):** Replaced undefined custom macros `\HvN`, `\Hmin`, `\QBER` with standard MathJax (`H_{\mathrm{vN}}^{\mathrm{DI}}`, `H_{\min}^{\mathrm{DI}}`, `\mathrm{QBER}`) across `README.md`, `CLAIMS.md`, `DEVIATIONS.md`, `HARDENING_LOG.md`, and `docs/reviews/01-10-pass-review.md`.
+- **Bounded-Domain Statistical CI Precision (`concern`):** Replaced symmetric $t$-CI `[59.898, 60.035]` (which overshot the 60-node domain ceiling) in White Paper II Table 4 with exact nonparametric percentile bootstrap 95% CI `[59.900, 60.000]` + rank-biserial $r_{\mathrm{rb}} = 1.000$ and explicit discrete boundary footnote.
+- **Full 24-Page Visual PDF Typesetting Audit (`issue`):** Fixed WP1 Page 1 blank-page abstract overflow so Title + Author + full Abstract + Section 1 sit cleanly on Page 1; fixed Table 2/3 headers & Section 4 title wrap; tightened WP2 into a balanced 5-page paper with 0 overfull hboxes.
+- **Live GitHub Metadata, Social Preview & Secondary Docs (`error`):** Synced GitHub repository About description, `docs/media/social-preview.svg`, `.cursor/rules/build-standard.mdc`, `CONTRIBUTING.md`, `docs/adr/0002`, `app/blueprint.html`, and `repo.yaml` to `v2.1.0` (`27 theorems`, `6/6 kernels`, `52/52` C11, `15/15` Node, `12/12` pytest, `42/42` live citations).
+
 ## [2.0.0] — 2026-11-25
 
 ### Added

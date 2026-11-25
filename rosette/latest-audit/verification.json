@@ -2,7 +2,7 @@
   "schema": "rosette-wire/verification/v1",
   "compositionId": "secmesh-pqsi-full-audit-v2",
   "compositionSha256": "06aeabb0266d713537c09da78980c46afbf9c21003ac7c37f7bef39693983560",
-  "receiptSha256": "894bb601f06a91e77eb0b5ad09083b905ab0e184e3b7234d9018284f7ed71f88",
+  "receiptSha256": "880efedb3282ed8e1fada21d6171b7ad7f7f5830fc0e1db55281fa6b51c63b59",
   "verdict": "VERIFIED",
   "checks": [
     {

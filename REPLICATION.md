@@ -8,7 +8,7 @@ Every theorem, differential test, benchmark number, Rosette-Wire receipt, vector
 | --- | --- | --- |
 | GCC / Clang (C11) | GCC 16.1.0 (WinLibs UCRT) / GCC 14 (Ubuntu) | Native Moonlab C11 core, 52-test suite & 500-input fuzz harness |
 | Node.js (OpenSSL 3.5+) | Node.js v25.8.2 (OpenSSL 3.5.5) | Hybrid PQ+PSI transport, CLI, live Eshkol AD runtime, 15-test suite |
-| Lean 4 + Lake + external kernels | `leanprover/lean4:v4.35.0` | Zero-Mathlib 25-theorem formalization & 6-kernel replay |
+| Lean 4 + Lake + external kernels | `leanprover/lean4:v4.35.0` | Zero-Mathlib 27-theorem formalization & 6-kernel replay |
 | Python + `uv` | Python 3.12.10 | Exact-arithmetic oracles, pytest, README axiom guard, figures, citation audit |
 | Tectonic (XeTeX) | Tectonic 0.17.0 | Compiling both AMS-LaTeX white papers |
 
@@ -51,7 +51,7 @@ con-ron --verified /tmp/Solution.export
 # On Linux with bwrap (all 6 distinct kernels):
 lake comparator --config palomar_comparator.json --paranoid
 ```
-Expected: `0` warnings, `0` proof `sorry`s, `52/52` exported declarations strictly within `[propext, Classical.choice, Quot.sound]`, `3,587` decls (`Solution`) and `3,630` decls (`PalomarSolution`) accepted by all 6 distinct kernel implementations in CI (5 distinct locally on Windows).
+Expected: `0` warnings, `0` proof `sorry`s, `56/56` exported declarations strictly within `[propext, Classical.choice, Quot.sound]`, `3,638` decls (`Solution`) and `3,701` decls (`PalomarSolution`) accepted by all 6 distinct kernel implementations in CI (5 distinct locally on Windows).
 
 ### 4. Python Exact-Arithmetic Audit, Pytest, Linters & Figures
 ```bash
@@ -65,7 +65,7 @@ uv pip install --python .venv/bin/python -r requirements.lock.txt
 .venv/bin/mypy python/secmesh_verify scripts/check_citations.py scripts/check_readme_axioms.py --ignore-missing-imports
 .venv/bin/python scripts/check_citations.py --online
 ```
-Expected: `12 passed`, `README axioms & allowlist check: PASS`, `All checks passed!`, `Success: no issues found`, `39/39` citations HTTP 200, and exact report SHA-256 matching `results/exact_verification_report.json`.
+Expected: `12 passed`, `README axiom check PASS`, `All checks passed!`, `Success: no issues found`, `42/42` citations HTTP 200, and exact report SHA-256 matching `results/exact_verification_report.json`.
 
 ### 5. Compile Both White Papers & Verify `MANIFEST.sha256`
 ```bash
@@ -78,5 +78,5 @@ sha256sum -c MANIFEST.sha256
 
 | Date | Environment | Scope Verified | Result |
 | --- | --- | --- | --- |
-| 2026-11-25 | Windows 11 (GCC 16.1.0, Node 25.8.2 / OpenSSL 3.5.5, Lean 4.35.0, Python 3.12.10, Tectonic 0.17.0) + Ubuntu Linux CI | `v2.0.0` clean-room self-replication: C11 (52/52 + 500 fuzz), Node (15/15 + 4 live Eshkol AD modules), Lean 6-kernel CI / 5-kernel Windows replay (25 theorems, 52 decls, 3,587/3,630 decls), Python exact + pytest (12/12), README axiom guard, live citations (39/39), WP1 + WP2 + 5 figures + arXiv tarball | PASS (independent external second-person replication open) |
+| 2026-11-25 | Windows 11 (GCC 16.1.0, Node 25.8.2 / OpenSSL 3.5.5, Lean 4.35.0, Python 3.12.10, Tectonic 0.17.0) + Ubuntu Linux CI | `v2.1.0` clean-room self-replication: C11 (52/52 + 500 fuzz), Node (15/15 + 4 live Eshkol AD modules), Lean 6-kernel CI / 5-kernel Windows replay (27 theorems, 56 decls, 3,638/3,701 decls), Python exact + pytest (12/12), README axiom guard, live citations (42/42), WP1 + WP2 + 5 figures + arXiv tarball | PASS (independent external second-person replication open) |
 

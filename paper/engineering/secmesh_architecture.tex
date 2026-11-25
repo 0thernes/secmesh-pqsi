@@ -2,7 +2,7 @@
 % Copyright (c) 2026 Alexander S. Donahue
 \documentclass[11pt,reqno]{amsart}
 
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.86in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{booktabs,array,tabularx,ragged2e}
 \usepackage{graphicx}
@@ -20,8 +20,9 @@
 \newcommand{\code}[1]{\texttt{\small #1}}
 
 \title[SecMesh-PQSI: Cryptographic Systems Architecture and Threat Model]{%
-  SecMesh-PQSI: Cryptographic Systems Architecture, Tsotchke Stack Integration,\\
-  Threat Model, and Pre-Registered Empirical Defense Evaluation}
+  SecMesh-PQSI: Cryptographic Systems Architecture,\\
+  Tsotchke Stack Integration, Threat Model,\\
+  and Pre-Registered Empirical Defense Evaluation}
 
 \author{Alexander S. Donahue}
 \address{Independent Researcher, Spokane, WA, USA}
@@ -34,7 +35,7 @@
 \begin{document}
 
 \begin{abstract}
-This companion engineering white paper specifies the systems architecture, cryptographic wire protocol, multi-language implementation, threat model, and empirical simulation benchmark of \textsc{SecMesh-PQSI}~v2.0.0, complementing the Lean-verified mathematical foundations in White Paper~I.
+This companion engineering white paper specifies the systems architecture, cryptographic wire protocol, multi-language implementation, threat model, and empirical simulation benchmark of \textsc{SecMesh-PQSI}~v2.1.0, complementing the Lean-verified mathematical foundations in White Paper~I.
 Starting from a forensic security audit of legacy \code{BoogerCheeseOnRye/SecMesh@aff7dc6}, we replace all ten defective mathematical and network mechanisms with a layered \emph{Post-Quantum + Post-Super-Intelligence (PQ+PSI)} defense engine uniting a vendored MIT C11 \code{moonlab} cryptographic core (FIPS~202 SHA3/SHAKE, FIPS~197 AES-256, FIPS~203 ML-KEM-512/768/1024, SP~800-90B health tests, Toeplitz extraction, constant-time $\F_{2^{128}}$ Carter--Wegman IT-MAC, Mersenne $\F_{2^{61}-1}$ Byzantine Shamir sharing, QGTL entanglement/Chern--GHZ geometry, Ising expander contagion barriers, and Bravyi $[[144,12,12]]$ qLDPC verification), a Node.js~25 / OpenSSL~3.5.5 hybrid transport layer (X25519 + ML-KEM-768 + Ed25519 + ML-DSA-65 + SLH-DSA-128s + sequence-bound anti-replay CW-128 + OTP + threshold-hedged signing randomness), four live-executed Eshkol~v1.3.6 forward-mode dual-number automatic differentiation modules, and Rosette-Wire SHA-256 Merkle verifiable audit receipts.
 
 We establish bit-exact cross-implementation FIPS~203 ML-KEM-768 interoperability between Tsotchke's C11 \code{moonlab} core and Node.js~25 OpenSSL~3.5.5 ($52/52$ C11 unit tests, $500/500$ fuzz inputs under ASan/UBSan, $15/15$ Node.js integration tests, $12/12$ Python pytest differential checks), measure a complete live lattice-hedged PQSI handshake ($25{,}007\text{ B}$ round-trip with canonical length-prefixed peer IDs), and report a pre-registered $30$-seed paired evaluation of the hardened mesh guardian health-field simulator (seeds \code{20260001}--\code{20260030}; exact permutation Holm--Bonferroni $p_{\mathrm{Holm}} = 3.73 \times 10^{-9}$ for both intrusion suppression and peak stress reduction).
@@ -59,7 +60,7 @@ Legacy \textsc{SecMesh}~v1 (\code{BoogerCheeseOnRye/SecMesh@aff7dc6})~\cite{secm
   \item \textbf{Layer 1 — Native C11 Moonlab Cryptographic Core (\code{native/}):} Vendors $18$ MIT-licensed C11 source files from \code{tsotchke/moonlab@cd3b234}~\cite{tsotchke_moonlab} compiled with \code{-std=c11 -D\_DEFAULT\_SOURCE -O2 -Wall -Wextra -Werror} ($0$ warnings, ASan/UBSan clean). Provides FIPS~202 SHA3/SHAKE, FIPS~197 AES-256, FIPS~203 ML-KEM-512/768/1024 with Fujisaki--Okamoto implicit rejection, NIST SP~800-90B health tests~\cite{nist_sp800_90b} (fail-closed on stuck-at faults), chunked OS CSPRNG seeding, constant-time $\F_{2^{128}}$ Carter--Wegman IT-MAC, XOR dual-survivability combiner, overflow-guarded Byzantine Shamir $(t,n)$ over Mersenne $\F_{2^{61}-1}$, QGTL/Chern--GHZ geometry, Ising expander contagion barriers, and thread-safe stack-allocated Bravyi $[[144,12,12]]$ BB qLDPC verification.
   \item \textbf{Layer 2 — Hardened Node.js~25 Hybrid Transport \& Guardian (\code{node/}):} Pairs Node~25 / OpenSSL~3.5.5 native \code{x25519}, \code{ml-kem-768}, \code{ed25519}, \code{ml-dsa-65}, and \code{slh-dsa-sha2-128s}~\cite{nist_fips203,nist_fips204,nist_fips205} with C11 Moonlab differential verification, canonical length-prefixed handshake framing, sequence-bound anti-replay Carter--Wegman $\F_{2^{128}}$ framing (per-frame fresh one-time pad discipline preventing two-frame key recovery, strict $64\text{ KiB}$ cap, loopback CORS, zero raw key material in \code{/status}, zero UDP echo), threshold-hedged signing randomness (\textbf{T6b}), and deterministic health-field defense telemetry.
   \item \textbf{Layer 3 — Executable Eshkol~v1.3.6 AD \& Rosette-Wire Receipts (\code{eshkol/}, \code{rosette/}):} Encodes four Eshkol~v1.3.6 S-expression AD modules (\code{finite\_key\_ad}, \code{qgt\_geodesic}, \code{bandwidth\_opt}, \code{chern\_ising\_ad})~\cite{tsotchke_eshkol} executed live by our portable forward-mode dual-number AD runtime (\code{eshkol-ad-runtime.mjs}) to $<10^{-12}$ analytical agreement, alongside canonical SHA-256 Rosette-Wire receipt bundles~\cite{tsotchke_rosette}.
-  \item \textbf{Layer 4 — Six-Kernel Formal Proof \& Exact Audit Oracles (\code{lean/}, \code{python/}):} $25$ zero-Mathlib Lean~4.35.0 proofs verified across all six distinct kernels via \code{lake comparator --paranoid}, plus $60$-digit Python exact-arithmetic differential oracles and automated README axiom drift checks.
+  \item \textbf{Layer 4 — Six-Kernel Formal Proof \& Exact Audit Oracles (\code{lean/}, \code{python/}):} $27$ zero-Mathlib Lean~4.35.0 proofs (\textbf{T1a}--\textbf{T7b}) verified across all six distinct kernels via \code{lake comparator --paranoid}, plus $60$-digit Python exact-arithmetic differential oracles and automated README axiom drift checks.
 \end{itemize}
 
 \section{Tsotchke Stack Integration Taxonomy}
@@ -103,7 +104,7 @@ Remaining $17$ repos ($1$ optional connector, $16$ excluded) & Various & Audited
 where $K_{\mathrm{IT}}$ is drawn from a certified QRNG or pre-shared one-time pad (when operating in PSI mode; defaulting transparently to computational PQ-only mode when no physical/pre-shared pad is configured, without false PSI claims).
 
 \subsection*{Cross-Implementation Bit-Exact FIPS~203 Interoperability}
-To eliminate single-implementation compiler or coding bugs, our test harness (\code{node/tests/test\_secmesh\_v2.mjs}) executes live bidirectional FIPS~203 ML-KEM-768 encapsulation and decapsulation between two completely independent implementations:
+To eliminate single-vendor coding or compiler bugs, our test harness (\code{test\_secmesh\_v2.mjs}) runs live bidirectional FIPS~203 ML-KEM-768 encapsulation and decapsulation between two independent implementations:
 \begin{enumerate}[leftmargin=1.8em]
   \item Node.js~25 / OpenSSL~3.5.5 generates an ML-KEM-768 keypair $(\mathrm{ek}, \mathrm{dk})$ and exports raw $1{,}184$-byte $\mathrm{ek}$ (DER header stripped) plus a $32$-byte random seed $m$ to Tsotchke's C11 \code{secmesh\_core} binary.
   \item C11 \code{moonlab\_mlkem768\_encaps} validates $\mathrm{ek}$ (rejecting any coefficient $\ge 3329$), computes $(c, K_{\mathrm{C11}})$, and returns $(c, K_{\mathrm{C11}})$.
@@ -159,7 +160,7 @@ Super-Intelligence & Lattice-only assumptions & Dual-survivability XOR combiner 
 \section{Pre-Registered \texorpdfstring{$30$}{30}-Seed Empirical Mesh Defense Evaluation}
 \label{sec:empirical}
 
-To evaluate the hardened self-stabilizing health-field controller (\code{HealthFieldEngine} in \code{mesh-guardian-v2.mjs} and mirrored independently in \code{exact\_audit.py}) without p-hacking or cherry-picking, we pre-registered $30$ consecutive deterministic seeds (\code{20260001} through \code{20260030}) comparing paired trajectories on a $60$-node mesh over $400$ ticks under identical synthetic intrusion injections ($\mathrm{threat}=0.35$, periodic $+40$-attacker surges every $100$ ticks):
+To evaluate our hardened \code{HealthFieldEngine} controller (implemented in \code{mesh-guardian-v2.mjs} and mirrored independently in \code{exact\_audit.py}) without p-hacking or cherry-picking, we pre-registered $30$ consecutive deterministic seeds (\code{20260001}--\code{20260030}) comparing paired trajectories on a $60$-node mesh over $400$ ticks under identical synthetic intrusion injections ($\mathrm{threat}=0.35$, periodic $+40$-attacker surges every $100$ ticks):
 \begin{itemize}[leftmargin=1.6em]
   \item \textbf{Control (Unprotected baseline):} \code{defenders = 0}, firewall factor $\mathrm{fw} = 0.0$ (no active interception or healing, passive stress decay only).
   \item \textbf{Treatment (SecMesh-PQSI~v2 policy):} \code{defenders = 6}, $\mathrm{fw} = 0.7$ (authenticated admission gating, active defender interception $p_{\mathrm{kill}} = 0.35\,\mathrm{fw}$, and continuous self-stabilizing healing $p_{\mathrm{heal}} = 0.05\,\mathrm{fw}$ whenever $\mathrm{health}_i < 1.0$).
@@ -168,21 +169,21 @@ To evaluate the hardened self-stabilizing health-field controller (\code{HealthF
 
 \begin{table}[t]
 \centering
-\caption{Pre-registered $30$-seed paired evaluation (seeds \code{20260001}--\code{20260030}, exact two-sided paired sign-flip permutation test with Holm--Bonferroni family-wise correction across $m=2$ primary endpoints).}
+\caption{Pre-registered $30$-seed paired evaluation (seeds \code{20260001}--\code{20260030}; exact two-sided paired sign-flip test with Holm--Bonferroni correction across $m=2$ endpoints; $10{,}000$-resample nonparametric percentile bootstrap $95\%$ CIs respecting bounded domain $[0,60]$).}
 \label{tab:empirical}
 \footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l r r r r r@{}}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}l r r r r r r@{}}
 \toprule
-\textbf{Endpoint} & \textbf{Control} & \textbf{Treatment} & \textbf{Mean Reduction (95\% CI)} & \textbf{Cohen's $d_z$} & \textbf{$p_{\mathrm{Holm}}$} \\
+\textbf{Endpoint} & \textbf{Control} & \textbf{Treat.} & \textbf{Mean Reduction (Boot.\ 95\% CI)} & \textbf{$r_{\mathrm{rb}}$} & \textbf{Cohen's $d_z$} & \textbf{$p_{\mathrm{Holm}}$} \\
 \midrule
-Admitted Intrusions & $60.000$ & $0.033$ & $59.967\; [59.898, 60.035]$ & $328.45$ & $3.73 \times 10^{-9}$ \\
-Peak Mesh Stress & $1.0425$ & $0.4431$ & $0.5994\; [0.5782, 0.6207]$ & $10.53$ & $3.73 \times 10^{-9}$ \\
+Admitted Intrusions & $60.000$ & $0.033$ & $59.967\; [59.900, 60.000]$ & $1.000$ & $328.45^{\dagger}$ & $3.73 \times 10^{-9}$ \\
+Peak Mesh Stress & $1.0425$ & $0.4431$ & $0.5994\; [0.5794, 0.6198]$ & $1.000$ & $10.53$ & $3.73 \times 10^{-9}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-All $30$ seeds favor the treatment arm strictly ($30/30$ wins on both endpoints, exact permutation $p = 2 / 2^{30} = 1.863 \times 10^{-9}$, Holm--Bonferroni adjusted $p_{\mathrm{Holm}} = 3.725 \times 10^{-9}$).
+All $30$ seeds favor the treatment arm strictly ($30/30$ wins, rank-biserial $r_{\mathrm{rb}}=1.000$, exact permutation $p = 2 / 2^{30} = 1.863 \times 10^{-9}$, Holm--Bonferroni $p_{\mathrm{Holm}} = 3.725 \times 10^{-9}$). $^{\dagger}$On bounded discrete intrusion counts ($\in [0,60]$), $29/30$ seeds achieve exact $60/60$ suppression and $1/30$ achieves $59/60$ ($\mathrm{SD}=0.183$), explaining the extreme $d_z = 328.45$ and motivating our nonparametric bootstrap CI $[59.900, 60.000]$ rather than a symmetric $t$-interval whose upper bound ($60.035$) would exceed the $60$-node domain ceiling.
 
 \section{Verification Matrix, Hardening Summary, and Disclosures}
 \label{sec:verify}
@@ -190,14 +191,14 @@ All $30$ seeds favor the treatment arm strictly ($30/30$ wins on both endpoints,
 Every subsystem is backed by executable tests and reproducible audit bundles:
 \begin{itemize}[leftmargin=1.6em]
   \item \textbf{Native C11 (\code{native/build/test\_native\_core}):} $52/52$ passed (FIPS~202/197/203 KATs, FO tamper reject, SP~800-90B RCT stuck-at reject, Toeplitz linearity, CW-128 MAC tamper, Shamir Byzantine $b=2$ recovery + overflow refusal, finite-key v2 Eve rejection, QGTL surplus, Chern--Concurrence--GHZ law, Ising Laplacian PSD \& Cheeger barrier, Bravyi BB144 CSS \& $k=12$, $K_N$ ceilings, NULL guards) + $500/500$ ASan/UBSan fuzz inputs.
-  \item \textbf{Node.js~25 (\code{node/tests/test\_secmesh\_v2.mjs}):} $15/15$ passed (including live C11 $\leftrightarrow$ OpenSSL~3.5.5 ML-KEM-768 interop, length-prefixed lattice-hedged PQSI handshake, Guardian~v2 CW-128 anti-replay enforcement, \textbf{T6b} threshold-hedged signing nonce dual-closure, live Eshkol AD execution across all $4$ \code{.esk} modules, and Rosette-Wire receipt verification).
-  \item \textbf{Python Exact Suite (\code{pytest python/tests/test\_all.py}):} $12/12$ passed ($0$ \code{ruff} warnings, $0$ \code{mypy} errors, $39/39$ live HTTP~200 citations, automated README axiom drift check), alongside \code{exact\_audit.py} ($60$-digit QGT residual $3.3\times 10^{-60}$, Chern residual $10^{-59}$, exhaustive \code{Compress\_1} tight at $+832$).
-  \item \textbf{Lean~4.35.0 Six-Kernel Audit:} $25/25$ theorems + non-vacuity verified across all $6$ distinct kernel implementations via \code{lake comparator --paranoid} ($0$ warnings, $0$ proof \code{sorry}s, $52/52$ exported axioms strictly in \code{[propext, Classical.choice, Quot.sound]}).
+  \item \textbf{Node.js~25 (\code{node/tests/test\_secmesh\_v2.mjs}):} $15/15$ passed (including live C11 $\leftrightarrow$ OpenSSL~3.5.5 ML-KEM-768 interop, length-prefixed lattice-hedged PQSI handshake, Guardian~v2 CW-128 anti-replay \& collision-free UDP bind, \textbf{T6b} threshold-hedged signing nonce dual-closure, live Eshkol AD execution across all $4$ \code{.esk} modules, and Rosette-Wire receipt verification).
+  \item \textbf{Python Exact Suite (\code{pytest python/tests/test\_all.py}):} $12/12$ passed ($0$ \code{ruff} warnings, $0$ \code{mypy} errors, $42/42$ live HTTP~200 citations, automated README axiom drift check), alongside \code{exact\_audit.py} ($60$-digit QGT residual $3.3\times 10^{-60}$, Chern residual $10^{-59}$, $3{,}211$-point Toner monogamy \& $81{,}796$-pair commitment conservation audit, exhaustive \code{Compress\_1} tight at $+832$).
+  \item \textbf{Lean~4.35.0 Six-Kernel Audit:} $27/27$ theorems (\textbf{T1a}--\textbf{T7b}) + non-vacuity verified across all $6$ distinct kernel implementations via \code{lake comparator --paranoid} ($0$ warnings, $0$ proof \code{sorry}s, $56/56$ exported axioms strictly in \code{[propext, Classical.choice, Quot.sound]}).
 \end{itemize}
-Six deep-dive hardening cycles across every file, line, figure, and checklist item are recorded verbatim in \code{HARDENING\_LOG.md}.
+Seven deep-dive hardening cycles across every file, line, figure, PDF page, and checklist item are recorded verbatim in \code{HARDENING\_LOG.md}.
 
 \subsection*{Operational Boundaries and Disclosures}
-\textsc{SecMesh-PQSI}~v2.0.0 is a research-grade reference cryptographic engine and verification suite, not a FIPS~140-3 validated hardware security module. Production deployment requires independent third-party cryptographic code audit, hardware constant-time side-channel profiling, and physical entropy provisioning whenever PSI confidentiality is relied upon.
+\textsc{SecMesh-PQSI}~v2.1.0 is a research-grade reference cryptographic engine and verification suite, not a FIPS~140-3 validated hardware security module. Production deployment requires independent third-party cryptographic code audit, hardware constant-time side-channel profiling, and physical entropy provisioning whenever PSI confidentiality is relied upon.
 Author: Alexander S. Donahue (Independent Researcher, Spokane, WA, USA; ORCID \code{0009-0006-8168-9648}); AI assistance (Gemini / Antigravity) was used under human direction for implementation, proof engineering, and typesetting, with no AI authorship claimed and zero conflicts of interest.
 
 \bibliographystyle{plain}

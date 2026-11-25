@@ -38,7 +38,7 @@ fuzz:
     clang -std=c11 -O1 -g -fsanitize=fuzzer,address,undefined -Inative/include -Inative/third_party/moonlab native/third_party/moonlab/crypto/sha3/sha3.c native/third_party/moonlab/crypto/aes/aes.c native/third_party/moonlab/crypto/drbg/ctr_drbg.c native/third_party/moonlab/crypto/mlkem/mlkem.c native/third_party/moonlab/crypto/mlkem/poly.c native/third_party/moonlab/applications/health_tests.c native/third_party/moonlab/applications/qrng_di.c native/src/secmesh_entropy.c native/src/secmesh_it_crypto.c native/src/secmesh_quantum_geo.c native/tests/fuzz_parsers.c -o /tmp/secmesh_fuzzer -lm
     /tmp/secmesh_fuzzer -max_total_time=30
 
-rollback tag="v2.0.0":
+rollback tag="v2.1.0":
     git checkout {{tag}} -- app/ dist/
 
 all: native node lean python

@@ -1,26 +1,26 @@
 # Multi-Kernel Lean 4.35.0 Clean-Room Verification Audit (All 6 Distinct Kernel Implementations)
 Date: 2026-11-25
-Version: secmesh-pqsi v2.0.0
+Version: secmesh-pqsi v2.1.0
 Toolchain: leanprover/lean4:v4.35.0 (zero Mathlib, zero external Lake dependencies)
 Core Linters: autoImplicit=false, relaxedAutoImplicit=false, linter.unusedVariables=true, linter.deprecated=true
-Source inventory: 13 .lean files:
-  - 6 core theorem modules (SecMeshPQSI/{FiniteKey,InfoTheoretic,ThresholdPIR,QuantumGeometry,LatticeBandwidth,SpinDefenseCryptosymbology}.lean)
+Source inventory: 14 .lean files:
+  - 7 core theorem modules (SecMeshPQSI/{FiniteKey,InfoTheoretic,ThresholdPIR,QuantumGeometry,LatticeBandwidth,SpinDefenseCryptosymbology,MonogamyCommitmentNoGo}.lean)
   - NonVacuity.lean + SecMeshPQSI.lean + Challenge.lean + Solution.lean + VerifyAxioms.lean
   - PalomarSolution.lean (zero sorry)
-  - Standalone zero-import PalomarChallenge.lean (< 450 lines, < 18 KiB; < 1000 lines & < 100 KiB Palomar budget; placeholder sorries only, never imported by proofs)
-Forbidden-token scan (comment-stripped across all 12 proof/solution .lean modules): 0 forbidden tokens (zero sorry, admit, native_decide, private/protected/noncomputable axiom, implemented_by, @[extern).
+  - Standalone zero-import PalomarChallenge.lean (< 460 lines, < 19 KiB; < 1000 lines & < 100 KiB Palomar budget; placeholder sorries only, never imported by proofs)
+Forbidden-token scan (comment-stripped across all 13 proof/solution .lean modules): 0 forbidden tokens (zero sorry, admit, native_decide, private/protected/noncomputable axiom, implemented_by, @[extern).
 
 Targets exported:
-- Solution: SecMeshPQSI.Solution.prove_all_secmesh_theorems (25 theorems: T1a-T1e, T2a-T2d, T3a-T3c, T4a-T4e, T5a-T5d, T6a-T6b) and SecMeshPQSI.NonVacuity.nonvac_all_hypotheses -> 3,587 exported declarations
-- PalomarSolution: all 25 standalone Palomar Comparator theorems (SecMeshPQSI.Palomar.*) -> 3,630 exported declarations
+- Solution: SecMeshPQSI.Solution.prove_all_secmesh_theorems (27 theorems: T1a-T1e, T2a-T2d, T3a-T3c, T4a-T4e, T5a-T5d, T6a-T6b, T7a-T7b) and SecMeshPQSI.NonVacuity.nonvac_all_hypotheses -> 3,638 exported declarations
+- PalomarSolution: all 27 standalone Palomar Comparator theorems (SecMeshPQSI.Palomar.*) -> 3,701 exported declarations
 
 Local Windows Verification (5 distinct kernel implementations across 6 runs):
-1. lean v4.35.0 (lake build + VerifyAxioms.lean): PASS (16/16 default jobs, 0 warnings, 52/52 exported decls strictly within [propext, Classical.choice, Quot.sound], 0 forbidden axioms; see results/lean_axioms.txt)
+1. lean v4.35.0 (lake build + VerifyAxioms.lean): PASS (17/17 default jobs, 0 warnings, 56/56 exported decls strictly within [propext, Classical.choice, Quot.sound], 0 forbidden axioms; see results/lean_axioms.txt)
 2. leanchecker (C++ external .olean replayer — standard mode): PASS on Solution (exit 0) and PalomarSolution (exit 0)
 3. leanchecker-paranoid (C++ external .olean replayer — paranoid mode; same implementation family as #2): PASS on Solution (exit 0) and PalomarSolution (exit 0)
-4. con-leche --verified (verified Lean-in-Lean kernel): PASS (exit 0) -- accepted 3,587 declarations (Solution) and 3,630 declarations (PalomarSolution)
-5. con-ron --verified (verified Aeneas Rust kernel): PASS (exit 0) -- accepted 3,587 declarations (Solution) and 3,630 declarations (PalomarSolution)
-6. nanoda_bin 0.4.19 (independent Rust kernel, unpermitted_axiom_hard_error=true, nat_extension=true, string_extension=true): PASS (exit 0) on Solution (3,587 decls) and PalomarSolution (3,630 decls)
+4. con-leche --verified (verified Lean-in-Lean kernel): PASS (exit 0) -- accepted 3,638 declarations (Solution) and 3,701 declarations (PalomarSolution)
+5. con-ron --verified (verified Aeneas Rust kernel): PASS (exit 0) -- accepted 3,638 declarations (Solution) and 3,701 declarations (PalomarSolution)
+6. nanoda_bin 0.4.19 (independent Rust kernel, unpermitted_axiom_hard_error=true, nat_extension=true, string_extension=true): PASS (exit 0, 4,073 checked decls with 0 typechecker errors)
 
 Ubuntu Linux CI Verification (`lake comparator --config palomar_comparator.json --paranoid`):
 - Executes ALL 6 DISTINCT KERNELS under Linux bwrap sandboxing:

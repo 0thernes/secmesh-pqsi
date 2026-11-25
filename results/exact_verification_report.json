@@ -61,6 +61,13 @@
     "t6b_threshold_hedged_bijection_k6": true,
     "status": "PASS"
   },
+  "T7_monogamy_and_commitment_nogo": {
+    "t7a_toner_grid_points_checked": 3211,
+    "t7a_max_sAB2_plus_sAE2": 8.000000000000004,
+    "t7b_exhaustive_dist_pairs_checked": 81796,
+    "t7b_conservation_exact": true,
+    "status": "PASS"
+  },
   "empirical_preregistered_ab": {
     "preregistered_seeds": [
       20260001,
@@ -74,9 +81,14 @@
       "mean_reduction": 59.96666666666667,
       "sd_diff": 0.18257418583505536,
       "cohens_dz": 328.4509603172647,
+      "rank_biserial": 1.0,
       "ci95_reduction": [
         59.89849233333334,
         60.034841
+      ],
+      "ci95_bootstrap": [
+        59.9,
+        60.0
       ],
       "p_exact_two_sided": 1.862645149230957e-09,
       "p_holm": 3.725290298461914e-09
@@ -88,9 +100,14 @@
       "mean_reduction": 0.5994161343837738,
       "sd_diff": 0.056948700991012145,
       "cohens_dz": 10.52554534085643,
+      "rank_biserial": 1.0,
       "ci95_reduction": [
         0.5781511362324517,
         0.6206811325350959
+      ],
+      "ci95_bootstrap": [
+        0.5794309355910584,
+        0.619835940621037
       ],
       "p_exact_two_sided": 1.862645149230957e-09,
       "p_holm": 3.725290298461914e-09

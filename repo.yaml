@@ -81,7 +81,7 @@ items:
   B08: {status: done, evidence: "results/lean_axioms.txt, results/exact_verification_report.json, rosette/latest-audit/, MANIFEST.sha256"}
   B09: {status: done, evidence: "Exact JSON CLI contracts verified across C11 <-> Node <-> Python differential harnesses"}
   B10: {status: done, evidence: "Exhaustive & metamorphic property tests in python/tests/test_all.py and native/tests/test_native_core.c"}
-  B11: {status: done, evidence: "Bit-exact C11 Moonlab <-> OpenSSL 3.5.5 ML-KEM-768 interop + C11 <-> Node <-> Python finite-key/QGT/BB144 differential checks + 5-kernel Lean replay"}
+  B11: {status: done, evidence: "Bit-exact C11 Moonlab <-> OpenSSL 3.5.5 ML-KEM-768 interop + C11 <-> Node <-> Python finite-key/QGT/BB144 differential checks + 6-kernel Lean replay"}
   B12: {status: done, evidence: "60-digit Decimal Python exact oracles & exhaustive GF(2)/F_17/byte enumerators"}
   B13: {status: done, evidence: "Adversarial tamper/mutant rejection tests (ML-KEM ciphertext bit-flip, CW-128 bit-flip/length-extension, corrupted Shamir shares, forbidden Lean token check)"}
   B14: {status: done, evidence: "Metamorphic Toeplitz F_2 linearity & OTP involutive bijection tests in native/tests/test_native_core.c and python/tests/test_all.py"}
@@ -92,15 +92,15 @@ items:
   B19: {status: n/a, note: "Single-threaded deterministic cryptographic core and sequential audit pipeline"}
   B20: {status: done, evidence: "60-digit Decimal QGT verification (max residual 3.3e-60) and exact Chernoff-KL inversion (<1e-11 C11<->Node<->Python agreement)"}
   B21: {status: n/a, note: "No distributed multi-host production cluster deployment"}
-  B22: {status: done, evidence: "Zero-Mathlib Lean 4.35.0 formalization (13 files, 25 theorems) verified across all 6 distinct kernels via lake comparator --paranoid"}
+  B22: {status: done, evidence: "Zero-Mathlib Lean 4.35.0 formalization (14 files, 27 theorems T1a-T7b) verified across all 6 distinct kernels via lake comparator --paranoid"}
   B23: {status: n/a, note: "Cryptographic algebra and finite-key bounds proved directly in Lean 4; no concurrent consensus state machine requiring TLA+"}
-  B24: {status: done, evidence: "All 25 headline theorems (T1a-T6b) + SimpleField (Fin 5) NonVacuity machine-checked in Lean 4.35.0"}
+  B24: {status: done, evidence: "All 27 headline theorems (T1a-T7b) + SimpleField (Fin 5) NonVacuity machine-checked in Lean 4.35.0"}
   B25: {status: n/a, note: "C11 core audited via -Wall -Wextra -Werror, ASan/UBSan, FIPS KATs, and Lean 4 algebraic proofs (T5a-T5c); CBMC/Kani deferred"}
   B26: {status: done, evidence: "Exact wire-size profiles (192..14,989 B) and K_N ceilings measured and proved in T5d and White Paper II Table 2"}
-  B27: {status: done, evidence: "Live SLH-DSA lattice-hedged handshake benchmark (25,003 B RTT, 391.0 ms) reproducible via examples/quickstart_demo.mjs"}
+  B27: {status: done, evidence: "Live SLH-DSA lattice-hedged handshake benchmark (25,007 B RTT with length-prefixed IDs) reproducible via examples/quickstart_demo.mjs"}
   B28: {status: done, evidence: "Pre-registered 30-seed paired simulation (seeds 20260001..20260030) in exact_audit.py"}
   B29: {status: done, evidence: "Exact two-sided paired sign-flip permutation test (p = 1.86e-9) in exact_audit.py"}
-  B30: {status: done, evidence: "95% confidence intervals and Cohen's dz reported in White Paper II Table 4 and results/exact_verification_report.json"}
+  B30: {status: done, evidence: "Bounded 10,000-resample nonparametric bootstrap 95% CIs, rank-biserial r_rb=1.000, and Cohen's dz reported in White Paper II Table 4 and results/exact_verification_report.json"}
   B31: {status: done, evidence: "Holm-Bonferroni family-wise error correction across m=2 primary endpoints (p_Holm = 3.73e-9)"}
   B32: {status: done, evidence: "Pre-registered seed range & deviations logged in DEVIATIONS.md and White Paper II Section 5"}
   B33: {status: n/a, note: "No machine learning model training"}
@@ -114,5 +114,5 @@ items:
   B41: {status: done, evidence: "LIMITATIONS.md"}
   B42: {status: done, evidence: "CLAIMS.md What Would Prove Us Wrong section"}
   B43: {status: done, evidence: "REPLICATION.md"}
-  B44: {status: partial, note: "Clean-room self-replication verified on Windows + planned Ubuntu CI; independent external second-person replication open"}
-  B45: {status: done, evidence: "docs/reviews/01-10-pass-review.md and HARDENING_LOG.md (3 full cycles); external journal peer review pending"}
+  B44: {status: partial, note: "Clean-room self-replication verified on Windows + live Ubuntu CI; independent external second-person replication open"}
+  B45: {status: done, evidence: "docs/reviews/01-10-pass-review.md and HARDENING_LOG.md (7 full cycles); external journal peer review pending"}

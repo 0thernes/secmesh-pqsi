@@ -8,7 +8,7 @@ import PalomarSolution
 /-!
 # Strict Axiom Allowlist Audit
 
-Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (25 individual
+Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (27 individual
 theorems + master conjunction) plus the non-vacuity witness
 `SecMeshPQSI.NonVacuity.nonvac_all_hypotheses` must depend strictly on a subset of the
 three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
@@ -39,6 +39,8 @@ three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 #print axioms SecMeshPQSI.Solution.t5d_kn_mesh_bandwidth_and_hedge_overhead
 #print axioms SecMeshPQSI.Solution.t6a_ising_laplacian_psd_and_cheeger_barrier
 #print axioms SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure
+#print axioms SecMeshPQSI.Solution.t7a_toner_chsh_monogamy_and_eve_isolation
+#print axioms SecMeshPQSI.Solution.t7b_hiding_binding_conservation_nogo
 #print axioms SecMeshPQSI.Solution.prove_all_secmesh_theorems
 #print axioms SecMeshPQSI.NonVacuity.nonvac_all_hypotheses
 #print axioms SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation
@@ -66,3 +68,5 @@ three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 #print axioms SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead
 #print axioms SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier
 #print axioms SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure
+#print axioms SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation
+#print axioms SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo

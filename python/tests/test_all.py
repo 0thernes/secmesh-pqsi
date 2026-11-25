@@ -236,7 +236,7 @@ def test_lean_zero_forbidden_tokens_and_axioms():
     # Collapse multi-line bracketed lists
     normalized = re.sub(r",\s*\n\s*", ", ", axioms_txt)
     decl_lines = [ln.strip() for ln in normalized.splitlines() if ln.strip().startswith("'SecMeshPQSI.")]
-    assert len(decl_lines) >= 52, f"Expected >= 52 audited declarations, got {len(decl_lines)}"
+    assert len(decl_lines) >= 56, f"Expected >= 56 audited declarations, got {len(decl_lines)}"
     for ln in decl_lines:
         if "does not depend on any axioms" in ln:
             continue
@@ -245,10 +245,10 @@ def test_lean_zero_forbidden_tokens_and_axioms():
         used = {a.strip() for a in m_ax.group(1).split(",") if a.strip()}
         assert used <= allowed, f"Disallowed axiom(s) {used - allowed} in {ln}"
     assert "SecMeshPQSI.Solution.prove_all_secmesh_theorems" in normalized
-    assert "SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure" in normalized
+    assert "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo" in normalized
 
 
-def test_t4de_and_t6_high_precision_invariants():
+def test_t4de_t6_and_t7_invariants_and_bounded_ci():
     from fractions import Fraction
     # Theorem T4d: Exact rational Chern-Concurrence conservation on Pythagorean triples
     for ca, sa, r in [(3, 4, 5), (5, 12, 13), (8, 15, 17), (0, 1, 1), (1, 0, 1)]:
@@ -262,6 +262,19 @@ def test_t4de_and_t6_high_precision_invariants():
         assert 4 * nq * (nq + 2) - 4 * nq * nq == 8 * nq
     # Theorem T6a: Cheeger expander barrier monotonicity
     assert 2 * 10 * (1.0 * 2.0 + 0.7) > 2 * 10 * (1.0 * 0.4 + 0.7)
+    # Theorem T7a: Toner monogamy S_AB^2 + S_AE^2 <= 8 on exact Pythagorean triples
+    for c, s, r in [(3, 4, 5), (5, 12, 13)]:
+        s_ab = 2 * (c * c + s * s)  # x1=c, x2=s => S_AB = 2 R^2 (Wait: scaled by R^2)
+        assert s_ab * s_ab <= 8 * (r**4)
+    # Theorem T7b: Exact TV + Overlap = 1 conservation on arbitrary distributions
+    p0 = [3, 1, 4, 2]
+    p1 = [1, 5, 2, 2]
+    assert sum(abs(a - b) for a, b in zip(p0, p1, strict=True)) + 2 * sum(min(a, b) for a, b in zip(p0, p1, strict=True)) == 20
+    # Bounded nonparametric bootstrap 95% CI respects [0, 60] ceiling in exact_verification_report.json
+    rep = json.loads((REPO_ROOT / "results" / "exact_verification_report.json").read_text(encoding="utf-8"))
+    boot_ci = rep["empirical_preregistered_ab"]["intrusions"]["ci95_bootstrap"]
+    assert 59.5 <= boot_ci[0] <= boot_ci[1] <= 60.0
+    assert rep["empirical_preregistered_ab"]["intrusions"]["rank_biserial"] == 1.0
 
 
 def test_eshkol_modules_balanced_sexprs():

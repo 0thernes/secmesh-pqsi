@@ -4,7 +4,7 @@ All deliberate deviations from upstream prototypes (`BoogerCheeseOnRye/SecMesh@a
 
 1. **Deviation from Legacy `BoogerCheeseOnRye/SecMesh@aff7dc6` (Intentional Security Fixes):**
    - Replaced super-quantum `CELL_P = [0.146, 0.854]` ($S = 2.832$) with exact $\sin^2(\pi/8)$ singlet correlators ($S \le 2\sqrt{2}$).
-   - Replaced range-1 Hoeffding with range-2 Hoeffding ($4\times$ sample correction) and replaced collective von Neumann $\HvN(S)$ with strict Pironio $\Hmin(S)$.
+   - Replaced range-1 Hoeffding with range-2 Hoeffding ($4\times$ sample correction) and replaced collective von Neumann $H_{\mathrm{vN}}^{\mathrm{DI}}(S)$ with strict Pironio $H_{\min}^{\mathrm{DI}}(S)$.
    - Replaced point QBER with exact Bernoulli Chernoff–KL upper confidence bound and realistic $f_{\mathrm{EC}} = 1.16$.
    - Removed biased 8-bit majority `deNoise`, cleartext `bitA`/`bitB` JSON transmission, unauthenticated `0.0.0.0` binding, wildcard `CORS: *`, `/e91` raw key leak, and open UDP amplification echo.
 2. **Deviation in Lean 4.35.0 Local Multi-Kernel Audit:**
