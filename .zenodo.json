@@ -1,0 +1,33 @@
+{
+  "title": "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations and Cryptographic Defense Engine for Post-Quantum and Post-Super-Intelligence Meshes",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "publication_date": "2026-11-25",
+  "creators": [
+    {
+      "name": "Donahue, Alexander S.",
+      "affiliation": "Independent Researcher, Spokane, WA, USA",
+      "orcid": "0009-0006-8168-9648"
+    }
+  ],
+  "description": "Clean-room cryptographic refactoring of legacy SecMesh rebuilt atop Tsotchke's cryptographic and quantum-geometry stack into a Post-Quantum and Post-Super-Intelligence (information-theoretic) mesh defense engine, backed by 21 zero-Mathlib Lean 4.35.0 theorems verified across five independent proof kernels, bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interoperability, and two companion AMS-LaTeX white papers.",
+  "license": "apache-2.0",
+  "access_right": "open",
+  "keywords": [
+    "post-quantum cryptography",
+    "information-theoretic security",
+    "device-independent QKD",
+    "ML-KEM-768",
+    "SLH-DSA",
+    "quantum geometric tensor",
+    "bivariate-bicycle qLDPC",
+    "Lean 4"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/0thernes/secmesh-pqsi",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "schema": "secmesh-pqsi/exact-verification/v1",
+  "platform": "Windows-11-10.0.29704-SP0",
+  "python": "3.12.10",
+  "T1_finite_key_forensics": {
+    "t1a_s_v1": "354/125",
+    "t1a_sq_excess": 316,
+    "t1b_actual_per_cell_tail_at_claimed_1e6": 0.028574404296987994,
+    "t1c_max_vn_minus_hmin_gap": 0.23570329549346902,
+    "t1c_max_gap_at_S": 2.6991924932857843,
+    "t1c_hmin_at_2p5": 0.26756769267675207,
+    "t1c_hvn_at_2p5": 0.4564355568004036,
+    "t1d_denoise_ones_out_of_256": 93,
+    "t1d_denoise_fragile_weight4_out_of_256": 70,
+    "status": "PASS"
+  },
+  "T2_info_theoretic_psi": {
+    "t2a_otp_exhaustive_n6": true,
+    "t2c_toeplitz_exhaustive_3x4_uniform_count": 8,
+    "t2d_cw_poly_exhaustive_f17_deg2_max_roots": 2,
+    "status": "PASS"
+  },
+  "T3_shamir_byzantine_pir": {
+    "t3b_counterexample_n6_t3_b2_d1_d2": [
+      2,
+      2
+    ],
+    "t3c_pir_checked_configs": 15,
+    "t3c_sample_N8_T2_B1": {
+      "N": 8,
+      "T": 2,
+      "B": 1,
+      "C_BU_M2": 0.5625,
+      "R_star": 0.5,
+      "gap": 0.0625
+    },
+    "status": "PASS"
+  },
+  "T4_qgtl_and_bb144": {
+    "t4b_50digit_max_surplus_residual": 3.3e-60,
+    "t4c_bb144_rank_hx": 66,
+    "t4c_bb144_rank_hz": 66,
+    "t4c_bb144_logical_k": 12,
+    "status": "PASS"
+  },
+  "T5_fips203_and_bandwidth": {
+    "t5a_q3329_zeta17_exact_order": 256,
+    "t5b_montgomery_checked_points": 14295,
+    "t5c_compress1_exhaustive_margin": 831,
+    "t5c_compress1_tightness_fail_at": 833,
+    "t5d_c11_pqsi_one_way_bytes": 6685,
+    "t5d_c11_pqsi_100mbps_ceiling": 1870,
+    "status": "PASS"
+  },
+  "empirical_preregistered_ab": {
+    "preregistered_seeds": [
+      20260001,
+      20260030
+    ],
+    "seed_count": 30,
+    "intrusions": {
+      "n_seeds": 30,
+      "control_mean": 60.0,
+      "treatment_mean": 0.03333333333333333,
+      "mean_reduction": 59.96666666666667,
+      "sd_diff": 0.18257418583505536,
+      "cohens_dz": 328.4509603172647,
+      "ci95_reduction": [
+        59.89849233333334,
+        60.034841
+      ],
+      "p_exact_two_sided": 1.862645149230957e-09,
+      "p_holm": 3.725290298461914e-09
+    },
+    "peak_stress": {
+      "n_seeds": 30,
+      "control_mean": 1.0424952973974373,
+      "treatment_mean": 0.44307916301366335,
+      "mean_reduction": 0.5994161343837738,
+      "sd_diff": 0.056948700991012145,
+      "cohens_dz": 10.52554534085643,
+      "ci95_reduction": [
+        0.5781511362324517,
+        0.6206811325350959
+      ],
+      "p_exact_two_sided": 1.862645149230957e-09,
+      "p_holm": 3.725290298461914e-09
+    },
+    "status": "PASS"
+  }
+}

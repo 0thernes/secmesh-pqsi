@@ -1,0 +1,33 @@
+{
+  "challenge_module": "PalomarChallenge",
+  "solution_module": "PalomarSolution",
+  "theorem_names": [
+    "SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation",
+    "SecMeshPQSI.Palomar.t1b_hoeffding_range2_factor4",
+    "SecMeshPQSI.Palomar.t1c_di_quarter_circle_duality",
+    "SecMeshPQSI.Palomar.t1d_denoise_majority_bias_and_fragility",
+    "SecMeshPQSI.Palomar.t1e_composable_epsilon_conservation",
+    "SecMeshPQSI.Palomar.t2a_shannon_otp_perfect_secrecy",
+    "SecMeshPQSI.Palomar.t2b_hybrid_dual_survivability",
+    "SecMeshPQSI.Palomar.t2c1_toeplitz_exact_2_universal",
+    "SecMeshPQSI.Palomar.t2c2_cauchy_schwarz_lhl",
+    "SecMeshPQSI.Palomar.t2d_carter_wegman_poly_bound",
+    "SecMeshPQSI.Palomar.t3a_shamir_threshold_and_secrecy",
+    "SecMeshPQSI.Palomar.t3b_byzantine_singleton_tightness",
+    "SecMeshPQSI.Palomar.t3c_pir_byzantine_capacity_gap",
+    "SecMeshPQSI.Palomar.t4a_qgt_psd_lagrange_and_trace",
+    "SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity",
+    "SecMeshPQSI.Palomar.t4c1_general_bb_commutation",
+    "SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified",
+    "SecMeshPQSI.Palomar.t5a_fips203_ntt_prime_and_root",
+    "SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact",
+    "SecMeshPQSI.Palomar.t5c_mlkem_compress1_margin",
+    "SecMeshPQSI.Palomar.t5d_kn_mesh_bandwidth_and_hedge_overhead"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

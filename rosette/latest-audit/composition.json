@@ -1,0 +1,19 @@
+{
+  "schema": "rosette-wire/composition/v1",
+  "id": "secmesh-pqsi-full-audit-v2",
+  "components": [
+    "moonlab-c11-fips203",
+    "openssl-3.5-fips203-204-205",
+    "secmesh-finite-key-v2",
+    "carter-wegman-gf128"
+  ],
+  "inputs": {
+    "nRounds": 450000,
+    "seed": 20261125,
+    "epsTotal": 0.000001
+  },
+  "declaredBounds": {
+    "deterministicReplay": true,
+    "failClosed": true
+  }
+}

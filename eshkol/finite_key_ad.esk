@@ -1,0 +1,56 @@
+;; SPDX-License-Identifier: Apache-2.0
+;; Copyright (c) 2026 Alexander S. Donahue
+;;
+;; Eshkol v1.3.6 Symbolic & Automatic-Differentiation Module:
+;; Exact sensitivity analysis of SecMesh-PQSI Composable Finite-Key Gate v2
+;; Uses Eshkol's native `derivative` primitive and OALR `with-region` scoping.
+
+(define *tsirelson* (* 2.0 (sqrt 2.0)))
+(define *ln2* (log 2.0))
+
+(define (log2 x) (/ (log x) *ln2*))
+
+(define (bin-entropy p)
+  (if (or (<= p 0.0) (>= p 1.0))
+      0.0
+      (- (+ (* p (log2 p)) (* (- 1.0 p) (log2 (- 1.0 p)))))))
+
+;; Pironio-Masanes-Acin (2010) single-round DI min-entropy:
+;;   H_min^DI(S) = 1 - log2(1 + sqrt(2 - (S/2)^2))
+(define (h-min-di s)
+  (let ((inside (- 2.0 (* 0.25 (* s s)))))
+    (- 1.0 (log2 (+ 1.0 (sqrt inside))))))
+
+;; Acin-Pironio (2007/2009) collective von Neumann entropy:
+;;   H_vN^DI(S) = 1 - h((1 + sqrt((S/2)^2 - 1)) / 2)
+(define (h-vn-di s)
+  (let* ((u (sqrt (- (* 0.25 (* s s)) 1.0)))
+         (p (* 0.5 (+ 1.0 u))))
+    (- 1.0 (bin-entropy p))))
+
+;; Strict gap function Delta(S) = H_vN^DI(S) - H_min^DI(S) > 0 on (2, 2*sqrt(2))
+(define (entropy-gap s)
+  (- (h-vn-di s) (h-min-di s)))
+
+;; Composable finite-key rate objective as a function of PE epsilon fraction alpha in (0, 0.5):
+;;   eps_PE = alpha * eps, eps_PA = (0.6 - alpha) * eps (holding eps_QBER, eps_s, eps_cor fixed)
+(define (finite-key-eps-objective alpha n-cell n-rem eps)
+  (let* ((eps-pe (* alpha eps))
+         (eps-pa (* (- 0.6 alpha) eps))
+         (t-err (* 4.0 (sqrt (/ (* 2.0 (log (/ 8.0 eps-pe))) n-cell))))
+         (s-lb (- *tsirelson* t-err))
+         (pa-cost (* 2.0 (log2 (/ 1.0 (* 2.0 eps-pa))))))
+    (- (* n-rem (h-min-di s-lb)) pa-cost)))
+
+;; Run exact forward-mode AD via Eshkol's compiler primitive `derivative`
+(with-region 'secmesh-finite-key-ad
+  (let* ((s0 2.50)
+         (d-hmin (derivative h-min-di s0))
+         (d-hvn  (derivative h-vn-di s0))
+         (d-gap  (derivative entropy-gap s0))
+         (d-eps  (derivative (lambda (a) (finite-key-eps-objective a 50000.0 40000.0 1e-6)) 0.2)))
+    (display "SecMesh-PQSI Eshkol AD Sensitivity Report (S = 2.50)") (newline)
+    (display "  dH_min^DI / dS = ") (display d-hmin) (newline)
+    (display "  dH_vN^DI  / dS = ") (display d-hvn)  (newline)
+    (display "  dGap      / dS = ") (display d-gap)  (newline)
+    (display "  dEll / d(alpha_PE) at alpha=0.2 = ") (display d-eps) (newline)))

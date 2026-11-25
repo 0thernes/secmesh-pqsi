@@ -1,0 +1,27 @@
+;; SPDX-License-Identifier: Apache-2.0
+;; Copyright (c) 2026 Alexander S. Donahue
+;;
+;; Eshkol v1.3.6 Complete-Graph K_N Post-Quantum Mesh Wire-Bandwidth Model
+;; Computes exact marginal wire cost per peer and mesh ceiling elasticity
+;; (extending Tsotchke-Corporation/pq-consensus-bandwidth to SecMesh K_N).
+
+(define (mesh-edges n)
+  (* 0.5 (* n (- n 1.0))))
+
+(define (mesh-total-bytes n round-trip-bytes)
+  (* (mesh-edges n) round-trip-bytes))
+
+(define (node-ceiling link-bps round-sec one-way-bytes)
+  (+ 1.0 (/ (* (/ link-bps 8.0) round-sec) one-way-bytes)))
+
+(with-region 'secmesh-bandwidth-ad
+  (let* ((s-pqsi 6685.0) ;; X25519+ML-KEM-768 + Ed25519+ML-DSA-65 + CW-128 + framing
+         (rt-pqsi 13274.0)
+         (n0 32.0)
+         (d-bytes-dn (derivative (lambda (n) (mesh-total-bytes n rt-pqsi)) n0))
+         (d-ceil-ds  (derivative (lambda (s) (node-ceiling 100000000.0 1.0 s)) s-pqsi)))
+    (display "SecMesh-PQSI Eshkol Wire-Bandwidth Elasticity Report") (newline)
+    (display "  K_32 total handshake bytes     = ") (display (mesh-total-bytes n0 rt-pqsi)) (newline)
+    (display "  d(total bytes)/dN at N=32      = ") (display d-bytes-dn) (newline)
+    (display "  100 Mbps 1s K_N ceiling        = ") (display (node-ceiling 100000000.0 1.0 s-pqsi)) (newline)
+    (display "  d(ceiling)/d(wire bytes)       = ") (display d-ceil-ds) (newline)))

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Alexander S. Donahue -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecMesh-PQSI v2.0 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
+<style>
+  :root {
+    --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
+    --text: #e6edf7; --muted: #8ea0ba; --accent: #38bdf8;
+    --good: #34d399; --warn: #fbbf24; --bad: #f87171; --violet: #a78bfa;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+  header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; background: linear-gradient(90deg, #0b1220, #10192b); }
+  h1 { margin: 0; font-size: 1.25rem; letter-spacing: 0.02em; }
+  .badge { display: inline-block; font-size: 0.75rem; padding: 0.2rem 0.55rem; border-radius: 999px; border: 1px solid var(--border); background: #132035; color: var(--accent); margin-right: 0.35rem; }
+  .badge.warn { color: var(--warn); border-color: #6b4e16; }
+  .badge.good { color: var(--good); border-color: #165c44; }
+  main { max-width: 1280px; margin: 0 auto; padding: 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1rem; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; }
+  .card h2 { margin: 0 0 0.6rem; font-size: 1rem; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
+  .wide { grid-column: 1 / -1; }
+  label { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--muted); margin: 0.45rem 0 0.2rem; }
+  input[type=range], select { width: 100%; accent-color: var(--accent); }
+  select { background: #0a101b; color: var(--text); border: 1px solid var(--border); padding: 0.35rem; border-radius: 6px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 0.6rem; margin-top: 0.75rem; }
+  .kpi { background: #0a101b; border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.7rem; }
+  .kpi .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .kpi .val { font-size: 1.1rem; font-weight: 700; margin-top: 0.15rem; font-variant-numeric: tabular-nums; }
+  .good { color: var(--good); } .bad { color: var(--bad); } .warn { color: var(--warn); } .violet { color: var(--violet); }
+  canvas { width: 100%; height: 220px; background: #060a10; border: 1px solid var(--border); border-radius: 8px; display: block; margin-top: 0.6rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.5rem; }
+  th, td { border-bottom: 1px solid var(--border); padding: 0.4rem 0.45rem; text-align: left; font-variant-numeric: tabular-nums; }
+  th { color: var(--muted); font-weight: 600; }
+  .notice { font-size: 0.82rem; color: var(--muted); border-left: 3px solid var(--warn); padding: 0.4rem 0.75rem; background: #14120b; border-radius: 4px; margin-bottom: 0.6rem; }
+  footer { max-width: 1280px; margin: 0 auto 2rem; padding: 0 1.25rem; font-size: 0.8rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>⬡ SecMesh-PQSI v2.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
+    <div style="margin-top:0.3rem">
+      <span class="badge good">Lean 4.35 · 6 Kernels</span>
+      <span class="badge">Moonlab FIPS 203 + QGTL + BB144</span>
+      <span class="badge warn">Browser Mode: Client-Side Analytic Simulator (No Physical QKD)</span>
+    </div>
+  </div>
+  <div style="font-size:0.82rem;color:var(--muted)">
+    Alexander S. Donahue · ORCID 0009-0006-8168-9648
+  </div>
+</header>
+
+<main>
+  <section class="card wide">
+    <div class="notice">
+      <strong>Epistemic Honesty Boundary:</strong> This browser console evaluates exact closed-form mathematics (Composable Finite-Key DI-QKD Gate v2 vs. defective legacy SecMesh v1, QGTL Concurrence Surplus Theorem T4a, and $K_N$ Post-Quantum Wire-Bandwidth Ceilings). Real cryptographic key exchange (X25519 + ML-KEM-768 + Ed25519 + ML-DSA-65 + SLH-DSA-128s + GF(2^128) Carter–Wegman IT-MAC) runs in the native C11 and Node.js 25 CLI engines; software simulation never substitutes for physical photonic QKD hardware.
+    </div>
+  </section>
+
+  <!-- 1. Composable Finite-Key E91 Gate v2 vs Broken Legacy v1 -->
+  <section class="card">
+    <h2>1. Composable Finite-Key Gate v2 vs. Legacy v1</h2>
+    <label for="inS">Observed CHSH |S| <span id="lblS">2.828</span></label>
+    <input id="inS" type="range" min="2.00" max="2.8284" step="0.005" value="2.8284">
+
+    <label for="inN">Total E91 Rounds N <span id="lblN">450,000</span></label>
+    <input id="inN" type="range" min="20000" max="1000000" step="10000" value="450000">
+
+    <label for="inQ">Sifting QBER (%) <span id="lblQ">0.0%</span></label>
+    <input id="inQ" type="range" min="0" max="25" step="0.5" value="0">
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="lbl">v2 Verdict (ε=1e-6)</div><div id="kV2Verdict" class="val good">KEY</div></div>
+      <div class="kpi"><div class="lbl">v2 Certified Bits</div><div id="kV2Bits" class="val">—</div></div>
+      <div class="kpi"><div class="lbl">v2 S_LB (Range-2)</div><div id="kV2SLB" class="val">—</div></div>
+      <div class="kpi"><div class="lbl">v2 QBER_UB (KL)</div><div id="kV2QUB" class="val">—</div></div>
+      <div class="kpi"><div class="lbl">Legacy v1 (Broken)</div><div id="kV1Bits" class="val warn">—</div></div>
+      <div class="kpi"><div class="lbl">v1 Overclaim Gap</div><div id="kGap" class="val bad">—</div></div>
+    </div>
+    <canvas id="cvEnt" aria-label="Pironio DI min-entropy vs Acin-Pironio von Neumann entropy curve"></canvas>
+  </section>
+
+  <!-- 2. QGTL Concurrence Surplus Witness (Theorem T4a) -->
+  <section class="card">
+    <h2>2. QGTL Entanglement Surplus Witness (Theorem T4a)</h2>
+    <label for="inAlpha">Entanglement Angle α (0=Separable, π/4=Singlet) <span id="lblAlpha">0.785</span></label>
+    <input id="inAlpha" type="range" min="0" max="0.7854" step="0.01" value="0.7854">
+
+    <label for="inTheta">Local SU(2) Rotation θ <span id="lblTheta">1.047</span></label>
+    <input id="inTheta" type="range" min="0.05" max="3.1415" step="0.02" value="1.0472">
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="lbl">Concurrence C</div><div id="kConc" class="val violet">—</div></div>
+      <div class="kpi"><div class="lbl">Horodecki S_max</div><div id="kSMax" class="val">—</div></div>
+      <div class="kpi"><div class="lbl">det(g)</div><div id="kDetG" class="val">—</div></div>
+      <div class="kpi"><div class="lbl">(1/4) Ω²</div><div id="kOmRhs" class="val">—</div></div>
+      <div class="kpi"><div class="lbl">QGT Surplus</div><div id="kSurp" class="val good">—</div></div>
+      <div class="kpi"><div class="lbl">T4a Closed Form</div><div id="kClosed" class="val good">—</div></div>
+    </div>
+    <canvas id="cvQgt" aria-label="QGTL determinant surplus versus entanglement angle"></canvas>
+  </section>
+
+  <!-- 3. Complete-Graph K_N PQ & PSI Wire-Bandwidth Ceiling -->
+  <section class="card wide">
+    <h2>3. Complete-Graph K_N Post-Quantum &amp; PSI Mesh Wire-Bandwidth Model</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem">
+      <div>
+        <label for="inMbps">Link Bandwidth (Mbit/s) <span id="lblMbps">100</span></label>
+        <input id="inMbps" type="range" min="10" max="1000" step="10" value="100">
+      </div>
+      <div>
+        <label for="inPeers">Active Mesh Nodes N <span id="lblPeers">32</span></label>
+        <input id="inPeers" type="range" min="2" max="200" step="2" value="32">
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Handshake Profile</th>
+          <th>One-Way (B)</th>
+          <th>Round-Trip (B)</th>
+          <th>K_N Total Wire (MB)</th>
+          <th>1s Mesh Ceiling (Nodes)</th>
+          <th>PQ Confidentiality</th>
+          <th>Unbounded PSI Layer</th>
+        </tr>
+      </thead>
+      <tbody id="bwRows"></tbody>
+    </table>
+  </section>
+</main>
+
+<footer>
+  SecMesh-PQSI v2.0 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, Rosette-Wire &amp; pq-consensus-bandwidth stack.
+</footer>
+
+<script>
+const TSIRELSON = 2 * Math.SQRT2;
+const hBin = p => (p <= 0 || p >= 1) ? 0 : -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p));
+const hMinDI = S => S <= 2 ? 0 : (S >= TSIRELSON ? 1 : Math.max(0, 1 - Math.log2(1 + Math.sqrt(Math.max(0, 2 - S * S / 4)))));
+const hVnDI  = S => S <= 2 ? 0 : (S >= TSIRELSON ? 1 : Math.max(0, 1 - hBin(0.5 * (1 + Math.sqrt(Math.max(0, (S / 2) ** 2 - 1))))));
+const klNats = (p, q) => (p > 0 ? p * Math.log(p / q) : 0) + (p < 1 ? (1 - p) * Math.log((1 - p) / (1 - q)) : 0);
+
+function qberUB(qHat, m, eps) {
+  if (qHat >= 0.5) return 0.5;
+  const rhs = Math.log(1 / eps) / m;
+  if (qHat <= 0) return Math.min(0.5, 1 - Math.exp(-rhs));
+  if (klNats(qHat, 0.5) <= rhs) return 0.5;
+  let lo = qHat, hi = 0.5;
+  for (let i = 0; i < 64; i++) { const mid = 0.5 * (lo + hi); if (klNats(qHat, mid) < rhs) lo = mid; else hi = mid; }
+  return hi;
+}
+
+const PROFILES = [
+  { name: 'Classical X25519 + Ed25519', oneWay: 192, rt: 384, pq: 'No (Shor-broken)', psi: 'No' },
+  { name: 'PQ-Auth-Only X25519 + ML-DSA-65', oneWay: 5357, rt: 10714, pq: 'No (SNDL-broken)', psi: 'No' },
+  { name: 'Hybrid X25519 + ML-KEM-768 + Ed25519 + ML-DSA-65', oneWay: 6669, rt: 13242, pq: 'Yes (FIPS 203/204)', psi: 'No' },
+  { name: 'SecMesh-PQSI Hybrid + CW-128 IT-MAC (+16B)', oneWay: 6685, rt: 13274, pq: 'Yes (FIPS 203/204)', psi: 'Auth + Optional OTP' },
+  { name: 'SecMesh-PQSI Lattice-Hedged (+SLH-DSA-128s +CW-128)', oneWay: 14989, rt: 29978, pq: 'Yes (Lattice+Hash)', psi: 'Auth + Optional OTP' },
+];
+
+function drawEntCanvas(curS) {
+  const cv = document.getElementById('cvEnt');
+  const ctx = cv.getContext('2d');
+  const W = cv.width = cv.clientWidth * 2, H = cv.height = cv.clientHeight * 2;
+  ctx.clearRect(0, 0, W, H);
+  const pad = 44;
+  ctx.strokeStyle = '#1f2e47'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(pad, 20, W - pad - 20, H - pad - 20);
+  const xOf = s => pad + ((s - 2) / (TSIRELSON - 2)) * (W - pad - 20);
+  const yOf = v => (H - pad) - v * (H - pad - 20);
+
+  // Shaded strict overclaim gap between H_vN and H_min
+  ctx.beginPath();
+  for (let i = 0; i <= 200; i++) {
+    const s = 2 + (i / 200) * (TSIRELSON - 2);
+    const x = xOf(s), y = yOf(hVnDI(s));
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  for (let i = 200; i >= 0; i--) {
+    const s = 2 + (i / 200) * (TSIRELSON - 2);
+    ctx.lineTo(xOf(s), yOf(hMinDI(s)));
+  }
+  ctx.closePath(); ctx.fillStyle = 'rgba(248, 113, 113, 0.18)'; ctx.fill();
+
+  const plot = (fn, col) => {
+    ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = 3;
+    for (let i = 0; i <= 200; i++) {
+      const s = 2 + (i / 200) * (TSIRELSON - 2);
+      const x = xOf(s), y = yOf(fn(s));
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  };
+  plot(hVnDI, '#fbbf24');
+  plot(hMinDI, '#34d399');
+
+  // Cursor line
+  const cx = xOf(curS);
+  ctx.strokeStyle = '#38bdf8'; ctx.setLineDash([6, 4]); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx, 20); ctx.lineTo(cx, H - pad); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#e6edf7'; ctx.font = '20px system-ui';
+  ctx.fillText('Green: H_min^DI (strict) | Amber: H_vN^DI (collective) | Red: Overclaim gap', pad + 10, 44);
+}
+
+function drawQgtCanvas(curA, theta) {
+  const cv = document.getElementById('cvQgt');
+  const ctx = cv.getContext('2d');
+  const W = cv.width = cv.clientWidth * 2, H = cv.height = cv.clientHeight * 2;
+  ctx.clearRect(0, 0, W, H);
+  const pad = 44;
+  ctx.strokeStyle = '#1f2e47'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(pad, 20, W - pad - 20, H - pad - 20);
+  const sh2 = Math.sin(theta / 2) ** 2;
+  const maxY = Math.max(0.05, 0.25 * sh2 * 1.15);
+  const xOf = a => pad + (a / (Math.PI / 4)) * (W - pad - 20);
+  const yOf = v => (H - pad) - (v / maxY) * (H - pad - 20);
+
+  ctx.beginPath(); ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 3.5;
+  for (let i = 0; i <= 200; i++) {
+    const a = (i / 200) * (Math.PI / 4);
+    const C = Math.sin(2 * a);
+    const surp = 0.25 * C * C * sh2;
+    const x = xOf(a), y = yOf(surp);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  const cx = xOf(curA);
+  const C0 = Math.sin(2 * curA);
+  const cy = yOf(0.25 * C0 * C0 * sh2);
+  ctx.fillStyle = '#34d399';
+  ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#e6edf7'; ctx.font = '20px system-ui';
+  ctx.fillText('det(g) - (1/4)Omega^2 = (C^2 / 4) sin^2(theta / 2)', pad + 10, 44);
+}
+
+function update() {
+  const S = parseFloat(document.getElementById('inS').value);
+  const N = parseInt(document.getElementById('inN').value, 10);
+  const qPct = parseFloat(document.getElementById('inQ').value);
+  const q = qPct / 100;
+  document.getElementById('lblS').textContent = S.toFixed(4);
+  document.getElementById('lblN').textContent = N.toLocaleString();
+  document.getElementById('lblQ').textContent = qPct.toFixed(1) + '%';
+
+  const eps = 1e-6;
+  const cell = Math.floor(N / 9);
+  const qSamp = Math.max(1, Math.floor(cell / 5));
+  const nRem = cell - qSamp;
+  const epsLane = eps / 5;
+  const sLB2 = Math.max(2, S - 4 * Math.sqrt((2 * Math.log(8 / epsLane)) / cell));
+  const qUB2 = qberUB(q, qSamp, epsLane);
+  const ell2 = Math.max(0, Math.floor(
+    nRem * hMinDI(sLB2) - nRem * 1.16 * hBin(qUB2)
+    - Math.sqrt(2 * nRem * Math.log(1 / epsLane)) / Math.LN2
+    - 2 * Math.log2(1 / (2 * epsLane)) - Math.ceil(Math.log2(1 / epsLane))
+  ));
+
+  // Legacy broken v1 formula
+  const epsS1 = eps / 3;
+  const sLB1 = Math.max(2, S - 4 * Math.sqrt(Math.log(8 / epsS1) / (2 * cell)));
+  const per1 = Math.max(0, hVnDI(sLB1) - hBin(q));
+  const ell1 = per1 <= 0 ? 0 : Math.max(0, Math.floor(cell * per1 - Math.sqrt(2 * cell * Math.log(1 / epsS1)) / Math.LN2 - (Math.log2(3 / eps) + 3)));
+
+  const vEl = document.getElementById('kV2Verdict');
+  vEl.textContent = ell2 >= 256 ? 'KEY' : 'ABORT';
+  vEl.className = 'val ' + (ell2 >= 256 ? 'good' : 'bad');
+  document.getElementById('kV2Bits').textContent = ell2.toLocaleString();
+  document.getElementById('kV2SLB').textContent = sLB2.toFixed(4);
+  document.getElementById('kV2QUB').textContent = (qUB2 * 100).toFixed(2) + '%';
+  document.getElementById('kV1Bits').textContent = ell1.toLocaleString();
+  document.getElementById('kGap').textContent = (ell1 - ell2 >= 0 ? '+' : '') + (ell1 - ell2).toLocaleString();
+  drawEntCanvas(S);
+
+  // QGTL
+  const alpha = parseFloat(document.getElementById('inAlpha').value);
+  const theta = parseFloat(document.getElementById('inTheta').value);
+  document.getElementById('lblAlpha').textContent = alpha.toFixed(3);
+  document.getElementById('lblTheta').textContent = theta.toFixed(3);
+  const C = Math.sin(2 * alpha);
+  const sh = Math.sin(theta / 2);
+  const gtt = 0.25;
+  const gpp = 0.25 * (Math.sin(theta) ** 2) + (C * C) * (sh ** 4);
+  const om = -0.5 * Math.cos(2 * alpha) * Math.sin(theta);
+  const detG = gtt * gpp;
+  const rhs = 0.25 * om * om;
+  const surp = detG - rhs;
+  const closed = 0.25 * C * C * sh * sh;
+  document.getElementById('kConc').textContent = C.toFixed(4);
+  document.getElementById('kSMax').textContent = (2 * Math.sqrt(1 + C * C)).toFixed(4);
+  document.getElementById('kDetG').textContent = detG.toFixed(6);
+  document.getElementById('kOmRhs').textContent = rhs.toFixed(6);
+  document.getElementById('kSurp').textContent = surp.toFixed(6);
+  document.getElementById('kClosed').textContent = closed.toFixed(6);
+  drawQgtCanvas(alpha, theta);
+
+  // Bandwidth table
+  const mbps = parseInt(document.getElementById('inMbps').value, 10);
+  const peers = parseInt(document.getElementById('inPeers').value, 10);
+  document.getElementById('lblMbps').textContent = mbps;
+  document.getElementById('lblPeers').textContent = peers;
+  const edges = (peers * (peers - 1)) / 2;
+  const bps = mbps * 1e6;
+  document.getElementById('bwRows').innerHTML = PROFILES.map(p => {
+    const ceil = Math.floor((bps / 8) / p.oneWay) + 1;
+    const totalMB = (edges * p.rt) / 1e6;
+    return `<tr><td>${p.name}</td><td>${p.oneWay.toLocaleString()}</td><td>${p.rt.toLocaleString()}</td><td>${totalMB.toFixed(2)} MB</td><td>${ceil.toLocaleString()}</td><td>${p.pq}</td><td>${p.psi}</td></tr>`;
+  }).join('');
+}
+
+for (const id of ['inS', 'inN', 'inQ', 'inAlpha', 'inTheta', 'inMbps', 'inPeers']) {
+  document.getElementById(id).addEventListener('input', update);
+}
+update();
+</script>
+</body>
+</html>

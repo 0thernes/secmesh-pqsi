@@ -1,0 +1,53 @@
+version = 1
+SPDX-PackageName = "secmesh-pqsi"
+SPDX-PackageSupplier = "Alexander S. Donahue <0_0@0thernes.art>"
+SPDX-PackageDownloadLocation = "https://github.com/0thernes/secmesh-pqsi"
+
+[[annotations]]
+path = [
+  "native/third_party/moonlab/**"
+]
+precedence = "override"
+SPDX-FileCopyrightText = "Copyright (c) tsotchke (Moonlab upstream, commit cd3b234)"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = [
+  "native/include/**",
+  "native/src/**",
+  "native/tests/**",
+  "native/Makefile",
+  "node/**",
+  "eshkol/**",
+  "lean/**",
+  "python/**",
+  "scripts/**",
+  "examples/**",
+  "app/**",
+  "justfile",
+  "package.json",
+  "pyproject.toml",
+  "requirements.lock.txt",
+  ".github/**"
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Alexander S. Donahue"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+  "paper/**",
+  "docs/**",
+  "dist/**",
+  "results/**",
+  "rosette/**",
+  "*.md",
+  "*.txt",
+  "CITATION.cff",
+  ".zenodo.json",
+  "repo.yaml",
+  "VERSION"
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Alexander S. Donahue"
+SPDX-License-Identifier = "CC-BY-4.0"

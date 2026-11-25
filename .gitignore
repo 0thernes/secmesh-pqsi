@@ -1,0 +1,42 @@
+# Build & virtual environment outputs
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Native C11 build artifacts
+native/build/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Lean 4 / Lake build cache
+lean/.lake/
+*.olean
+*.ilean
+*.export
+
+# LaTeX intermediate build artifacts (keep dist/*.pdf and paper/figures/*.pdf)
+paper/build/
+paper/engineering/build/
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
+*.bbl
+*.blg
+
+# Local secrets & OS artifacts
+.env
+.DS_Store
+Thumbs.db

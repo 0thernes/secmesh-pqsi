@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use SecMesh-PQSI, its Lean 4.35 proofs, or companion white papers, please cite this work as below."
+title: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations and Cryptographic Defense Engine for Post-Quantum and Post-Super-Intelligence Meshes"
+version: "1.0.0"
+date-released: "2026-11-25"
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/0thernes/secmesh-pqsi"
+url: "https://github.com/0thernes/secmesh-pqsi"
+authors:
+  - family-names: "Donahue"
+    given-names: "Alexander S."
+    orcid: "https://orcid.org/0009-0006-8168-9648"
+    email: "0_0@0thernes.art"
+    affiliation: "Independent Researcher, Spokane, WA, USA"
+keywords:
+  - "post-quantum cryptography"
+  - "information-theoretic security"
+  - "device-independent QKD"
+  - "ML-KEM-768"
+  - "SLH-DSA"
+  - "Carter-Wegman MAC"
+  - "Shamir secret sharing"
+  - "quantum geometric tensor"
+  - "bivariate-bicycle qLDPC"
+  - "Lean 4 formal verification"
+abstract: >-
+  Clean-room cryptographic refactoring of legacy SecMesh (aff7dc6) rebuilt atop
+  Tsotchke's MIT/Apache-2.0 stack (moonlab, QGTL, Eshkol, Rosette-Wire,
+  pq-consensus-bandwidth) into a Post-Quantum and Post-Super-Intelligence
+  (information-theoretic) defense suite, backed by 21 zero-Mathlib Lean 4.35.0
+  theorems verified across five distinct proof kernels and two companion
+  AMS-LaTeX white papers.

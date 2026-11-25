@@ -1,0 +1,10 @@
+---
+description: Canonical project build standard, verification rules, and integrity boundaries for secmesh-pqsi
+alwaysApply: true
+---
+Follow `AGENTS.md` at repository root as the canonical specification for `secmesh-pqsi`.
+Key invariants:
+- Zero Mathlib, zero `sorry`/`admit`/`native_decide`/custom `axiom` in all Lean 4.35 proof modules (`lean/PalomarChallenge.lean` stubs only).
+- Compile native C11 with `-std=c11 -O2 -Wall -Wextra -Werror` and keep 40/40 native tests, 12/12 Node tests, and 11/11 Python pytest tests passing.
+- Commit and push straight to `main`; never add blocking hooks, branch protection, commit signing, or banned bot configs (Build Standard v1.2.0 R1–R8).
+- Classify all review findings using the 10-class taxonomy (`bug`, `error`, `issue`, `problem`, `concern`, `dilemma`, `conflict`, `gap`, `hole`, `blindspot`).

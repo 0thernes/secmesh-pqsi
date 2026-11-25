@@ -1,0 +1,149 @@
+# SPDX-License-Identifier: Apache-2.0
+name: SecMesh-PQSI CI (Informational Multi-Platform Verification)
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  native-c11:
+    name: Native C11 Moonlab Core (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & test C11 core (-Wall -Wextra -Werror)
+        shell: bash
+        run: |
+          make -C native clean all test
+          ./native/build/secmesh_core mlkem-kat
+          ./native/build/secmesh_core bb144
+          ./native/build/secmesh_core entropy-status
+      - name: Run AddressSanitizer + UBSan (Ubuntu)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          make -C native sanitizers
+          gcc -std=c11 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Werror -DFUZZ_STANDALONE \
+            -Inative/include -Inative/third_party/moonlab \
+            native/third_party/moonlab/crypto/sha3/sha3.c \
+            native/third_party/moonlab/crypto/aes/aes.c \
+            native/third_party/moonlab/crypto/drbg/ctr_drbg.c \
+            native/third_party/moonlab/crypto/mlkem/mlkem.c \
+            native/third_party/moonlab/crypto/mlkem/poly.c \
+            native/third_party/moonlab/applications/health_tests.c \
+            native/third_party/moonlab/applications/qrng_di.c \
+            native/src/secmesh_entropy.c \
+            native/src/secmesh_it_crypto.c \
+            native/src/secmesh_quantum_geo.c \
+            native/tests/fuzz_parsers.c \
+            -o /tmp/fuzz_smoke_asan -lm
+          /tmp/fuzz_smoke_asan
+
+  node-and-python:
+    name: Node.js 25 Interop & Python Exact Suite (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build native C11 binary for cross-implementation differential tests
+        shell: bash
+        run: make -C native all
+      - name: Run Node.js 25 differential, interop & security tests (12/12)
+        shell: bash
+        run: |
+          node node/tests/test_secmesh_v2.mjs
+          node examples/quickstart_demo.mjs
+          node node/src/secmesh-cli.mjs audit
+      - name: Install Python deps & run exact audit, pytest, ruff, mypy, citation check
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy scipy matplotlib pytest ruff mypy jsonschema
+          python python/secmesh_verify/exact_audit.py
+          pytest python/tests/test_all.py -v
+          ruff check python scripts/check_citations.py || true
+          mypy python/secmesh_verify scripts/check_citations.py --ignore-missing-imports || true
+          python scripts/check_citations.py
+
+  lean4-multi-kernel:
+    name: Zero-Mathlib Lean 4.35.0 Multi-Kernel & Palomar Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install bubblewrap (for lake comparator) and elan Lean 4.35.0
+        run: |
+          sudo apt-get update && sudo apt-get install -y bubblewrap
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Clean build, strict axiom audit & multi-kernel replay
+        working-directory: lean
+        run: |
+          elan show
+          lake build
+          lake env lean VerifyAxioms.lean > /tmp/ci_axioms.txt
+          cat /tmp/ci_axioms.txt
+          ! grep -E "sorryAx|Lean\.ofReduceBool|Lean\.trustCompiler" /tmp/ci_axioms.txt
+          lake env leanchecker Solution
+          lake env leanchecker PalomarSolution
+          lake env leanchecker-paranoid Solution
+          lake env leanchecker-paranoid PalomarSolution
+          lake env leanexport Solution -- SecMeshPQSI.Solution.prove_all_secmesh_theorems SecMeshPQSI.NonVacuity.nonvac_all_hypotheses > /tmp/Solution.export
+          lake env con-leche --verified /tmp/Solution.export
+          lake env con-ron --verified /tmp/Solution.export
+          cat << 'EOF' > /tmp/nanoda.json
+          {
+            "export_file_path": "/tmp/Solution.export",
+            "use_stdin": false,
+            "permitted_axioms": ["propext", "Classical.choice", "Quot.sound"],
+            "unpermitted_axiom_hard_error": true,
+            "nat_extension": true,
+            "string_extension": true
+          }
+          EOF
+          lake env nanoda_bin /tmp/nanoda.json
+          lake comparator --config palomar_comparator.json --paranoid || true
+
+  white-papers:
+    name: AMS-LaTeX White Papers & arXiv Tarball Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Tectonic
+        run: |
+          curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh
+          echo "$PWD" >> "$GITHUB_PATH"
+      - name: Compile White Papers I & II and test standalone arXiv tarball
+        run: |
+          (cd paper && tectonic -X compile main.tex --outdir build)
+          (cd paper/engineering && tectonic -X compile secmesh_architecture.tex --outdir build)
+          mkdir -p /tmp/arxiv_verify
+          tar -xzf dist/arxiv_submission.tar.gz -C /tmp/arxiv_verify
+          (cd /tmp/arxiv_verify && tectonic -X compile main.tex)
+      - name: Attest frozen PDF & arXiv artifacts on main push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf
+            dist/Donahue_2026_secmesh_pqsi_architecture.pdf
+            dist/arxiv_submission.tar.gz

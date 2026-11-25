@@ -1,0 +1,41 @@
+;; SPDX-License-Identifier: Apache-2.0
+;; Copyright (c) 2026 Alexander S. Donahue
+;;
+;; Eshkol v1.3.6 Quantum Geometric Tensor (QGTL) Concurrence Surplus Module
+;; Verifies Theorem T4a via Eshkol exact AD:
+;;   det(g) - (1/4) * Omega^2 == (C^2 / 4) * sin^2(theta / 2)
+;; where C = |sin(2*alpha)| is Wootters concurrence and S_max = 2*sqrt(1 + C^2).
+
+(define (qgt-g-tt theta alpha) 0.25)
+
+(define (qgt-g-pp theta alpha)
+  (let* ((st (sin theta))
+         (sh (sin (* 0.5 theta)))
+         (c  (sin (* 2.0 alpha))))
+    (+ (* 0.25 (* st st)) (* (* c c) (* sh (* sh (* sh sh)))))))
+
+(define (qgt-omega-tp theta alpha)
+  (* -0.5 (* (cos (* 2.0 alpha)) (sin theta))))
+
+;; Exact QGT Entanglement Surplus: det(g) - (1/4) * Omega^2
+(define (qgt-surplus theta alpha)
+  (let ((det-g (* (qgt-g-tt theta alpha) (qgt-g-pp theta alpha)))
+        (om    (qgt-omega-tp theta alpha)))
+    (- det-g (* 0.25 (* om om)))))
+
+;; Exact Theorem T4a closed form: (sin^2(2*alpha) / 4) * sin^2(theta / 2)
+(define (qgt-surplus-closed theta alpha)
+  (let ((c  (sin (* 2.0 alpha)))
+        (sh (sin (* 0.5 theta))))
+    (* 0.25 (* (* c c) (* sh sh)))))
+
+(with-region 'secmesh-qgt-entanglement-ad
+  (let* ((theta0 1.0471975511965976) ;; pi / 3
+         (alpha0 0.7853981633974483) ;; pi / 4 (singlet, C = 1)
+         (diff-err (- (qgt-surplus theta0 alpha0) (qgt-surplus-closed theta0 alpha0)))
+         (d-surp-dt (derivative (lambda (t) (qgt-surplus t alpha0)) theta0))
+         (d-surp-da (derivative (lambda (a) (qgt-surplus theta0 a)) 0.39269908169872414)))
+    (display "SecMesh-PQSI Eshkol QGTL Concurrence Surplus Report") (newline)
+    (display "  Identity residual (exact = 0)  = ") (display diff-err)  (newline)
+    (display "  d(surplus)/d(theta) at singlet = ") (display d-surp-dt) (newline)
+    (display "  d(surplus)/d(alpha) at pi/8    = ") (display d-surp-da) (newline)))

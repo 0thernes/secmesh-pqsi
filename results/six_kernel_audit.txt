@@ -1,0 +1,26 @@
+# Multi-Kernel Lean 4.35.0 Clean-Room Verification Audit (5 Distinct Implementations / 6 Completed Runs)
+Date: 2026-11-25
+Toolchain: leanprover/lean4:v4.35.0 (zero Mathlib, zero external Lake dependencies)
+Core Linters: autoImplicit=false, relaxedAutoImplicit=false, linter.unusedVariables=true, linter.deprecated=true
+Source inventory: 12 .lean files, 3,501 total lines:
+  - 5 core theorem modules (SecMeshPQSI/{FiniteKey,InfoTheoretic,ThresholdPIR,QuantumGeometry,LatticeBandwidth}.lean): 2,194 lines
+  - NonVacuity.lean + SecMeshPQSI.lean + Challenge.lean + Solution.lean + VerifyAxioms.lean: 452 lines
+  - PalomarSolution.lean: 512 lines (zero sorry)
+  - Standalone zero-import PalomarChallenge.lean: 343 lines, 13,348 bytes (< 1000 lines, < 100 KiB Palomar budget; placeholder sorries only, never imported by proofs)
+Forbidden-token scan (comment-stripped across all 11 proof/solution .lean modules): 0 forbidden tokens (zero sorry, admit, native_decide, axiom, implemented_by, @[extern).
+
+Targets exported:
+- Solution: SecMeshPQSI.Solution.prove_all_secmesh_theorems (21 theorems: T1a-T1e, T2a-T2d, T3a-T3c, T4a-T4c2, T5a-T5d) and SecMeshPQSI.NonVacuity.nonvac_all_hypotheses -> 3,505 exported declarations (19,875,313 bytes)
+- PalomarSolution: all 21 standalone Palomar Comparator theorems (SecMeshPQSI.Palomar.*) -> 3,545 exported declarations (20,085,179 bytes)
+
+Completed locally reproducible kernel checks (5 distinct kernel implementations across 6 runs):
+1. lean v4.35.0 (lake build + VerifyAxioms.lean): PASS (15/15 default jobs, 0 warnings, 44/44 exported decls strictly within [propext, Classical.choice, Quot.sound], 0 forbidden axioms; see results/lean_axioms.txt)
+2. leanchecker (C++ external .olean replayer — standard mode): PASS on Solution (exit 0) and PalomarSolution (exit 0)
+3. leanchecker-paranoid (C++ external .olean replayer — paranoid mode; same implementation family as #2): PASS on Solution (exit 0) and PalomarSolution (exit 0)
+4. con-leche --verified (verified Lean-in-Lean kernel): PASS (exit 0) -- accepted 3,505 declarations (Solution) and 3,545 declarations (PalomarSolution)
+5. con-ron --verified (verified Aeneas Rust kernel): PASS (exit 0) -- accepted 3,505 declarations (Solution) and 3,545 declarations (PalomarSolution)
+6. nanoda_bin 0.4.19 (independent Rust kernel, unpermitted_axiom_hard_error=true, nat_extension=true, string_extension=true): PASS (exit 0) on Solution (3,505 decls) and PalomarSolution (3,545 decls), 0 typechecker errors, 0 unpermitted axioms
+
+Upstream Windows tooling limitations (explicitly excluded from completed local kernel count above):
+- lean4lean.exe (bundled in leanprover--lean4---v4.35.0 Windows toolchain): FAILED locally — classified as an upstream problem; `lake env lean4lean Solution` exits 1 with `failed to read file '...Solution.olean', incompatible header` due to an upstream .olean header-version mismatch in the Windows bundle. Accordingly, lean4lean is NOT counted among the 5 completed locally reproducible kernel implementations above.
+- lake comparator --config palomar_comparator.json --paranoid / lake check --paranoid: Lean 4.35's sandboxed comparator requires Linux user namespaces (bwrap); tested in Linux (ubuntu-latest) CI workflow (.github/workflows/ci.yml) rather than native Windows.

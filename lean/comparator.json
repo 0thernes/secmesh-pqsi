@@ -1,0 +1,34 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "SecMeshPQSI.Solution.t1a_v1_tsirelson_violation",
+    "SecMeshPQSI.Solution.t1b_hoeffding_range2_factor4",
+    "SecMeshPQSI.Solution.t1c_di_quarter_circle_duality",
+    "SecMeshPQSI.Solution.t1d_denoise_majority_bias_and_fragility",
+    "SecMeshPQSI.Solution.t1e_composable_epsilon_conservation",
+    "SecMeshPQSI.Solution.t2a_shannon_otp_perfect_secrecy",
+    "SecMeshPQSI.Solution.t2b_hybrid_dual_survivability",
+    "SecMeshPQSI.Solution.t2c1_toeplitz_exact_2_universal",
+    "SecMeshPQSI.Solution.t2c2_cauchy_schwarz_lhl",
+    "SecMeshPQSI.Solution.t2d_carter_wegman_poly_bound",
+    "SecMeshPQSI.Solution.t3a_shamir_threshold_and_secrecy",
+    "SecMeshPQSI.Solution.t3b_byzantine_singleton_tightness",
+    "SecMeshPQSI.Solution.t3c_pir_byzantine_capacity_gap",
+    "SecMeshPQSI.Solution.t4a_qgt_psd_lagrange_and_trace",
+    "SecMeshPQSI.Solution.t4b_qgt_concurrence_surplus_identity",
+    "SecMeshPQSI.Solution.t4c1_general_bb_commutation",
+    "SecMeshPQSI.Solution.t4c2_bravyi_gross_bb144_certified",
+    "SecMeshPQSI.Solution.t5a_fips203_ntt_prime_and_root",
+    "SecMeshPQSI.Solution.t5b_montgomery_reduction_exact",
+    "SecMeshPQSI.Solution.t5c_mlkem_compress1_margin",
+    "SecMeshPQSI.Solution.t5d_kn_mesh_bandwidth_and_hedge_overhead",
+    "SecMeshPQSI.Solution.prove_all_secmesh_theorems"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

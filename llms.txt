@@ -1,0 +1,24 @@
+# SecMesh-PQSI
+
+> Clean-room Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) cryptographic mesh defense engine rebuilt atop Tsotchke's stack, backed by 21 zero-Mathlib Lean 4.35.0 theorems verified across 5 distinct proof kernels and two companion AMS-LaTeX white papers.
+
+## Core Entrypoints
+- [README.md](README.md): Overview, verbatim `#print axioms` 5-second proof, quickstart, and honest scope.
+- [AGENTS.md](AGENTS.md): Canonical engineering and verification instructions.
+- [CLAIMS.md](CLAIMS.md): Numbered claims ledger (`kernel-checked` / `differential-tested` / `numerical` / `open-problem`).
+- [LIMITATIONS.md](LIMITATIONS.md): Explicit cryptographic, formalization, simulation, and tooling boundaries.
+- [REPLICATION.md](REPLICATION.md): End-to-end clean-room replication steps.
+
+## White Papers & Formal Proofs
+- [White Paper I — Formal Foundations (LaTeX)](paper/main.tex) | [Frozen PDF](dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf)
+- [White Paper II — Systems Architecture (LaTeX)](paper/engineering/secmesh_architecture.tex) | [Frozen PDF](dist/Donahue_2026_secmesh_pqsi_architecture.pdf)
+- [Lean 4.35 Master Entrypoint](lean/SecMeshPQSI.lean) | [Palomar Challenge](lean/PalomarChallenge.lean) | [Palomar Solution](lean/PalomarSolution.lean)
+- [Multi-Kernel Audit Transcript](results/six_kernel_audit.txt) | [Axiom Allowlist Transcript](results/lean_axioms.txt)
+
+## Software Implementation
+- [Native C11 Moonlab Core](native/include/secmesh_pqsi.h)
+- [Node.js 25 PQSI Handshake](node/src/pqsi-handshake.mjs) | [Hardened Guardian v2](node/src/mesh-guardian-v2.mjs)
+- [Eshkol v1.3.6 AD Modules](eshkol/finite_key_ad.esk)
+- [Python Exact Verification](python/secmesh_verify/exact_audit.py)
+- [Tsotchke 30-Repo Integration Map](docs/tsotchke-stack-map.md)
+- [Interactive Defense Console](app/index.html)

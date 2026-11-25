@@ -1,0 +1,118 @@
+# SPDX-License-Identifier: Apache-2.0
+# yaml-language-server: $schema=./repo-standard.schema.json
+# Project manifest for the Build Standard for LLMs v1.2.0. Read by scripts/Audit-Repo.ps1 and scripts/audit-repo.sh.
+standard: "1.2.0"
+name: "secmesh-pqsi"
+description: "Post-Quantum & Post-Super-Intelligence (information-theoretic) cryptographic mesh defense engine rebuilt atop Tsotchke's stack, backed by 21 zero-Mathlib Lean 4.35.0 theorems verified across 5 distinct kernels and 2 AMS-LaTeX white papers."
+owner: "0thernes"
+year: 2026
+project_type: research
+stack: [c, node, python, lean, latex, other]
+flags:
+  public: true
+  package: false
+  visual: true
+  ui: true
+  native: true
+  ai: false
+  personal_data: false
+  service: false
+  deployed: true
+  api: false
+  perf: true
+  concurrent: false
+  numeric: true
+  experimental: true
+  ml: false
+  formal: true
+items:
+  A01: {status: done, evidence: "README.md"}
+  A02: {status: done, evidence: "README.md shields.io badge ribbon"}
+  A03: {status: done, evidence: "README.md Quickstart section"}
+  A04: {status: done, evidence: "README.md Core Results & examples/quickstart_demo.mjs"}
+  A05: {status: done, evidence: "app/index.html interactive console & paper/figures/*.pdf"}
+  A06: {status: done, evidence: "LICENSE (Apache-2.0), LICENSE-DOCS (CC-BY-4.0), REUSE.toml, native/third_party/moonlab/LICENSE-MOONLAB (MIT)"}
+  A07: {status: done, evidence: "CHANGELOG.md"}
+  A08: {status: done, evidence: "VERSION 1.0.0 synced with CHANGELOG.md, CITATION.cff, package.json, pyproject.toml"}
+  A09: {status: done, evidence: "native/tests/test_native_core.c (40/40), node/tests/test_secmesh_v2.mjs (12/12), python/tests/test_all.py (11/11)"}
+  A10: {status: done, evidence: ".github/workflows/ci.yml (informational Ubuntu + Windows matrix)"}
+  A11: {status: done, evidence: ".github/workflows/release.yml triggered on v* tags"}
+  A12: {status: done, evidence: ".gitignore"}
+  A13: {status: done, evidence: ".gitattributes and .editorconfig"}
+  A14: {status: done, evidence: "CONTRIBUTING.md"}
+  A15: {status: done, evidence: "CODE_OF_CONDUCT.md"}
+  A16: {status: done, evidence: "SECURITY.md"}
+  A17: {status: done, evidence: "SUPPORT.md"}
+  A18: {status: done, evidence: ".github/ISSUE_TEMPLATE/{config,bug,feature,question}.yml (no PR template per R4)"}
+  A19: {status: done, evidence: "GitHub About description, Pages homepage, and topics configured on 0thernes/secmesh-pqsi"}
+  A20: {status: done, evidence: "docs/architecture.md and paper/engineering/secmesh_architecture.tex"}
+  A21: {status: done, evidence: "docs/adr/0001-*.md, 0002-*.md, 0003-*.md"}
+  A22: {status: done, evidence: "CITATION.cff and .zenodo.json"}
+  A23: {status: done, evidence: "Clean unsigned commit history straight to main with real author identity"}
+  A24: {status: done, evidence: "Zero secrets, build artifacts, or >5MB blobs committed"}
+  A25: {status: done, evidence: ".github/workflows/ci.yml runs ubuntu-latest and windows-latest"}
+  A26: {status: done, evidence: "docs/media/social-preview.svg"}
+  A27: {status: done, evidence: ".github/workflows/pages.yml deploys app/index.html interactive defense console"}
+  A28: {status: n/a, note: "Research artifact (package: false); package.json and pyproject.toml provided for reproducible local runs"}
+  A29: {status: done, evidence: "ROADMAP.md"}
+  A30: {status: done, evidence: ".github/labels.tsv covers all 10 finding classes"}
+  A31: {status: done, evidence: "justfile and scripts/dev.sh"}
+  A32: {status: done, evidence: "AGENTS.md canonical + CLAUDE.md + GEMINI.md + .cursor/rules/build-standard.mdc + llms.txt + llms-full.txt"}
+  A33: {status: done, evidence: ".env.example and docs/configuration.md"}
+  A34: {status: n/a, note: "Local CLI/library research prototype, not a hosted always-on SaaS service"}
+  A35: {status: done, evidence: "docs/operations.md health-gate & incident playbook"}
+  A36: {status: done, evidence: "GitHub Pages static console deployment in .github/workflows/pages.yml"}
+  A37: {status: done, evidence: "Measured wire sizes & live 391.0 ms SLH-DSA handshake latency in White Paper II Table 2 and node/tests/test_secmesh_v2.mjs"}
+  A38: {status: done, evidence: "app/index.html uses semantic landmarks, high-contrast colorblind-safe palette, and keyboard-navigable controls"}
+  A39: {status: done, evidence: "THIRD_PARTY_NOTICES.md with pinned commit SHAs and native/third_party/moonlab/LICENSE-MOONLAB"}
+  A40: {status: n/a, note: "Software invokes zero runtime AI/LLM APIs; AI development assistance disclosed in white papers & formalization.yaml"}
+  A41: {status: n/a, note: "Not a published npm/PyPI library package"}
+  A42: {status: done, evidence: "README.md and SECURITY.md support status"}
+  A43: {status: done, evidence: "examples/README.md and runnable examples/quickstart_demo.mjs"}
+  A44: {status: done, evidence: "docs/faq.md and docs/glossary.md"}
+  A45: {status: done, evidence: "docs/privacy.md (zero telemetry, zero personal data collected)"}
+  B01: {status: done, evidence: "justfile, scripts/dev.sh, and REPLICATION.md"}
+  B02: {status: done, evidence: "lean/lean-toolchain, requirements.lock.txt, pyproject.toml, package.json, UPSTREAM_COMMIT.txt"}
+  B03: {status: done, evidence: "Deterministic seeded Node/Python runs, exact integer Lean proofs, Rosette-Wire canonical SHA-256 bundles"}
+  B04: {status: done, evidence: "CLAIMS.md numbered claims ledger with 4 status tiers"}
+  B05: {status: done, evidence: "40 C11 + 12 Node + 11 Python pytest tests covering C1-C11"}
+  B06: {status: done, evidence: "Negative/adversarial tests: FO tamper reject, SP 800-90B stuck-at reject, Parked Eve reject, CW-128 forge reject, Compress_1 e=+832 failure, Shamir n<t+2b refusal"}
+  B07: {status: done, evidence: "Regression tests for all 10 legacy SecMesh v1 defects in node/tests/test_secmesh_v2.mjs and python/tests/test_all.py"}
+  B08: {status: done, evidence: "results/lean_axioms.txt, results/exact_verification_report.json, rosette/latest-audit/, MANIFEST.sha256"}
+  B09: {status: done, evidence: "Exact JSON CLI contracts verified across C11 <-> Node <-> Python differential harnesses"}
+  B10: {status: done, evidence: "Exhaustive & metamorphic property tests in python/tests/test_all.py and native/tests/test_native_core.c"}
+  B11: {status: done, evidence: "Bit-exact C11 Moonlab <-> OpenSSL 3.5.5 ML-KEM-768 interop + C11 <-> Node <-> Python finite-key/QGT/BB144 differential checks + 5-kernel Lean replay"}
+  B12: {status: done, evidence: "60-digit Decimal Python exact oracles & exhaustive GF(2)/F_17/byte enumerators"}
+  B13: {status: done, evidence: "Adversarial tamper/mutant rejection tests (ML-KEM ciphertext bit-flip, CW-128 bit-flip/length-extension, corrupted Shamir shares, forbidden Lean token check)"}
+  B14: {status: done, evidence: "Metamorphic Toeplitz F_2 linearity & OTP involutive bijection tests in native/tests/test_native_core.c and python/tests/test_all.py"}
+  B15: {status: done, evidence: "libFuzzer harness in native/tests/fuzz_parsers.c and justfile fuzz recipe (500/500 standalone corpus smoke pass)"}
+  B16: {status: done, evidence: "GCC -std=c11 -O2 -Wall -Wextra -Werror (0 warnings) + ASan/UBSan sanitizer job in .github/workflows/ci.yml"}
+  B17: {status: done, evidence: "ruff check (0 errors) configured in pyproject.toml and .github/workflows/ci.yml"}
+  B18: {status: done, evidence: "mypy (0 issues) configured in pyproject.toml and .github/workflows/ci.yml"}
+  B19: {status: n/a, note: "Single-threaded deterministic cryptographic core and sequential audit pipeline"}
+  B20: {status: done, evidence: "60-digit Decimal QGT verification (max residual 3.3e-60) and exact Chernoff-KL inversion (<1e-11 C11<->Node<->Python agreement)"}
+  B21: {status: n/a, note: "No distributed multi-host production cluster deployment"}
+  B22: {status: done, evidence: "Zero-Mathlib Lean 4.35.0 formalization (12 files, 3,501 lines) replayed across 5 distinct kernel implementations (6 runs)"}
+  B23: {status: n/a, note: "Cryptographic algebra and finite-key bounds proved directly in Lean 4; no concurrent consensus state machine requiring TLA+"}
+  B24: {status: done, evidence: "All 21 headline theorems (T1a-T5d) + SimpleField (Fin 5) NonVacuity machine-checked in Lean 4.35.0"}
+  B25: {status: n/a, note: "C11 core audited via -Wall -Wextra -Werror, ASan/UBSan, FIPS KATs, and Lean 4 algebraic proofs (T5a-T5c); CBMC/Kani deferred"}
+  B26: {status: done, evidence: "Exact wire-size profiles (192..14,989 B) and K_N ceilings measured and proved in T5d and White Paper II Table 2"}
+  B27: {status: done, evidence: "Live SLH-DSA lattice-hedged handshake benchmark (25,003 B RTT, 391.0 ms) reproducible via examples/quickstart_demo.mjs"}
+  B28: {status: done, evidence: "Pre-registered 30-seed paired simulation (seeds 20260001..20260030) in exact_audit.py"}
+  B29: {status: done, evidence: "Exact two-sided paired sign-flip permutation test (p = 1.86e-9) in exact_audit.py"}
+  B30: {status: done, evidence: "95% confidence intervals and Cohen's dz reported in White Paper II Table 4 and results/exact_verification_report.json"}
+  B31: {status: done, evidence: "Holm-Bonferroni family-wise error correction across m=2 primary endpoints (p_Holm = 3.73e-9)"}
+  B32: {status: done, evidence: "Pre-registered seed range & deviations logged in DEVIATIONS.md and White Paper II Section 5"}
+  B33: {status: n/a, note: "No machine learning model training"}
+  B34: {status: n/a, note: "No runtime AI/LLM components"}
+  B35: {status: done, evidence: "CycloneDX sbom.cdx.json, THIRD_PARTY_NOTICES.md, and scripts/check_citations.py"}
+  B36: {status: done, evidence: "docs/threat-model.md and White Paper II Section 4"}
+  B37: {status: done, evidence: "MANIFEST.sha256 verified across all frozen artifacts and release workflow"}
+  B38: {status: done, evidence: "actions/attest-build-provenance@v2 in .github/workflows/ci.yml"}
+  B39: {status: n/a, note: "No external dataset corpus; generated exact verification artifacts hashed in MANIFEST.sha256"}
+  B40: {status: done, evidence: "docs/run-log.md and rosette/latest-audit/bundle.json"}
+  B41: {status: done, evidence: "LIMITATIONS.md"}
+  B42: {status: done, evidence: "CLAIMS.md What Would Prove Us Wrong section"}
+  B43: {status: done, evidence: "REPLICATION.md"}
+  B44: {status: partial, note: "Clean-room self-replication verified on Windows + planned Ubuntu CI; independent external second-person replication open"}
+  B45: {status: done, evidence: "docs/reviews/01-10-pass-review.md and HARDENING_LOG.md (3 full cycles); external journal peer review pending"}

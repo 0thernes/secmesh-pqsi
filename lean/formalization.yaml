@@ -1,0 +1,190 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# SPDX-License-Identifier: Apache-2.0
+version: "v0.4"
+release_version: "1.0.0"
+
+project:
+  name: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"
+  description: >-
+    Zero-Mathlib Lean 4.35.0 formalization of 21 theorems across five mathematical
+    families (T1-T5) underlying the SecMesh-PQSI hybrid cryptographic defense engine:
+    (T1) forensic resolution of finite-key DI-QKD/E91 defects in upstream SecMesh v1
+    (super-quantum Tsirelson violation 354/125 > 2*sqrt(2), factor-of-4 range-2 Hoeffding
+    exponent error, quarter-circle duality between von Neumann and Pironio DI min-entropy,
+    8-bit majority deNoise bias 93/256 and fragility 70/256, and composable epsilon
+    conservation); (T2) unconditional information-theoretic Post-Super-Intelligence (PSI)
+    security (Shannon OTP bijection, hybrid XOR dual-survivability, constructive general-dimension
+    binary Toeplitz exact 2-universality, integer Cauchy-Schwarz Leftover Hash Lemma core,
+    and general-field Carter-Wegman degree-d polynomial root bound); (T3) Shamir (t,n)
+    exact threshold reconstruction and (t-1)-collusion zero-leakage secrecy, Byzantine
+    Singleton bound tightness n >= t + 2b, and CS-053 colluding/coded Byzantine PIR
+    capacity gap; (T4) D-dimensional complex QGT Hermitian PSD Lagrange/trace uncertainty,
+    an exact closed-form QGT Concurrence Surplus identity det(g) - (1/4)Omega^2 = (C^2/4)sin^2(theta/2)
+    bridging QGTL to Horodecki CHSH, and general + Bravyi [[144,12,12]] Gross BB qLDPC
+    CSS orthogonality; and (T5) FIPS 203 ML-KEM prime q=3329 / primitive 256-th NTT root
+    zeta=17, exact zero-overflow Montgomery reduction, exact Compress_1 error margin |e|<=831,
+    and complete-graph K_N wire-bandwidth ceiling optimality.
+  authors:
+    - name: "Alexander S. Donahue"
+      orcid: "0009-0006-8168-9648"
+      email: "0_0@0thernes.art"
+      affiliation: "Independent Researcher, Spokane, WA, USA"
+  responsible_maintainers:
+    - name: "Alexander S. Donahue"
+      github: "0thernes"
+      orcid: "0009-0006-8168-9648"
+      email: "0_0@0thernes.art"
+  license: "Apache-2.0"
+
+classification:
+  arxiv:
+    - "cs.CR"
+    - "quant-ph"
+    - "cs.IT"
+    - "cs.LO"
+  msc2020:
+    - "94A60"
+    - "81P94"
+    - "94A62"
+    - "94B05"
+    - "03B35"
+
+sources:
+  - title: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"
+    authors:
+      - "Alexander S. Donahue"
+    id: "https://github.com/0thernes/secmesh-pqsi"
+    type: "original-proof"
+    relationship: "other"
+    note: >-
+      Original formalization and companion AMS-LaTeX white papers first presented in
+      this repository. No external DOI, arXiv ID, or peer review is claimed prior to
+      confirmed external assignment.
+  - title: "Module-Lattice-Based Key-Encapsulation Mechanism Standard (FIPS 203)"
+    authors:
+      - "National Institute of Standards and Technology"
+    id: "https://doi.org/10.6028/NIST.FIPS.203"
+    type: "standard"
+    relationship: "background"
+    note: "Defines ML-KEM modulus q=3329, NTT root zeta=17, Montgomery arithmetic, and Compress_1."
+  - title: "High-threshold and low-overhead fault-tolerant quantum memory"
+    authors:
+      - "Sergey Bravyi"
+      - "Andrew W. Cross"
+      - "Jay M. Gambetta"
+      - "Dmitri Maslov"
+      - "Patrick Rall"
+      - "Theodore J. Yoder"
+    id: "https://doi.org/10.1038/s41586-024-07107-7"
+    type: "paper"
+    relationship: "background"
+    note: "Defines the [[144, 12, 12]] Gross bivariate-bicycle qLDPC code certified in T4c."
+  - title: "Random numbers certified by Bell's theorem"
+    authors:
+      - "Stefano Pironio"
+      - "Antonio Acin"
+      - "Serge Massar"
+      - "A. Boyer de la Giroday"
+      - "Dzmitry N. Matsukevich"
+      - "Peter Maunz"
+      - "Steven Olmschenk"
+      - "David Hayes"
+      - "Le Luo"
+      - "T. Andrew Manning"
+      - "Christopher Monroe"
+    id: "https://doi.org/10.1038/nature09008"
+    type: "paper"
+    relationship: "background"
+    note: "Establishes the CHSH device-independent min-entropy bound H_min^DI(S) audited in T1c."
+
+related_formalizations: []
+
+status:
+  scope: >-
+    Complete zero-Mathlib Lean 4.35.0 formalization of all 21 core algebraic,
+    combinatorial, and information-theoretic theorems T1a-T5d plus concrete
+    non-vacuity witnesses (SecMeshPQSI/NonVacuity.lean, including SimpleField (Fin 5)).
+    Not formalized in Lean: real-analytic transcendental logarithms/exponentials
+    (Bernoulli KL-Chernoff inversion and binary entropy numerical evaluations,
+    verified to high precision in Python/C11/Node), side-channel timing/hardware
+    leakage of C11/OpenSSL executables, computational hardness conjectures (LWE/MLWE),
+    or physical photonic Bell-test loophole closure.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+  main_results:
+    - declaration: "SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: []
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t2b_hybrid_dual_survivability"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t2c1_toeplitz_exact_2_universal"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t3a_shamir_threshold_and_secrecy"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t3b_byzantine_singleton_tightness"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+    - declaration: "SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact"
+      file: "lean/PalomarSolution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "lean/palomar_comparator.json"
+
+automation:
+  methods:
+    - method: "manual"
+      notes: "Alexander S. Donahue conceived the project scope, directed the forensic audit of upstream SecMesh and Tsotchke stack integration, reviewed every theorem statement against cryptographic standards, and approved publication."
+    - method: "agent"
+      models:
+        - "Gemini (Antigravity)"
+      framework: "Antigravity"
+      notes: >-
+        Assisted with formal Lean 4.35 proof engineering, C11/Node/Python/Eshkol
+        implementation, differential testing, and manuscript drafting under human
+        supervision. All 21 theorems are verified independently by multiple Lean 4.35
+        proof kernels (results/six_kernel_audit.txt).
+
+fidelity:
+  divergences: >-
+    Transcendental real-number bounds (Hoeffding exponential, binary entropy h(p),
+    and trigonometric cos/sin) are formalized via exact integer/rational algebraic
+    identities and cleared-denominator inequalities (T1a, T1b, T1c, T4b) so the
+    Lean trusted computing base requires zero Mathlib dependencies; transcendental
+    numerical curves are cross-verified to 60-digit decimal precision in Python and
+    against C11/Node implementations.
+
+review:
+  status: "self-assessed"
+  notes: >-
+    Not externally peer-reviewed. Machine-checked across 5 distinct completed Lean
+    4.35 kernel implementations (6 runs: lean v4.35.0, leanchecker,
+    leanchecker-paranoid, con-leche --verified, con-ron --verified, and nanoda_bin;
+    see results/six_kernel_audit.txt) with 0 warnings, 0 proof sorries, and
+    concrete non-vacuity witnesses in lean/SecMeshPQSI/NonVacuity.lean.

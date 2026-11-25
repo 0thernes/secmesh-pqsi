@@ -1,0 +1,36 @@
+# SecMesh-PQSI — Full LLM Reference Index
+
+Author: Alexander S. Donahue (Independent Researcher, Spokane, WA, USA; ORCID 0009-0006-8168-9648; 0_0@0thernes.art)
+License: Apache-2.0 (code), MIT (vendored native/third_party/moonlab), CC-BY-4.0 (manuscripts & docs)
+Version: 1.0.0 (2026-11-25)
+
+## 1. Summary of 21 Machine-Checked Lean 4.35.0 Theorems
+- T1a (`t1a_v1_tsirelson_violation`, 0 axioms): Legacy SecMesh v1 `CELL_P=[0.146,0.854]` gives expected `S = 354/125 = 2.832 > 2*sqrt(2)` (`354^2 - 8*125^2 = 316`).
+- T1b (`t1b_hoeffding_range2_factor4`): Range-2 `±1` Hoeffding requires 4x sample factor vs range-1; v1 inflates per-cell failure at `eps=1e-6` from `2.5e-7` to `0.0285744 > 1/50`.
+- T1c (`t1c_di_quarter_circle_duality`): Exact quarter-circle duality `u^2 + v^2 = 1` separating Acin-Pironio collective von Neumann `H_vN^DI(S)` from Pironio strict min-entropy `H_min^DI(S)` (`H_min(2.5) < H_vN(2.5)`; numerical max gap `+0.235703` bits/round at `S = 2.699192`).
+- T1d (`t1d_denoise_majority_bias_and_fragility`, 0 axioms): Legacy 8-bit majority `deNoise` outputs 1 on `93/256`, 0 on `163/256`, and is single-flip fragile on `70/256` weight-4 bytes.
+- T1e (`t1e_composable_epsilon_conservation`): Additive 5-lane composable epsilon union bound vs legacy v1 double-spending `eps_s` and omitting `eps_Q`, `eps_cor`.
+- T2a (`t2a_shannon_otp_perfect_secrecy`): Exact OTP bijection over `{0,1}^n` for all `n`.
+- T2b (`t2b_hybrid_dual_survivability`): General k-factor XOR combiner retains unconditional bijection whenever at least one factor survives.
+- T2c1 (`t2c1_toeplitz_exact_2_universal`): Constructive back-substitution proof of exact 2-universality of `(m+n-1)`-bit binary Toeplitz hashing for all `m, n`.
+- T2c2 (`t2c2_cauchy_schwarz_lhl`): Exact integer Cauchy-Schwarz Lagrange core of Renner's Leftover Hash Lemma.
+- T2d (`t2d_carter_wegman_poly_bound`): Degree `<= d` nonzero polynomial over any `SimpleField F` has at most `d` distinct roots (forging prob `<= d/2^128` over `GF(2^128)`).
+- T3a (`t3a_shamir_threshold_and_secrecy`): Exact Shamir `(t, n)` reconstruction and unique `(t-1)` Lagrange interpolation over any `SimpleField F` (zero mutual information).
+- T3b (`t3b_byzantine_singleton_tightness`): Unique Byzantine recovery for `n >= t + 2b` and exact distance `d = 2b` ambiguity at `n = t + 2b - 1`.
+- T3c (`t3c_pir_byzantine_capacity_gap`): Mega Atlas `CS-053` positive-rate threshold `N >= K + T + 2B` and exact `T^2 > 0` strict excess of Banawan-Ulukus `M=2` capacity over linear star-product rate.
+- T4a (`t4a_qgt_psd_lagrange_and_trace`): Exact D-dimensional complex QGT Lagrange and trace uncertainty inequalities `4*(g11*g22 - g12^2) >= Omega^2` and `(g11+g22)^2 >= Omega^2`.
+- T4b (`t4b_qgt_concurrence_surplus_identity`): New exact ring identity `det(g) - (1/4)*Omega^2 = (C^2/4)*sin^2(theta/2)` linking Tsotchke's QGTL to Wootters concurrence `C` and Horodecki CHSH `S_max = 2*sqrt(1+C^2)`.
+- T4c1 (`t4c1_general_bb_commutation`, 0 axioms): `AB = BA => H_X * H_Z^T = 0 (mod 2)` for bivariate-bicycle CSS codes.
+- T4c2 (`t4c2_bravyi_gross_bb144_certified`): Group-algebra involution + kernel check certifying all `5,184` CSS products and weight `6` stabilizers of Bravyi's `[[144,12,12]]` Gross code.
+- T5a (`t5a_fips203_ntt_prime_and_root`): `q = 3329` prime, `3329 = 13*256+1`, primitive 256-th root `zeta = 17`.
+- T5b (`t5b_montgomery_reduction_exact`): Zero-overflow exact Montgomery reduction across `|a| < 32768 * 3329`.
+- T5c (`t5c_mlkem_compress1_margin`): Exact FIPS 203 `Compress_1` decoding for `|e| <= 831` (strictly tight at `e = +832`).
+- T5d (`t5d_kn_mesh_bandwidth_and_hedge_overhead`): Complete-graph `K_N` ceiling `N_max = B/S + 1` and `< 1.75%` wire overhead (`+112 B`) for Ed25519 + CW-128 IT-MAC hedging.
+
+## 2. Multi-Kernel Verification Summary
+5 distinct Lean 4.35.0 kernel implementations (6 runs: `lean v4.35.0`, `leanchecker`, `leanchecker-paranoid`, `con-leche --verified`, `con-ron --verified`, `nanoda_bin 0.4.19`) accepted both `Solution` (3,505 decls) and `PalomarSolution` (3,545 decls) with 0 errors and strict axiom allowlist `[propext, Classical.choice, Quot.sound]`.
+
+## 3. Executable Verification Summary
+- Native C11 (`native/build/test_native_core`): 40/40 passed (`-std=c11 -O2 -Wall -Wextra -Werror`).
+- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 12/12 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop and live 25,003 B lattice-hedged PQSI handshake (391.0 ms).
+- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `ruff`, `mypy`, `check_citations.py --online`): 11/11 pytest passed, 0 ruff errors, 0 mypy errors, 32/32 live citations HTTP 200.

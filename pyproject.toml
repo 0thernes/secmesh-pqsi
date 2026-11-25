@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0
+[project]
+name = "secmesh-pqsi-verify"
+version = "1.0.0"
+description = "Independent exact-arithmetic verification, differential tests, and figure generators for SecMesh-PQSI"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "Alexander S. Donahue", email = "0_0@0thernes.art" }
+]
+dependencies = [
+  "numpy>=2.0",
+  "scipy>=1.14",
+  "matplotlib>=3.9",
+  "jsonschema>=4.20",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "pypdfium2>=4.30",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM", "PIE", "PLR", "FURB", "RUF", "BLE"]
+ignore = ["E501", "PLR0912", "PLR0913", "PLR0914", "PLR0915", "PLR2004"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = false
+ignore_missing_imports = true

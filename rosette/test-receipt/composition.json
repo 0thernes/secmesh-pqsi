@@ -1,0 +1,15 @@
+{
+  "schema": "rosette-wire/composition/v1",
+  "id": "unit-test-v2",
+  "components": [
+    "pqsi-handshake",
+    "finite-key-v2"
+  ],
+  "inputs": {
+    "seed": 7
+  },
+  "declaredBounds": {
+    "deterministicReplay": true,
+    "failClosed": true
+  }
+}
