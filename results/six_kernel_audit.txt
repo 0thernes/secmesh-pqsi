@@ -21,6 +21,12 @@ Completed locally reproducible kernel checks (5 distinct kernel implementations 
 5. con-ron --verified (verified Aeneas Rust kernel): PASS (exit 0) -- accepted 3,505 declarations (Solution) and 3,545 declarations (PalomarSolution)
 6. nanoda_bin 0.4.19 (independent Rust kernel, unpermitted_axiom_hard_error=true, nat_extension=true, string_extension=true): PASS (exit 0) on Solution (3,505 decls) and PalomarSolution (3,545 decls), 0 typechecker errors, 0 unpermitted axioms
 
-Upstream Windows tooling limitations (explicitly excluded from completed local kernel count above):
-- lean4lean.exe (bundled in leanprover--lean4---v4.35.0 Windows toolchain): FAILED locally — classified as an upstream problem; `lake env lean4lean Solution` exits 1 with `failed to read file '...Solution.olean', incompatible header` due to an upstream .olean header-version mismatch in the Windows bundle. Accordingly, lean4lean is NOT counted among the 5 completed locally reproducible kernel implementations above.
-- lake comparator --config palomar_comparator.json --paranoid / lake check --paranoid: Lean 4.35's sandboxed comparator requires Linux user namespaces (bwrap); tested in Linux (ubuntu-latest) CI workflow (.github/workflows/ci.yml) rather than native Windows.
+Upstream Windows tooling limitations & Ubuntu CI 6-kernel completion:
+- lean4lean.exe (bundled in leanprover--lean4---v4.35.0 Windows toolchain): FAILED locally on Windows (`incompatible header`), therefore excluded from the local Windows 5-kernel count above.
+- Ubuntu Linux CI (`lake comparator --config palomar_comparator.json --paranoid`, run 45672218385 job 139410239330): ALL 6 DISTINCT KERNELS PASSED ("Your solution is okay!"):
+  1. Lean paranoid kernel: accepts solution
+  2. lean4lean kernel: checked 3,549 declarations, accepts solution
+  3. nanoda kernel: accepts solution
+  4. con-leche kernel (--verified): accepted 3,552 declarations, accepts solution
+  5. con-ron kernel (--verified): accepted 3,552 declarations, accepts solution
+  6. Lean default kernel: accepts solution

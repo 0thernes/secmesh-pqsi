@@ -2,6 +2,13 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] — 2026-11-25
+
+### Fixed
+- **Ubuntu glibc C11 portability (`native/Makefile`, `.github/workflows/ci.yml`):** Added `-D_DEFAULT_SOURCE` under `-std=c11` so vendored Moonlab `utils/secure_memory.h` resolves `explicit_bzero` cleanly on Ubuntu Linux GCC (0 warnings).
+- **CI White Papers build directory (`.github/workflows/ci.yml`):** Created `paper/build` and `paper/engineering/build` prior to Tectonic compilation.
+- **Ubuntu 6-Kernel Palomar Comparator Verification:** Confirmed all 6 independent Lean 4.35.0 kernels (`Lean paranoid`, `lean4lean` [3,549 decls], `nanoda`, `con-leche` [3,552 decls], `con-ron` [3,552 decls], and `Lean default`) pass `lake comparator --config palomar_comparator.json --paranoid` (`"Your solution is okay!"`) on Ubuntu CI and promoted comparator check to strict mode.
+
 ## [1.0.0] — 2026-11-25
 
 ### Added

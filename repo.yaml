@@ -33,7 +33,7 @@ items:
   A05: {status: done, evidence: "app/index.html interactive console & paper/figures/*.pdf"}
   A06: {status: done, evidence: "LICENSE (Apache-2.0), LICENSE-DOCS (CC-BY-4.0), REUSE.toml, native/third_party/moonlab/LICENSE-MOONLAB (MIT)"}
   A07: {status: done, evidence: "CHANGELOG.md"}
-  A08: {status: done, evidence: "VERSION 1.0.0 synced with CHANGELOG.md, CITATION.cff, package.json, pyproject.toml"}
+  A08: {status: done, evidence: "VERSION 1.0.1 synced with CHANGELOG.md, CITATION.cff, package.json, pyproject.toml"}
   A09: {status: done, evidence: "native/tests/test_native_core.c (40/40), node/tests/test_secmesh_v2.mjs (12/12), python/tests/test_all.py (11/11)"}
   A10: {status: done, evidence: ".github/workflows/ci.yml (informational Ubuntu + Windows matrix)"}
   A11: {status: done, evidence: ".github/workflows/release.yml triggered on v* tags"}

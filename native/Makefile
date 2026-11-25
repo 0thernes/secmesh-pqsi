@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 CC      ?= gcc
-CFLAGS  ?= -std=c11 -O2 -Wall -Wextra -Wpedantic -Werror -Iinclude -Ithird_party/moonlab
+CFLAGS  ?= -std=c11 -D_DEFAULT_SOURCE -O2 -Wall -Wextra -Wpedantic -Werror -Iinclude -Ithird_party/moonlab
 LDFLAGS ?= -lm
 
 ifeq ($(OS),Windows_NT)
@@ -43,7 +43,7 @@ test: all
 	./$(BUILD_DIR)/test_native_core$(EXE)
 
 sanitizers: | $(BUILD_DIR)
-	$(CC) -std=c11 -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-omit-frame-pointer \
+	$(CC) -std=c11 -D_DEFAULT_SOURCE -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-omit-frame-pointer \
 	  -Iinclude -Ithird_party/moonlab $(CORE_SRCS) $(MOONLAB_SRCS) tests/test_native_core.c \
 	  -o $(BUILD_DIR)/test_native_core_san$(EXE) $(LDFLAGS)
 	./$(BUILD_DIR)/test_native_core_san$(EXE)
