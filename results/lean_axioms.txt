@@ -67,4 +67,8 @@
  Quot.sound]
 'SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation' depends on axioms: [propext, Quot.sound]
-'SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.AdversarialTests.adv_compress1_fails_at_plus_832' does not depend on any axioms
+'SecMeshPQSI.AdversarialTests.adv_v1_chsh_refutes_tsirelson_bound' does not depend on any axioms
+'SecMeshPQSI.AdversarialTests.adv_commitment_disjoint_refutes_hiding' does not depend on any axioms
+'SecMeshPQSI.AdversarialTests.adv_toner_concrete_pythagorean_witness' does not depend on any axioms

@@ -14,7 +14,7 @@ import net from 'node:net';
 import dgram from 'node:dgram';
 import http from 'node:http';
 import crypto from 'node:crypto';
-import { verifyCwFrame } from './pqsi-handshake.mjs';
+import { verifyCwFrame, createReplayWindow } from './pqsi-handshake.mjs';
 
 export const MAX_FRAME_BYTES = 65536;
 
@@ -110,7 +110,7 @@ export function createHardenedGuardian({
     recent: [],
   };
   const rates = new Map();
-  const seenCwSeqs = new Set();
+  const seenCwSeqs = createReplayWindow(4096n);
   const activeTcpSockets = new Set();
   let liveConns = 0;
 

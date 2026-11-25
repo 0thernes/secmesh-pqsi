@@ -13,7 +13,9 @@ from __future__ import annotations
 import json
 import math
 import re
+import shutil
 import subprocess
+import tempfile
 from decimal import Decimal, getcontext
 from pathlib import Path
 
@@ -172,7 +174,7 @@ def test_differential_node_suite_and_report():
         text=True,
         check=True,
     )
-    assert "Node.js Suite Summary: 15/15 passed" in proc.stdout
+    assert "Node.js Suite Summary: 16/16 passed" in proc.stdout
     assert RESULTS_REPORT.exists()
     data = json.loads(RESULTS_REPORT.read_text(encoding="utf-8"))
     for key in [
@@ -236,7 +238,7 @@ def test_lean_zero_forbidden_tokens_and_axioms():
     # Collapse multi-line bracketed lists
     normalized = re.sub(r",\s*\n\s*", ", ", axioms_txt)
     decl_lines = [ln.strip() for ln in normalized.splitlines() if ln.strip().startswith("'SecMeshPQSI.")]
-    assert len(decl_lines) >= 56, f"Expected >= 56 audited declarations, got {len(decl_lines)}"
+    assert len(decl_lines) >= 60, f"Expected >= 60 audited declarations, got {len(decl_lines)}"
     for ln in decl_lines:
         if "does not depend on any axioms" in ln:
             continue
@@ -246,6 +248,35 @@ def test_lean_zero_forbidden_tokens_and_axioms():
         assert used <= allowed, f"Disallowed axiom(s) {used - allowed} in {ln}"
     assert "SecMeshPQSI.Solution.prove_all_secmesh_theorems" in normalized
     assert "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo" in normalized
+    assert "SecMeshPQSI.AdversarialTests.adv_compress1_fails_at_plus_832" in normalized
+
+
+def test_adversarial_definition_counterexamples_and_kernel_reject():
+    """Playbook v1.3 Item 12: verify adversarial counterexample suite and confirm Lean rejects false claims."""
+    adv_file = REPO_ROOT / "lean" / "SecMeshPQSI" / "AdversarialTests.lean"
+    assert adv_file.exists()
+    adv_text = adv_file.read_text(encoding="utf-8")
+    assert "adv_compress1_fails_at_plus_832" in adv_text
+    assert "adv_v1_chsh_refutes_tsirelson_bound" in adv_text
+    assert "adv_commitment_disjoint_refutes_hiding" in adv_text
+    lake_bin = shutil.which("lake")
+    if lake_bin:
+        bad_lean = (
+            "import SecMeshPQSI.LatticeBandwidth\n"
+            "theorem deliberately_false_compress1 : "
+            "SecMeshPQSI.LatticeBandwidth.mlkemCompress1 (0 * 1665 + 832) = 0 := by decide\n"
+        )
+        with tempfile.TemporaryDirectory() as td:
+            bad_path = Path(td) / "FalseClaim.lean"
+            bad_path.write_text(bad_lean, encoding="utf-8")
+            proc = subprocess.run(
+                [lake_bin, "env", "lean", str(bad_path)],
+                cwd=REPO_ROOT / "lean",
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            assert proc.returncode != 0, "Lean kernel MUST reject deliberately false Compress_1 claim!"
 
 
 def test_t4de_t6_and_t7_invariants_and_bounded_ci():

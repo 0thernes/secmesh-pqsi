@@ -45,6 +45,7 @@ void secmesh_secure_zero(void *ptr, size_t len) {
 }
 
 int secmesh_ct_memeq(const uint8_t *a, const uint8_t *b, size_t len) {
+    if (len > 0 && (!a || !b)) return 0;
     uint8_t diff = 0;
     for (size_t i = 0; i < len; i++) {
         diff |= (uint8_t)(a[i] ^ b[i]);
@@ -234,7 +235,9 @@ int moonlab_qrng_bytes(uint8_t *out, size_t len) {
     const char domain[] = "SecMesh-PQSI-v2.0|Moonlab-SP800-90B-Toeplitz-SHAKE256";
     sha3_update(&ctx, (const uint8_t *)domain, sizeof(domain) - 1);
     uint64_t ctr = ++g_epoch_counter;
-    sha3_update(&ctx, (const uint8_t *)&ctr, sizeof ctr);
+    uint8_t ctr_le[8];
+    for (int i = 0; i < 8; i++) ctr_le[i] = (uint8_t)((ctr >> (8 * i)) & 0xFFu);
+    sha3_update(&ctx, ctr_le, sizeof ctr_le);
     sha3_update(&ctx, extracted, sizeof extracted);
     sha3_update(&ctx, raw_in, 32);
     shake_squeeze(&ctx, out, len);

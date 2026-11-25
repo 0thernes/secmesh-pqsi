@@ -33,6 +33,13 @@ static void store_be64(uint8_t p[8], uint64_t v) {
     p[6] = (uint8_t)(v >> 8);  p[7] = (uint8_t)(v);
 }
 
+static void store_le64(uint8_t p[8], uint64_t v) {
+    p[0] = (uint8_t)(v);       p[1] = (uint8_t)(v >> 8);
+    p[2] = (uint8_t)(v >> 16); p[3] = (uint8_t)(v >> 24);
+    p[4] = (uint8_t)(v >> 32); p[5] = (uint8_t)(v >> 40);
+    p[6] = (uint8_t)(v >> 48); p[7] = (uint8_t)(v >> 56);
+}
+
 void secmesh_gf128_mul(uint8_t out[16], const uint8_t a[16], const uint8_t b[16]) {
     if (!out || !a || !b) return;
     /* GHASH bit convention: MSB of byte 0 is x^0, LSB of byte 15 is x^127.
@@ -126,13 +133,15 @@ int secmesh_hybrid_combine(uint8_t k_out[32],
         shake256_init(&ctx);
         const char dom[] = "SecMesh-PQSI-v2.0|DualSurvivabilityCombiner|PQ";
         sha3_update(&ctx, (const uint8_t *)dom, sizeof(dom) - 1);
-        uint64_t tlen = (uint64_t)transcript_len;
-        sha3_update(&ctx, (const uint8_t *)&tlen, sizeof tlen);
+        uint8_t tlen_le[8];
+        store_le64(tlen_le, (uint64_t)transcript_len);
+        sha3_update(&ctx, tlen_le, sizeof tlen_le);
         if (transcript && transcript_len > 0) {
             sha3_update(&ctx, transcript, transcript_len);
         }
-        uint64_t klen = (uint64_t)k_pq_len;
-        sha3_update(&ctx, (const uint8_t *)&klen, sizeof klen);
+        uint8_t klen_le[8];
+        store_le64(klen_le, (uint64_t)k_pq_len);
+        sha3_update(&ctx, klen_le, sizeof klen_le);
         sha3_update(&ctx, k_pq, k_pq_len);
         shake_squeeze(&ctx, k_pq_derived, 32);
         secmesh_secure_zero(&ctx, sizeof ctx);
@@ -275,12 +284,19 @@ typedef struct {
     uint32_t min_agree;
     secmesh_share_t pick[64];
     int found;
+    int budget_exceeded;
+    uint64_t steps;
+    uint64_t max_steps;
     uint64_t secret;
     uint32_t corrupted;
 } byz_search_t;
 
 static void byz_dfs(byz_search_t *st, uint32_t start, uint32_t depth) {
-    if (st->found) return;
+    if (st->found || st->budget_exceeded) return;
+    if (++st->steps > st->max_steps) {
+        st->budget_exceeded = 1;
+        return;
+    }
     if (depth == st->t) {
         uint32_t agree = 0;
         for (uint32_t k = 0; k < st->n; k++) {
@@ -301,7 +317,7 @@ static void byz_dfs(byz_search_t *st, uint32_t start, uint32_t depth) {
     for (uint32_t i = start; i + (st->t - depth) <= st->n; i++) {
         st->pick[depth] = st->all[i];
         byz_dfs(st, i + 1, depth + 1);
-        if (st->found) return;
+        if (st->found || st->budget_exceeded) return;
     }
 }
 
@@ -315,6 +331,15 @@ int secmesh_shamir_reconstruct_byzantine(const secmesh_share_t *shares,
         num_shares > 256 || max_byzantine > 128) return -1;
     /* Enforce Theorem T3b Singleton-Byzantine condition (overflow-safe uint64_t): n >= t + 2b */
     if ((uint64_t)num_shares < (uint64_t)threshold + 2ULL * (uint64_t)max_byzantine) return -2;
+    /* Enforce Theorem T3b distinct-point prerequisite: every x_i in [1, p-1], y_i < p,
+     * and x_i != x_j for all i != j (prevents duplicate-x double-counting forgery!). */
+    for (uint32_t i = 0; i < num_shares; i++) {
+        if (shares[i].x == 0 || shares[i].x >= SECMESH_SHAMIR_PRIME ||
+            shares[i].y >= SECMESH_SHAMIR_PRIME) return -4;
+        for (uint32_t j = i + 1; j < num_shares; j++) {
+            if (shares[i].x == shares[j].x) return -4;
+        }
+    }
 
     byz_search_t st;
     memset(&st, 0, sizeof st);
@@ -322,7 +347,9 @@ int secmesh_shamir_reconstruct_byzantine(const secmesh_share_t *shares,
     st.n = num_shares;
     st.t = threshold;
     st.min_agree = num_shares - max_byzantine;
+    st.max_steps = 200000ULL; /* Bound worst-case combinatorial DoS */
     byz_dfs(&st, 0, 0);
+    if (st.budget_exceeded) return -5;
     if (!st.found) return -3; /* More than max_byzantine corruptions! */
     *secret_out = st.secret;
     if (corrupted_detected_out) *corrupted_detected_out = st.corrupted;

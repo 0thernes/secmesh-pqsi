@@ -4,14 +4,16 @@ module
 
 import Solution
 import PalomarSolution
+import SecMeshPQSI.AdversarialTests
 
 /-!
 # Strict Axiom Allowlist Audit
 
 Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (27 individual
-theorems + master conjunction) plus the non-vacuity witness
-`SecMeshPQSI.NonVacuity.nonvac_all_hypotheses` must depend strictly on a subset of the
-three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
+theorems + master conjunction), the non-vacuity witness
+`SecMeshPQSI.NonVacuity.nonvac_all_hypotheses`, and the 4 adversarial boundary counterexamples
+in `SecMeshPQSI.AdversarialTests` (60 audited declarations total) must depend strictly on a
+subset of the three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 -/
 
 #print axioms SecMeshPQSI.Solution.t1a_v1_tsirelson_violation
@@ -70,3 +72,7 @@ three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 #print axioms SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure
 #print axioms SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation
 #print axioms SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo
+#print axioms SecMeshPQSI.AdversarialTests.adv_compress1_fails_at_plus_832
+#print axioms SecMeshPQSI.AdversarialTests.adv_v1_chsh_refutes_tsirelson_bound
+#print axioms SecMeshPQSI.AdversarialTests.adv_commitment_disjoint_refutes_hiding
+#print axioms SecMeshPQSI.AdversarialTests.adv_toner_concrete_pythagorean_witness

@@ -301,6 +301,45 @@ static void test_chern_ghz_ising_and_null_hardening(void) {
     CHECK(secmesh_shamir_reconstruct_byzantine(sh, 4, 2, 0x80000000u, &dummy_sec, NULL) == -1 &&
           secmesh_shamir_reconstruct_byzantine(sh, 300, 2, 1, &dummy_sec, NULL) == -1,
           "Hardening: Shamir Byzantine rejects uint32_t overflow and num_shares > 256");
+
+    /* Cycle 8 Hardening: duplicate-x forgery rejection, x==0 rejection, NULL ct_memeq, NaN fail-closed, Ising symmetry */
+    secmesh_share_t sh_dup[5] = {{1, 42}, {1, 42}, {1, 42}, {2, 99}, {3, 156}};
+    CHECK(secmesh_shamir_reconstruct_byzantine(sh_dup, 5, 2, 1, &dummy_sec, NULL) == -4,
+          "Hardening H8.02: Shamir Byzantine rejects duplicate x-coordinate forgery (-4)");
+    secmesh_share_t sh_zero[5] = {{0, 42}, {1, 99}, {2, 156}, {3, 213}, {4, 270}};
+    CHECK(secmesh_shamir_reconstruct_byzantine(sh_zero, 5, 2, 1, &dummy_sec, NULL) == -4,
+          "Hardening H8.02: Shamir Byzantine rejects x==0 evaluation point (-4)");
+    uint8_t eq_buf[4] = {1, 2, 3, 4};
+    CHECK(secmesh_ct_memeq(NULL, eq_buf, 4) == 0 && secmesh_ct_memeq(eq_buf, NULL, 4) == 0,
+          "Hardening H8.04: secmesh_ct_memeq NULL pointer returns 0 safely");
+    secmesh_fk_input_t fk_in_nan = {
+        .chsh_s = NAN,
+        .cnts = {112500ULL, 112500ULL, 112500ULL, 112500ULL},
+        .n_key = 450000ULL,
+        .qber_errors = 0ULL,
+        .qber_sample = 10000ULL,
+        .eps_total = 1e-6,
+        .ec_efficiency = 1.16,
+        .use_di_min_ent = 1
+    };
+    secmesh_fk_result_t fk_nan;
+    secmesh_finite_key_eval(&fk_in_nan, &fk_nan);
+    CHECK(fk_nan.admitted == 0 && fk_nan.cert_bits == 0,
+          "Hardening H8.04: Finite-key gate fails closed on IEEE-754 NaN CHSH");
+    secmesh_ising_barrier_t bar_nan;
+    secmesh_ising_eval_expander_barrier(60, 10, NAN, 2.0, 0.7, &bar_nan);
+    CHECK(bar_nan.min_work_barrier == 0.0,
+          "Hardening H8.04: Ising expander barrier fails closed on NaN input");
+    int64_t J_asym[16] = {
+        0, 2, 0, 2,
+        1, 0, 2, 0,
+        0, 2, 0, 2,
+        2, 0, 2, 0
+    };
+    int64_t h_neg[4] = {3, -1, 3, 3};
+    CHECK(secmesh_ising_graph_energy(4, J_asym, h4, sig_ok, &dir0, &lap0, &cut0) == -4 &&
+          secmesh_ising_graph_energy(4, J4, h_neg, sig_ok, &dir0, &lap0, &cut0) == -4,
+          "Hardening H8.04: Ising graph energy rejects asymmetric J and negative h (-4)");
 }
 
 int main(void) {

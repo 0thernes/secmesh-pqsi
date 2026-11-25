@@ -627,6 +627,15 @@ private theorem sumNat_eq (n : Nat) (f : Nat → Nat) :
 private theorem absDiffNat_eq (a b : Nat) :
     absDiffNat a b = SecMeshPQSI.MonogamyCommitmentNoGo.absDiffNat a b := rfl
 
+private theorem sumNat_absDiff_eq (T : Nat) (P0 P1 : Nat → Nat) :
+    sumNat T (fun t => absDiffNat (P0 t) (P1 t)) =
+    SecMeshPQSI.MonogamyCommitmentNoGo.sumNat T (fun t => SecMeshPQSI.MonogamyCommitmentNoGo.absDiffNat (P0 t) (P1 t)) := by
+  induction T with
+  | zero => rfl
+  | succ k ih =>
+    rw [sumNat, SecMeshPQSI.MonogamyCommitmentNoGo.sumNat, ih]
+    rfl
+
 theorem t7a_toner_chsh_monogamy_and_eve_isolation :
     (∀ (c s x1 x2 y1 y2 R : Int),
       c * c + s * s = R * R →
@@ -660,8 +669,8 @@ theorem t7b_hiding_binding_conservation_nogo :
   rw [sumNat_eq] at h0 h1
   have h := SecMeshPQSI.MonogamyCommitmentNoGo.t7b_hiding_binding_conservation_nogo T D P0 P1 h0 h1
   dsimp only at h ⊢
-  rw [sumNat_eq, sumNat_eq]
-  simpa [absDiffNat_eq] using h
+  rw [sumNat_absDiff_eq, sumNat_eq]
+  exact h
 
 end
 end SecMeshPQSI.Palomar

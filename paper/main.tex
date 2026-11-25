@@ -10,6 +10,7 @@
 \usepackage{microtype}
 \usepackage{xurl}
 \usepackage{enumitem}
+\usepackage{placeins}
 \usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=teal!70!black,urlcolor=blue!60!black]{hyperref}
 \emergencystretch=3em
 \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
@@ -53,7 +54,7 @@
 \begin{document}
 
 \begin{abstract}
-We establish the formal mathematical, algebraic, and information-theoretic foundations of \textsc{SecMesh-PQSI}~v2.1.0, a clean-room cryptographic refactoring of legacy \textsc{SecMesh} (\code{BoogerCheeseOnRye/SecMesh@aff7dc6}) rebuilt upon Tsotchke's MIT/Apache-2.0 stack (\code{moonlab}, \code{quantum\_geometric\_tensor}, \code{libirrep}, \code{spin\_based\_neural\_network}, \code{eshkol}, \code{rosette-wire}, and \code{pq-consensus-bandwidth}).
+We establish the formal mathematical, algebraic, and information-theoretic foundations of \textsc{SecMesh-PQSI}~v2.2.0, a clean-room cryptographic refactoring of legacy \textsc{SecMesh} (\code{BoogerCheeseOnRye/SecMesh@aff7dc6}) rebuilt upon Tsotchke's MIT/Apache-2.0 stack (\code{moonlab}, \code{quantum\_geometric\_tensor}, \code{libirrep}, \code{spin\_based\_neural\_network}, \code{eshkol}, \code{rosette-wire}, and \code{pq-consensus-bandwidth}).
 A forensic audit exposes ten defects in legacy \textsc{SecMesh}~v1---including a super-quantum Tsirelson violation ($S=354/125 > 2\sqrt{2}$), a $4\times$ range-$2$ Hoeffding exponent error (tail $>0.0285$ vs.\ $2.5\times 10^{-7}$), mislabeling collective von Neumann entropy as Pironio DI min-entropy ($+0.2357$ bit overestimate at $S\approx 2.6992$), and a biased $8$-bit denoiser ($93/256$ ones).
 
 We resolve all ten defects and advance the frontier through seven theorem families (\textbf{T1}--\textbf{T7}, $27$ formal theorems):
@@ -527,7 +528,7 @@ Table~\ref{tab:frontier} maps our formal theorems directly to verbatim-verified 
 
 \begin{table}[t]
 \centering
-\caption{Linkage between \textsc{SecMesh-PQSI}~v2.1.0 formal results and verbatim-verified open problems in the \emph{Unsolved Problems Mega Atlas}~v2~\cite{mega_atlas_2026}.}
+\caption{Linkage between \textsc{SecMesh-PQSI}~v2.2.0 formal results and verbatim-verified open problems in the \emph{Unsolved Problems Mega Atlas}~v2~\cite{mega_atlas_2026}.}
 \label{tab:frontier}
 \footnotesize
 \begin{tabularx}{\linewidth}{@{} >{\RaggedRight\arraybackslash}p{2.05cm} >{\RaggedRight\arraybackslash}p{4.05cm} Y Y@{}}
@@ -552,14 +553,14 @@ Table~\ref{tab:frontier} maps our formal theorems directly to verbatim-verified 
 \section{Formal Verification, Six-Kernel Audit \& Statement Fidelity}
 \label{sec:formal}
 
-All $27$ theorems (\textbf{T1a}--\textbf{T7b}) are formalized in \emph{zero-Mathlib} Lean~4.35.0 across $14$ source files (\code{lean/SecMeshPQSI/*.lean}, \code{Challenge.lean}, \code{Solution.lean}, \code{PalomarChallenge.lean}, \code{PalomarSolution.lean}, \code{VerifyAxioms.lean}) with strict core linters enabled (\code{autoImplicit=false}, \code{relaxedAutoImplicit=false}, \code{linter.unusedVariables=true}, \code{linter.deprecated=true}).
-To exclude vacuous proofs, \code{SecMeshPQSI/NonVacuity.lean} explicitly constructs the concrete prime field instance \code{SimpleField (Fin 5)} and inhabits every hypothesis bundle across \textbf{T1}--\textbf{T7}.
+All $27$ theorems (\textbf{T1a}--\textbf{T7b}) are formalized in \emph{zero-Mathlib} Lean~4.35.0 across $15$ source files (\code{lean/SecMeshPQSI/*.lean}, \code{Challenge.lean}, \code{Solution.lean}, \code{PalomarChallenge.lean}, \code{PalomarSolution.lean}, \code{VerifyAxioms.lean}) with strict core linters enabled (\code{autoImplicit=false}, \code{relaxedAutoImplicit=false}, \code{linter.unusedVariables=true}, \code{linter.deprecated=true}).
+To exclude vacuous or over-weakened definitions, \code{SecMeshPQSI/NonVacuity.lean} explicitly constructs the concrete prime field instance \code{SimpleField (Fin 5)} and inhabits every hypothesis bundle across \textbf{T1}--\textbf{T7}, while \code{SecMeshPQSI/AdversarialTests.lean} proves four zero-axiom concrete counterexamples to sharpened/false claims (paired with an automated CI check confirming the Lean kernel rejects a deliberately false \code{Compress\_1} claim).
 
 \subsection*{All-Six-Kernel Independent Replay (Palomar Comparator)}
 Following the Palomar Registry comparator protocol, \code{PalomarChallenge.lean} ($<460$ lines, $<19\text{ KiB}$, zero imports) declares all $27$ standalone theorem contracts, while \code{PalomarSolution.lean} (zero \code{sorry}) discharges every theorem from \code{SecMeshPQSI.*}.
 Every theorem passes \code{lake comparator --config palomar\_comparator.json --paranoid} on Ubuntu~Linux CI across \emph{all six distinct Lean~4.35 kernel implementations} (and $5$ local Windows kernels; verbatim logs in \code{results/six\_kernel\_audit.txt} and \code{results/lean\_axioms.txt}):
 \begin{enumerate}[leftmargin=1.8em]
-  \item \code{Lean default} (\code{lean v4.35.0}, \code{lake build} + \code{VerifyAxioms.lean}): PASS ($17/17$ jobs, $0$ warnings, $56/56$ exported declarations strictly within \code{[propext, Classical.choice, Quot.sound]}).
+  \item \code{Lean default} (\code{lean v4.35.0}, \code{lake build} + \code{VerifyAxioms.lean}): PASS ($18/18$ jobs, $0$ warnings, $60/60$ exported declarations strictly within \code{[propext, Classical.choice, Quot.sound]}).
   \item \code{Lean paranoid} (\code{leanchecker} / \code{leanchecker-paranoid}): PASS (exit~$0$).
   \item \code{lean4lean} (independent Lean-in-Lean kernel on Ubuntu Linux CI): PASS.
   \item \code{con-leche --verified} (verified Lean-in-Lean kernel): PASS (accepted $3{,}638$ Solution and $3{,}701$ PalomarSolution decls locally).
@@ -575,7 +576,7 @@ Every theorem passes \code{lake comparator --config palomar\_comparator.json --p
 \scriptsize
 \begin{tabularx}{\linewidth}{@{}l l Y c@{}}
 \toprule
-\textbf{ID} & \textbf{Lean Declaration (\code{SecMeshPQSI.Solution.*})} & \textbf{Informal Claim \& Reference} & \textbf{Axioms} \\
+\textbf{ID} & \textbf{Lean Declaration (\code{SecMeshPQSI.Solution.*})} & \textbf{Claim \& Ref.} & \textbf{Axioms} \\
 \midrule
 T1a & \code{t1a\_v1\_tsirelson\_violation} & $S_{\mathrm{v1}}=354/125 > 2\sqrt{2}$ (excess $316$)~\cite{tsirelson1980,secmesh_upstream} & \code{0} \\
 T1b & \code{t1b\_hoeffding\_range2\_factor4} & Range-$2$ Hoeffding $4\times$ exponent \& tail $>0.02$~\cite{hoeffding1963} & \code{PCQ} \\
@@ -608,6 +609,7 @@ T7b & \code{t7b\_hiding\_binding\_conservation\_nogo} & $\mathrm{TV}(P_0,P_1){+}
 \end{tabularx}
 \end{table}
 
+\FloatBarrier
 % ============================================================================
 \section{Limitations, Reproducibility, and Disclosures}
 \label{sec:disclosures}

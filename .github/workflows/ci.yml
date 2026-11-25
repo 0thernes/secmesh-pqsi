@@ -70,7 +70,7 @@ jobs:
       - name: Build native C11 binary for cross-implementation differential tests
         shell: bash
         run: make -C native all
-      - name: Run Node.js 25 differential, interop, anti-replay & live Eshkol AD tests (15/15)
+      - name: Run Node.js 25 differential, interop, anti-replay & live Eshkol AD tests (16/16)
         shell: bash
         run: |
           node node/tests/test_secmesh_v2.mjs
@@ -125,6 +125,8 @@ jobs:
           EOF
           lake env nanoda_bin /tmp/nanoda.json
           lake comparator --config palomar_comparator.json --paranoid
+          printf 'import SecMeshPQSI.LatticeBandwidth\ntheorem false_compress1 : SecMeshPQSI.LatticeBandwidth.mlkemCompress1 832 = 0 := by decide\n' > /tmp/FalseClaim.lean
+          ! lake env lean /tmp/FalseClaim.lean
 
   white-papers:
     name: AMS-LaTeX White Papers & arXiv Tarball Verification

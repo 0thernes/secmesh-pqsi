@@ -2,6 +2,21 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] — 2026-11-25
+
+### Added (Playbook v1.3 Adversarial Counterexamples & Automated Retraction Audits)
+- **Lean 4.35 Adversarial Definition & Counterexample Suite (`lean/SecMeshPQSI/AdversarialTests.lean`, Playbook v1.3 Item 12):** Added 4 zero-axiom machine-checked boundary counterexamples (`adv_compress1_fails_at_plus_832`, `adv_v1_chsh_refutes_tsirelson_bound`, `adv_commitment_disjoint_refutes_hiding`, `adv_toner_concrete_pythagorean_witness`) bringing the Lean formalization to **15 `.lean` files, 18 build jobs, and 60 audited declarations**, paired with automated negative kernel-rejection tests in `python/tests/test_all.py` (`13/13`) and `.github/workflows/ci.yml` confirming Lean rejects deliberately false `Compress_1` claims.
+- **Automated Crossref Retraction Check (`scripts/check_citations.py`, Playbook v1.3 Item 16):** Extended `--online` citation verification to query Crossref `relation.is-retracted-by` and `update-to` retraction metadata on every DOI (**42/42 live HTTP 200, 32/32 DOIs verified not retracted**).
+- **Expanded Security Regression Tests:** Native C11 suite expanded from `52/52` to **`58/58`** (duplicate-`x` & `x=0` Shamir refusal, NULL `secmesh_ct_memeq`, IEEE-754 `NaN` fail-closed finite-key & Ising expander, asymmetric/negative Ising graph validation); Node.js 25 suite expanded from `15/15` to **`16/16`** (RFC-6479 bounded sliding replay window).
+
+### Fixed (Cycle 8 Deep Cryptographic, Memory-DoS, Endianness, Axiom-Parity & Typesetting Hardening)
+- **C11 Byzantine Shamir Duplicate-`x` Forgery & Combinatorial DoS (`bug`/`hole`, `H8.02`):** `secmesh_shamir_reconstruct_byzantine` now enforces pairwise distinct evaluation points $x_i \in [1, p-1]$ (returning `-4`, closing a duplicate-`x` double-counting bypass of Theorem `T3b`) and caps DFS combinations at `200,000` steps (returning `-5`).
+- **C11 Big-Endian Portability (`bug`, `H8.03`):** Replaced host-endian `uint64_t` byte-pointer hashing in `secmesh_it_crypto.c` and `secmesh_entropy.c` with explicit little-endian `store_le64` matching Node.js `writeBigUInt64LE`.
+- **C11 NULL / `NaN` / Ising Symmetry Guards (`bug`, `H8.04`):** Added NULL guard to `secmesh_ct_memeq`, `isfinite(...)` fail-closed guards across `secmesh_finite_key_eval`, `secmesh_qgt_entangled_manifold`, `secmesh_chern_concurrence_ghz`, and `secmesh_ising_eval_expander_barrier`, and symmetric nonnegative validation (`-4`) to `secmesh_ising_graph_energy`.
+- **Node 25 Guardian v2 Unbounded Replay Memory DoS (`hole`, `H8.05`):** Replaced unbounded `Set` in `mesh-guardian-v2.mjs` with RFC-6479-style `createReplayWindow(windowSize = 4096n)` in `pqsi-handshake.mjs` keeping $O(1)$ memory while rejecting both duplicates and stale below-window sequences.
+- **Lean `Palomar.t7b` Axiom Parity (`concern`, `H8.06`):** Eliminated unnecessary `Classical.choice` from `SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo` (`[propext, Quot.sound]`), matching `Solution.t7b` identically.
+- **White Paper I Page-Layout Float Fix (`issue`, `H8.01`):** Added `\usepackage{placeins}` + `\FloatBarrier` after Table 3 and shortened col 3 header to `Claim & Ref.`, preventing Table 3 from floating past References and Author Affiliation onto a trailing page.
+
 ## [2.1.0] — 2026-11-25
 
 ### Added

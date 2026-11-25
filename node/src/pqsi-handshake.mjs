@@ -113,6 +113,48 @@ export function sealCwFrame(rBuf, padSource, seq, payloadBuf) {
 }
 
 /**
+ * RFC-6479-style bounded sliding replay window preventing unbounded memory growth DoS
+ * while strictly rejecting both exact duplicates and stale sequence numbers older than windowSize.
+ */
+export function createReplayWindow(windowSize = 4096n) {
+  const win = BigInt(windowSize);
+  if (win < 1n) throw new Error('windowSize must be >= 1');
+  const seen = new Set();
+  let initialized = false;
+  let maxSeq = 0n;
+  return {
+    windowSize: win,
+    get size() { return seen.size; },
+    get maxSeq() { return maxSeq; },
+    has(seq) {
+      const s = BigInt(seq);
+      if (s < 0n) return true;
+      if (!initialized) return false;
+      if (maxSeq >= win && s <= maxSeq - win) return true; // stale outside window -> reject!
+      return seen.has(s);
+    },
+    add(seq) {
+      const s = BigInt(seq);
+      if (s < 0n) return;
+      if (initialized && maxSeq >= win && s <= maxSeq - win) return;
+      if (!initialized || s > maxSeq) {
+        initialized = true;
+        maxSeq = s;
+        seen.add(s);
+        if (maxSeq >= win && seen.size > Number(win)) {
+          const floor = maxSeq - win;
+          for (const k of seen) {
+            if (k <= floor) seen.delete(k);
+          }
+        }
+      } else {
+        seen.add(s);
+      }
+    },
+  };
+}
+
+/**
  * Verify and consume a Carter-Wegman frame with strict replay & pad-reuse protection.
  */
 export function verifyCwFrame(frameBuf, rBuf, padSource, seenSeqs) {

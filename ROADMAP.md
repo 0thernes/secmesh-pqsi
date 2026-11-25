@@ -1,13 +1,15 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Roadmap (`ROADMAP.md`)
 
-## Released (`v1.0.0` – `v2.0.0`)
+## Released (`v1.0.0` – `v2.2.0`)
 - **`v1.0.0` / `v1.0.1`:** Clean-room C11 + Node.js 25 + Eshkol + Lean 4.35.0 rebuild resolving all 10 legacy SecMesh defects, 21 zero-Mathlib theorems passing all 6 kernels under `lake comparator --paranoid` on Ubuntu CI, two AMS-LaTeX white papers, standalone arXiv tarball, and full Build Standard v1.2.0 packaging.
 - **`v2.0.0`:** Expanded to **25 zero-Mathlib Lean 4.35.0 theorems (`T1a`–`T6b`)** adding Topological Chern–Concurrence–Entropy Conservation (`T4d`), `libirrep` Spin-$j$ GHZ Heisenberg QFI (`T4e`), Ising Laplacian PSD & Cheeger Expander Barrier (`T6a`), and Simmons Cryptosymbology / Threshold-Hedged Dual Closure (`T6b`); built live executable forward-mode dual-number Eshkol AD runtime; fixed C11 NULL/thread-safety/overflow hardening and Guardian v2 CW-128 per-frame anti-replay; launched Interactive Lean Proof Blueprint DAG (`app/blueprint.html`); completed verbatim Mega Atlas v2 ID audit and full 27-repo Tsotchke audit.
+- **`v2.1.0`:** Added Theorem Family **`T7`** (`T7a` Toner quantum CHSH monogamy $S_{AB}^2 + S_{AE}^2 \le 8$ & CKW Berry-monopole Eve isolation; `T7b` Hiding–Binding Conservation Law $\mathrm{TV}+\mathrm{Overlap}=1$ proving unconditional bit-commitment impossibility and hybrid PQ+PSI necessity → **27 theorems** across all 6 kernels), nonparametric percentile bootstrap 95% CIs (`[59.900, 60.000]`) & rank-biserial $r_{\mathrm{rb}}=1.000$, fixed GitHub MathJax rendering and WP1 Page-1 layout.
+- **`v2.2.0`:** Completed Cycle 8 hardening: C11 Shamir duplicate-`x` forgery & DFS-cap fixes, big-endian LE64 portability, NULL/`NaN`/asymmetric-Ising fail-closed guards (`58/58` C11 tests), RFC-6479 bounded sliding replay window in Guardian v2 (`16/16` Node tests), `Palomar.t7b` zero-`Classical.choice` parity, Playbook v1.3 Item 12 `AdversarialTests.lean` (`60/60` audited Lean declarations) + negative Lean kernel rejection (`13/13` pytest + CI), Playbook Item 16 automated Crossref retraction checks (`42/42` HTTP 200, `32/32` DOIs not retracted), and WP1 Table 3 `\FloatBarrier` fix.
 
-## Planned Future Milestones (`v2.1.x`+)
+## Planned Future Milestones (`v2.3.x`+)
 1. **Real-Analytic EAT/GEAT Formalization (`QC-021`):** Explore finite-key Entropy Accumulation Theorem (EAT) and Generalized EAT bounds for non-i.i.d. coherent attacks below $N < 10^5$ rounds.
 2. **Hardware QRNG Driver Integration:** Add optional pluggable adapter for physical certified QRNG endpoints (e.g., `Tsotchke-Corporation/Quantum-RNG-API` or local USB QRNG hardware) feeding the `SECMESH_IT_PAD_FILE` PSI lane.
 3. **Native Eshkol LLVM Linux CI Target:** Compile and benchmark `eshkol/*.esk` natively in CI alongside our portable `eshkol-ad-runtime.mjs` once prebuilt Linux Eshkol packages ship.
 4. **Mixed-State Multipartite QGT Monotones (`QC-018` / `QC-030`):** Extend Theorems `T4b`, `T4d`, and `T4e` to noisy/mixed Werner and dephased GHZ states using Bures metric and quantum Fisher information bounds.
-5. **External Archival & Registry Deposits:** Submit frozen `v2.0.0` release to Palomar Registry (`submit.palomar-registry.org`), Software Heritage Save Code Now, and arXiv (`cs.CR` / `quant-ph`) upon endorsement.
+5. **External Archival & Registry Deposits:** Submit frozen `v2.2.0` release to Palomar Registry (`submit.palomar-registry.org`), Software Heritage Save Code Now, and arXiv (`cs.CR` / `quant-ph`) upon endorsement.

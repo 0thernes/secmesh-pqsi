@@ -78,7 +78,9 @@ static double qber_kl_upper_bound(double p_hat, uint64_t m, double eps_qber) {
 void secmesh_finite_key_eval(const secmesh_fk_input_t *in, secmesh_fk_result_t *out) {
     if (!out) return;
     memset(out, 0, sizeof *out);
-    if (!in || in->n_key == 0 || in->eps_total <= 0.0 || in->eps_total >= 1.0) return;
+    if (!in || in->n_key == 0 ||
+        !isfinite(in->eps_total) || !(in->eps_total > 0.0 && in->eps_total < 1.0) ||
+        !isfinite(in->chsh_s)) return;
 
     /* Disjoint composable epsilon budget: 5 equal disjoint lanes summing to eps_total */
     const double eps_pe   = in->eps_total * 0.2;
@@ -200,6 +202,7 @@ void secmesh_qgt_entangled_manifold(double theta, double phi, double alpha,
                                     secmesh_qgt_result_t *out) {
     if (!out) return;
     memset(out, 0, sizeof *out);
+    if (!isfinite(theta) || !isfinite(phi) || !isfinite(alpha)) return;
 
     double complex psi[4], dt[4], dp[4];
     entangled_state_and_derivs(theta, phi, alpha, psi, dt, dp);
@@ -234,6 +237,7 @@ void secmesh_chern_concurrence_ghz(double alpha, uint32_t n_qubits,
                                    secmesh_chern_ghz_result_t *out) {
     if (!out) return;
     memset(out, 0, sizeof *out);
+    if (!isfinite(alpha)) return;
     if (n_qubits < 1) n_qubits = 1;
     double c_eff = -cos(2.0 * alpha);
     double conc  = fabs(sin(2.0 * alpha));
@@ -271,6 +275,12 @@ int secmesh_ising_graph_energy(uint32_t n, const int64_t *J_flat, const int64_t 
     if (n == 0 || n > 1024) return -2;
     for (uint32_t i = 0; i < n; i++) {
         if (sig[i] != 1 && sig[i] != -1) return -3;
+        if (h_vec[i] < 0) return -4;
+        for (uint32_t j = 0; j < n; j++) {
+            int64_t wij = J_flat[(size_t)i * n + j];
+            int64_t wji = J_flat[(size_t)j * n + i];
+            if (wij < 0 || wij != wji) return -4;
+        }
     }
     int64_t dir = 0, lap = 0, cut_pair = 0, field = 0;
     for (uint32_t i = 0; i < n; i++) {
@@ -296,6 +306,7 @@ void secmesh_ising_eval_expander_barrier(uint32_t n_nodes, uint32_t compromised_
                                          double firewall_h, secmesh_ising_barrier_t *out) {
     if (!out) return;
     memset(out, 0, sizeof *out);
+    if (!isfinite(coupling_j) || !isfinite(edge_expansion_phi) || !isfinite(firewall_h)) return;
     if (compromised_k > n_nodes / 2u) compromised_k = n_nodes / 2u;
     if (coupling_j < 0.0) coupling_j = 0.0;
     if (edge_expansion_phi < 0.0) edge_expansion_phi = 0.0;

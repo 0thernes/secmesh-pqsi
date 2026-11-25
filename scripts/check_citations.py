@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 import urllib.error
@@ -59,6 +60,32 @@ def check_url(url: str, timeout: float = 12.0) -> tuple[bool, str]:
                 continue
             return False, str(exc)
     return False, "unreachable"
+
+
+def check_crossref_retraction(doi: str, timeout: float = 12.0) -> tuple[bool, str]:
+    """Query Crossref Works API to verify DOI is not retracted (Playbook v1.3 Item 16)."""
+    url = f"https://api.crossref.org/works/{doi}"
+    headers = {"User-Agent": "SecMesh-PQSI-CitationAudit/2.2 (mailto:0_0@0thernes.art)"}
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        msg = data.get("message", {})
+        # Crossref flags retractions via 'update-to' or 'relation' -> 'is-retracted-by'
+        relations = msg.get("relation", {})
+        if isinstance(relations, dict) and relations.get("is-retracted-by"):
+            return False, "RETRACTED (Crossref relation is-retracted-by)"
+        for upd in msg.get("update-to", []) or []:
+            if isinstance(upd, dict) and str(upd.get("type", "")).lower() == "retraction":
+                return False, "RETRACTED (Crossref update-to retraction)"
+        return True, "not retracted"
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            # Non-Crossref RA (e.g., NIST DataCite DOI 10.6028/*) — valid via doi.org handle API
+            return True, "non-Crossref RA (verified via doi.org)"
+        return True, f"Crossref HTTP {exc.code} (non-fatal)"
+    except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError):
+        return True, "Crossref timeout (non-fatal)"
 
 
 def main() -> int:
@@ -112,8 +139,16 @@ def main() -> int:
                 target = f["url"].strip()
             if target:
                 ok, status = check_url(target)
+                retract_note = ""
+                if ok and f.get("doi"):
+                    doi_clean = f["doi"].replace("https://doi.org/", "").strip()
+                    not_ret, ret_msg = check_crossref_retraction(doi_clean)
+                    retract_note = f" | {ret_msg}"
+                    if not not_ret:
+                        ok = False
+                        status = ret_msg
                 tag = "OK" if ok else "FAIL"
-                print(f"  [{tag}] {e['key']}: {target} -> {status}")
+                print(f"  [{tag}] {e['key']}: {target} -> {status}{retract_note}")
                 if not ok:
                     errors.append(f"{e['key']}: live check failed ({target}: {status})")
 

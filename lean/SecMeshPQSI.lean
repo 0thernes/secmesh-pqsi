@@ -10,3 +10,4 @@ public import SecMeshPQSI.LatticeBandwidth
 public import SecMeshPQSI.SpinDefenseCryptosymbology
 public import SecMeshPQSI.MonogamyCommitmentNoGo
 public import SecMeshPQSI.NonVacuity
+public import SecMeshPQSI.AdversarialTests

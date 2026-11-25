@@ -18,6 +18,8 @@ import {
   carterWegmanMac,
   carterWegmanVerify,
   sealCwFrame,
+  verifyCwFrame,
+  createReplayWindow,
   thresholdHedgedNonce,
   dualSurvivabilityCombine,
   generatePeerIdentity,
@@ -326,6 +328,25 @@ await test('Differential C11: Chern-Concurrence-GHZ (T4d/T4e) & Ising Expander B
 
   const bar = JSON.parse(execFileSync(NATIVE_BIN, ['ising-barrier', '60', '10', '1.0', '2.0', '0.7'], { encoding: 'utf8' }));
   assert.ok(Math.abs(bar.min_work_barrier - 54.0) < 1e-12);
+});
+
+await test('Security: Bounded RFC-6479 CW-128 Sliding Replay Window rejects stale & bounds memory O(1)', () => {
+  const r = crypto.randomBytes(16);
+  const padSeed = crypto.randomBytes(32);
+  const win = createReplayWindow(8n);
+  // Accept 20 monotonically increasing frames; window must stay <= 8 entries!
+  for (let i = 1n; i <= 20n; i++) {
+    const f = sealCwFrame(r, padSeed, i, Buffer.from(`MSG-${i}`));
+    const v = verifyCwFrame(f, r, padSeed, win);
+    assert.equal(v.ok, true);
+  }
+  assert.ok(win.size <= 8, `replay window grew unbounded: ${win.size}`);
+  // Exact in-window duplicate (seq=19) rejected
+  const dup = sealCwFrame(r, padSeed, 19n, Buffer.from('MSG-19'));
+  assert.equal(verifyCwFrame(dup, r, padSeed, win).reason, 'cw-replay-reject');
+  // Stale below-window sequence (seq=5 <= 20 - 8 = 12) MUST be rejected even after eviction!
+  const stale = sealCwFrame(r, padSeed, 5n, Buffer.from('MSG-5'));
+  assert.equal(verifyCwFrame(stale, r, padSeed, win).reason, 'cw-replay-reject');
 });
 
 console.log(`=== Node.js Suite Summary: ${passed}/${passed} passed ===`);

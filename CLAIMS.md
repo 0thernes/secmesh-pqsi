@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Numbered Claims Ledger (`CLAIMS.md`)
 
-Every technical and mathematical claim in `secmesh-pqsi v2.1.0` is tagged by its exact verification status:
+Every technical and mathematical claim in `secmesh-pqsi v2.2.0` is tagged by its exact verification status:
 - `kernel-checked` — Proved in zero-Mathlib Lean 4.35.0 and independently replayed across all 6 distinct kernel implementations (`Lean paranoid`, `lean4lean`, `nanoda`, `con-leche --verified`, `con-ron --verified`, `Lean default`) via `lake comparator --paranoid` (`results/six_kernel_audit.txt`).
 - `differential-tested` — Verified across independent C11, Node.js 25/OpenSSL 3.5.5, Eshkol AD runtime, and Python implementations.
 - `numerical` — Verified via arbitrary-precision (60-digit `Decimal`) or seeded exact-arithmetic Python simulation.
