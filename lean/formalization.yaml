@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 # SPDX-License-Identifier: Apache-2.0
 version: "v0.4"
-release_version: "2.5.0"
+release_version: "3.0.0"
 
 project:
   name: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"

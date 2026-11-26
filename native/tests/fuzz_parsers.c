@@ -13,6 +13,7 @@
  *   gcc -std=c11 -O2 -Wall -Wextra -Werror -DFUZZ_STANDALONE ... fuzz_parsers.c -o fuzz_smoke -lm
  */
 #include "secmesh_pqsi.h"
+#include "secmesh_tun.h"
 #include "../third_party/moonlab/crypto/mlkem/mlkem.h"
 #include "../third_party/moonlab/applications/moonlab_export.h"
 
@@ -78,6 +79,13 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     if (secmesh_ising_graph_energy(4, J4, h4, sig4, &dir, &lap, &cut) != 0 ||
         dir != 2 * lap || dir < 0 || cut < 0) {
         __builtin_trap();
+    }
+
+    /* 5. Fuzz v3.0 RFC 791 IPv4 parser & SP 800-90B pad buffer auditor */
+    secmesh_ipv4_hdr_t ip4;
+    (void)secmesh_ipv4_parse(data, size, &ip4);
+    if (size >= 512) {
+        (void)secmesh_sp80090b_audit_buffer(data, size);
     }
     return 0;
 }

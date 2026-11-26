@@ -2,6 +2,28 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] — 2026-11-26
+
+### Added ("Invincible Onion Artichoke" — Complete Levels 1, 2 & 3 Deployable Cryptographic Stack)
+- **Native C11 Constant-Time Coprocessor, `mlock`/`VirtualLock`, `dudect` Welch's $t$-Test & Cross-Platform `TUN`/`Wintun` Driver (`native/`):**
+  - Added persistent `secmesh_core ct-worker` coprocessor (`node/src/native-ct-bridge.mjs`) offloading `GF(2^128)`, `CW-128`, Dual-Survivability Hybrid Combine, FIPS 203 `ML-KEM-768` encaps, and `SP 800-90B` pad audits into branchless, `VirtualLock`/`mlock`-locked C11.
+  - Added `native/tests/test_const_time.c` (`dudect`-style Welch's $t$-test across `secmesh_ct_memeq`, `secmesh_gf128_mul`, `secmesh_cw_mac_compute`, and `moonlab_mlkem768_encaps`, **4/4 PASS** after hardening `secmesh_ct_memeq` with volatile loads, compiler barrier, and branchless bitshift return!).
+  - Added `native/src/secmesh_tun.c` + `secmesh_tun.h` supporting Linux `/dev/net/tun` (`IFF_TUN | IFF_NO_PI`), dynamic Windows `wintun.dll` ABI, honest `tun-probe`, and RFC 791 IPv4 validation (**`69/69` C11 tests**, `-Wall -Wextra -Werror`, `0` warnings).
+- **Level 1 — Paranoid Vault, Trust Store & Crash-Safe Atomic Pad Ledger (`node/src/secmesh-vault.mjs`, `secmesh-trust.mjs`, `secmesh-pad-ledger.mjs`):**
+  - 6-algorithm composite peer identity (`Ed25519 + ML-DSA-65 + SLH-DSA-128s + X25519 + ML-KEM-768 + ML-KEM-1024`) encrypted at rest with native **Argon2id** + **Double-AEAD Cascade** (`AES-256-GCM` inner + `ChaCha20-Poly1305` outer) + Byzantine Shamir $(t,n \ge t+2b)$ 256-bit key backup/recovery.
+  - Zero-Trust `PeerTrustStore` with anti-MITM key-change refusal (`MITM_KEY_CHANGE_REFUSED`) and composite-signed revocation certificates.
+  - Crash-safe `SECMESH_IT_PAD_FILE` ledger (`O_CREAT | O_EXCL` lockfile, SP 800-90B admission gate, write-ahead `fsync`ed offset advance, immediate on-disk zero-shred, and `PAD_REUSE_ALARM` rollback detection).
+  - 5-Layer Onion-Artichoke File/Buffer Encryptor (`encrypt`/`decrypt` CLI): fixed-4096B bucket padding + Triple-KEM + Dual-AEAD cascade + optional OTP + C11 CW-128 + composite signature.
+- **Level 2 — Live Over-the-Wire Daemon, PQ Double-Ratchet, 3-Hop Onion Circuit & Encrypted TCP Tunnel (`secmesh-wire.mjs`, `secmesh-ratchet.mjs`, `secmesh-daemon.mjs`):**
+  - `LengthPrefixedFramer` + fixed-size cell padding + chaff cover traffic (also upgrading `mesh-guardian-v2.mjs` with `framed: true` mode, closing the WAN TCP stream-fragmentation hole!).
+  - `PqDoubleRatchetSession`: bidirectional SHAKE-256 per-packet chain ratchet + Double-AEAD + CW-128 + bounded out-of-order skipped-key cache (`MAX_SKIP=64`) + live synchronized asymmetric PQ epoch rekeying (`X25519 + ML-KEM-768`).
+  - Live 3-message over-the-wire TCP server/client (`serve`), live encrypted TCP port-forwarding tunnel (`tunnel`, PQ+PSI `ssh -L`), and true **3-Hop Onion-Artichoke Circuit Router** (`onion-relay`, bounded FIFO replay protection + 5-min timestamp freshness + encrypted return path).
+- **Level 3 — Encrypted UDP L3 Mesh VPN, Active Zero-Trust Firewall & Production Packaging (`secmesh-l3-vpn.mjs`, `secmesh-firewall.mjs`, `deploy/`):**
+  - `UdpMeshVpnNode`: WireGuard-style stateless 120s-rotating DoS cookie (`MAC1`/cookie), RFC 791 IPv4 `AllowedIPs` anti-spoofing cryptokey routing, NAT keepalives, and live authenticated NAT endpoint roaming (`vpn` CLI).
+  - `ActiveDefenseFirewall`: 3-strike pre-crypto IP quarantine + injection-safe Windows `netsh` (WFP) & Linux `nftables` rule emitters (`firewall-plan` CLI).
+  - Production `deploy/Dockerfile` (non-root UID 65532), hardened `deploy/secmeshd.service` (`systemd`), `deploy/install-windows-service.ps1`, and 3-page NIST Cyber & Quantum Technical Executive Brief (`dist/Donahue_2026_secmesh_pqsi_nist_executive_brief.pdf`).
+- **Expanded Verification:** **`69/69`** C11 + **`4/4`** `dudect` Welch $t$-test + **`500/500`** fuzz (incl. IPv4 & SP 800-90B), **`34/34`** Node 25 tests (`19/19` core + `15/15` Onion-Artichoke red-team suite), **`15/15`** pytest, **`28/28`** Lean 4.35 theorems across all **6 kernels**, and 2-job GitHub Pages workflow fixing same-job artifact race (`H12.01`–`H12.06`).
+
 ## [2.5.0] — 2026-11-25
 
 ### Added (Theorem `T7c` Quantum Microcrypt / EFI Conservation Law & 5th Zero-Axiom Witness)

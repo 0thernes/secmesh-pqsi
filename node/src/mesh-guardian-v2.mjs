@@ -15,6 +15,7 @@ import dgram from 'node:dgram';
 import http from 'node:http';
 import crypto from 'node:crypto';
 import { verifyCwFrame, createReplayWindow } from './pqsi-handshake.mjs';
+import { LengthPrefixedFramer } from './secmesh-wire.mjs';
 
 export const MAX_FRAME_BYTES = 65536;
 
@@ -113,6 +114,7 @@ export function createHardenedGuardian({
   idleMs = 6000,
   allowedOrigin = 'http://127.0.0.1',
   cwControlKey = null,
+  framed = false,
 } = {}) {
   const state = {
     startedAt: Date.now(),
@@ -188,30 +190,49 @@ export function createHardenedGuardian({
     }, idleMs);
     timer.unref();
 
-    sock.on('data', (chunk) => {
-      timer.refresh();
-      rxBytes += chunk.length;
-      if (rxBytes > MAX_FRAME_BYTES) {
-        record('oversize-frame', src, true, `rx=${rxBytes} > ${MAX_FRAME_BYTES}`);
-        sock.destroy();
-        return;
-      }
+    const handleCompleteFrame = (frameBuf) => {
       if (cwControlKey) {
         // Expect [seq_u64be (8B) || CW-128 tag (16B) || payload] with strict anti-replay
         // and fresh per-frame one-time pad discipline (Theorem T2d; never reuse (r, b)!)
         const padSrc = cwControlKey.padPool || cwControlKey.padSeed || cwControlKey.b;
-        const ver = verifyCwFrame(chunk, cwControlKey.r, padSrc, seenCwSeqs);
+        const ver = verifyCwFrame(frameBuf, cwControlKey.r, padSrc, seenCwSeqs);
         if (!ver.ok) {
           record(ver.reason, src, true, `CW-128 frame rejected (${ver.reason})`);
           sock.destroy();
           return;
         }
       }
-      record('authenticated-frame', src, false, `${chunk.length}B accepted`);
+      record('authenticated-frame', src, false, `${frameBuf.length}B accepted`);
       try {
         // Fixed compact ACK only (never reflects arbitrary attacker payload!)
-        sock.write(JSON.stringify({ ok: true, rx: chunk.length }) + '\n');
+        sock.write(JSON.stringify({ ok: true, rx: frameBuf.length }) + '\n');
       } catch { /* socket closed */ }
+    };
+
+    const streamFramer = framed
+      ? new LengthPrefixedFramer({
+          maxFrameBytes: MAX_FRAME_BYTES,
+          onFrame: handleCompleteFrame,
+          onError: (err) => {
+            record('oversize-frame', src, true, err.message);
+            sock.destroy();
+          },
+        })
+      : null;
+
+    sock.on('data', (chunk) => {
+      timer.refresh();
+      if (streamFramer) {
+        streamFramer.push(chunk);
+        return;
+      }
+      rxBytes += chunk.length;
+      if (rxBytes > MAX_FRAME_BYTES) {
+        record('oversize-frame', src, true, `rx=${rxBytes} > ${MAX_FRAME_BYTES}`);
+        sock.destroy();
+        return;
+      }
+      handleCompleteFrame(chunk);
     });
     sock.on('error', () => {});
     sock.on('close', () => { clearTimeout(timer); decLive(); });

@@ -1,4 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
+ifeq ($(origin CC),default)
+  CC := gcc
+endif
 CC      ?= gcc
 CFLAGS  ?= -std=c11 -D_DEFAULT_SOURCE -O2 -Wall -Wextra -Wpedantic -Werror -Iinclude -Ithird_party/moonlab
 LDFLAGS ?= -lm
@@ -22,13 +25,14 @@ MOONLAB_SRCS := \
 CORE_SRCS := \
   src/secmesh_entropy.c \
   src/secmesh_it_crypto.c \
-  src/secmesh_quantum_geo.c
+  src/secmesh_quantum_geo.c \
+  src/secmesh_tun.c
 
 BUILD_DIR := build
 
-.PHONY: all test sanitizers clean
+.PHONY: all test const-time sanitizers clean
 
-all: $(BUILD_DIR)/secmesh_core$(EXE) $(BUILD_DIR)/test_native_core$(EXE)
+all: $(BUILD_DIR)/secmesh_core$(EXE) $(BUILD_DIR)/test_native_core$(EXE) $(BUILD_DIR)/test_const_time$(EXE)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -39,8 +43,14 @@ $(BUILD_DIR)/secmesh_core$(EXE): $(CORE_SRCS) $(MOONLAB_SRCS) src/secmesh_cli.c 
 $(BUILD_DIR)/test_native_core$(EXE): $(CORE_SRCS) $(MOONLAB_SRCS) tests/test_native_core.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -Wno-pedantic $(CORE_SRCS) $(MOONLAB_SRCS) tests/test_native_core.c -o $@ $(LDFLAGS)
 
+$(BUILD_DIR)/test_const_time$(EXE): $(CORE_SRCS) $(MOONLAB_SRCS) tests/test_const_time.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -Wno-pedantic $(CORE_SRCS) $(MOONLAB_SRCS) tests/test_const_time.c -o $@ $(LDFLAGS)
+
 test: all
 	./$(BUILD_DIR)/test_native_core$(EXE)
+
+const-time: $(BUILD_DIR)/test_const_time$(EXE)
+	./$(BUILD_DIR)/test_const_time$(EXE)
 
 sanitizers: | $(BUILD_DIR)
 	$(CC) -std=c11 -D_DEFAULT_SOURCE -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-omit-frame-pointer \

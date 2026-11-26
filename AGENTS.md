@@ -5,7 +5,7 @@ This file is the single canonical instruction set for all coding and research ag
 
 ## 1. Repository Purpose & Integrity Rules
 
-`secmesh-pqsi` (`v2.5.0`) is a clean-room cryptographic refactoring of `BoogerCheeseOnRye/SecMesh@aff7dc6` rebuilt atop Tsotchke's MIT/Apache-2.0 stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`) into a Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) mesh defense engine, backed by **28 zero-Mathlib Lean 4.35.0 theorems** verified across **all 6 distinct kernel implementations** (`lake comparator --paranoid`) and **two companion AMS-LaTeX white papers**.
+`secmesh-pqsi` (`v3.0.0`) is a clean-room cryptographic refactoring of `BoogerCheeseOnRye/SecMesh@aff7dc6` rebuilt atop Tsotchke's MIT/Apache-2.0 stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`) into a complete Levels 1–3 Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) "Onion-Artichoke" mesh defense suite, backed by **28 zero-Mathlib Lean 4.35.0 theorems** verified across **all 6 distinct kernel implementations** (`lake comparator --paranoid`), **two companion AMS-LaTeX white papers**, and a **3-page NIST Cyber & Quantum Executive Brief**.
 
 ### Non-Negotiable Integrity Boundaries
 - **Zero fabrication / zero sycophancy:** Every reported theorem, test count, byte count, latency, and hash MUST come from an actual run of current files in this repo.

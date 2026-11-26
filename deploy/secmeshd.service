@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: Apache-2.0
+# Hardened systemd unit for SecMesh-PQSI v3.0.0 Daemon
+[Unit]
+Description=SecMesh-PQSI v3.0 Post-Quantum & Information-Theoretic Mesh Daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+StateDirectory=secmesh-pqsi
+StateDirectoryMode=0700
+ConfigurationDirectory=secmesh-pqsi
+ConfigurationDirectoryMode=0700
+WorkingDirectory=/opt/secmesh-pqsi
+ExecStart=/usr/bin/node /opt/secmesh-pqsi/node/src/secmesh-cli.mjs audit
+Restart=on-failure
+RestartSec=3s
+
+# Zero-Trust Linux Sandbox Hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=no
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=no
+# Grant ONLY CAP_NET_ADMIN if enabling kernel /dev/net/tun or nftables enforcement:
+CapabilityBoundingSet=CAP_NET_ADMIN
+AmbientCapabilities=CAP_NET_ADMIN
+
+[Install]
+WantedBy=multi-user.target

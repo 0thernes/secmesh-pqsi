@@ -17,6 +17,7 @@ jobs:
         run: |
           sha256sum dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf \
                     dist/Donahue_2026_secmesh_pqsi_architecture.pdf \
+                    dist/Donahue_2026_secmesh_pqsi_nist_executive_brief.pdf \
                     dist/arxiv_submission.tar.gz \
                     MANIFEST.sha256 > SHA256SUMS
           cat SHA256SUMS
@@ -29,6 +30,7 @@ jobs:
             gh release create "$TAG" \
               dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf \
               dist/Donahue_2026_secmesh_pqsi_architecture.pdf \
+              dist/Donahue_2026_secmesh_pqsi_nist_executive_brief.pdf \
               dist/arxiv_submission.tar.gz \
               MANIFEST.sha256 \
               SHA256SUMS \

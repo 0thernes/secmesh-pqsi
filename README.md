@@ -20,9 +20,10 @@
 
 ---
 
-**SecMesh-PQSI** (`v2.5.0`) is a clean-room cryptographic refactoring of [`BoogerCheeseOnRye/SecMesh@aff7dc6`](https://github.com/BoogerCheeseOnRye/SecMesh) rebuilt atop Tsotchke's MIT/Apache-2.0 cryptographic, representation-theoretic, and quantum-geometry stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`, `quantum_rng`, `classical_rng`; complete live-verified 27-repo audit in [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md)) into a rigorously audited **Post-Quantum + Post-Super-Intelligence (information-theoretic)** defense architecture.
+**SecMesh-PQSI** (`v3.0.0` — *"Invincible Onion Artichoke"*) is a clean-room cryptographic refactoring of [`BoogerCheeseOnRye/SecMesh@aff7dc6`](https://github.com/BoogerCheeseOnRye/SecMesh) rebuilt atop Tsotchke's MIT/Apache-2.0 cryptographic, representation-theoretic, and quantum-geometry stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`, `quantum_rng`, `classical_rng`; complete live-verified 27-repo audit in [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md)) into a complete **Levels 1–3 Post-Quantum + Post-Super-Intelligence (information-theoretic)** defense suite.
 
 - **Author:** Alexander S. Donahue ([ORCID `0009-0006-8168-9648`](https://orcid.org/0009-0006-8168-9648), Independent Researcher, Spokane, WA, USA)
+- **3-Page NIST Cyber & Quantum Executive Brief (Plain English):** [PDF (`dist/Donahue_2026_secmesh_pqsi_nist_executive_brief.pdf`)](dist/Donahue_2026_secmesh_pqsi_nist_executive_brief.pdf) · [LaTeX](paper/brief/secmesh_pqsi_nist_brief.tex)
 - **White Paper I (Formal Foundations):** [PDF (`dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf`)](dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf) · [LaTeX](paper/main.tex) · [arXiv Tarball](dist/arxiv_submission.tar.gz)
 - **White Paper II (Systems Architecture & Threat Model):** [PDF (`dist/Donahue_2026_secmesh_pqsi_architecture.pdf`)](dist/Donahue_2026_secmesh_pqsi_architecture.pdf) · [LaTeX](paper/engineering/secmesh_architecture.tex)
 - **Interactive Defense Console & Proof Blueprint:** [`app/index.html`](app/index.html) · [`app/blueprint.html`](app/blueprint.html) (live on GitHub Pages)
@@ -67,21 +68,21 @@ $ cd lean && lake build && lake env lean VerifyAxioms.lean
 | **T5 — FIPS 203 ML-KEM & $K_N$ Ceilings** | $q = 3329$ prime & $\zeta = 17$ primitive 256-th NTT root, zero-overflow Montgomery reduction across $|a| < 2^{15}\cdot 3329$, sharp `Compress_1` margin $|e|\le 831$ (tight at $+832$), complete-graph $K_N$ ceiling optimality & `< 1.75%` IT-hedge overhead (`+112 B`). | [`lean/SecMeshPQSI/LatticeBandwidth.lean`](lean/SecMeshPQSI/LatticeBandwidth.lean) |
 | **T6 — Ising Expander Barrier & Cryptosymbology** | Discrete Laplacian PSD, exact Ising spin-flip cut bijection, Cheeger expander contagion work barrier $W_{\min}(k) \ge 2k(J_{\min}\phi_0 + h_{\min})$; Simmons deterministic zero-capacity, $2^k$ kleptographic bijection & threshold-hedged XOR dual-closure. | [`lean/SecMeshPQSI/SpinDefenseCryptosymbology.lean`](lean/SecMeshPQSI/SpinDefenseCryptosymbology.lean) |
 | **T7 — Monogamy, Commitment No-Go & Microcrypt EFI** | Toner CHSH monogamy $S_{AB}^2 + S_{AE}^2 \le 8$ + CKW Berry-monopole isolation (`T7a`); exact Hiding–Binding Conservation $\mathrm{TV}+\mathrm{Overlap}=1$ (`T7b`); exact Fuchs–van de Graaff $1-B \le \mathrm{TV}$, $\mathrm{TV}^2+B^2 \le 1$, pure-state $D_{\mathrm{tr}}^2+F=1$, and Quantum Microcrypt EFI fidelity ceiling (`T7c`, Mega Atlas `CS-031`/`QC-022`). | [`lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean`](lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean) |
-| **C11 + Node 25 + Eshkol AD Engine** | **64/64** C11 Moonlab tests (`-Wall -Wextra -Werror`, ASan/UBSan + 500/500 fuzz, `__int128` Ising overflow guard, Shamir stack zeroization, strict CLI parser), **19/19** Node 25 tests (bit-exact C11 ↔ OpenSSL 3.5.5 ML-KEM-768, strict 16-byte AES-256-GCM tag guard, canonical CW-128, Guardian v2 RFC-6479 + HTTP 405/CSP, parse/eval-depth-capped execution of all **5** Eshkol v1.3.6 AD modules to `<1e-12`, schema-verified Rosette-Wire receipts, deterministic seeded Toeplitz), **15/15** pytest (incl. negative Lean kernel rejection, placeholder & manifest/Atlas sync guards), **44/44** HTTP-200 citations (**33/33** Crossref non-retracted DOIs + **1** DataCite DOI), pre-registered 30-seed paired benchmark (`p_Holm = 3.73e-9`). | [`native/`](native/), [`node/`](node/), [`eshkol/`](eshkol/), [`python/`](python/) |
+| **Levels 1–3 Onion-Artichoke Stack (C11 + Node 25 + Eshkol AD)** | **69/69** C11 Moonlab + TUN/Wintun tests (`-Wall -Wextra -Werror`, ASan/UBSan + 500/500 fuzz, `VirtualLock`/`mlock`, **4/4** `dudect` Welch $t$-test, persistent `ct-worker` coprocessor), **34/34** Node 25 tests (`19/19` core + `15/15` Onion-Artichoke red-team: Argon2id + AES-256-GCM/ChaCha20-Poly1305 6-algo keystore, Byzantine Shamir recovery, anti-MITM `PeerTrustStore` + signed revocations, crash-safe on-disk-shredding `SECMESH_IT_PAD_FILE` ledger, 5-layer file vault, 1-byte TCP framing, PQ Double-Ratchet + live auto-rekey, live TCP `serve`/`tunnel`, 3-hop Onion-Artichoke router, UDP L3 Mesh VPN with rotating DoS cookies + `AllowedIPs` anti-spoofing + NAT roaming, active `netsh`/`nftables` firewall, 5 live Eshkol AD modules), **15/15** pytest, **44/44** HTTP-200 citations (**33/33** Crossref non-retracted DOIs + **1** DataCite DOI), pre-registered 30-seed benchmark (`p_Holm = 3.73e-9`). | [`native/`](native/), [`node/`](node/), [`deploy/`](deploy/), [`eshkol/`](eshkol/), [`python/`](python/) |
 
 ---
 
 ## Quickstart
 
 ```bash
-# 1. Build & test the native C11 Moonlab cryptographic core (64/64 tests)
-make -C native test
+# 1. Build & test native C11 Moonlab + TUN/Wintun core (69/69 tests + 4/4 dudect constant-time)
+make -C native test const-time
 
-# 2. Run Node.js 25 differential, ML-KEM interop, anti-replay CW-128 & live Eshkol AD suite (19/19 tests)
-node node/tests/test_secmesh_v2.mjs
+# 2. Run ALL 34 Node.js 25 core + Level 1-3 Onion-Artichoke red-team tests
+node node/tests/test_secmesh_v2.mjs && node node/tests/test_artichoke_v3.mjs
 
-# 3. Run the interactive quickstart demo & emit a Rosette-Wire audit bundle
-node examples/quickstart_demo.mjs
+# 3. Run real Level 1-3 CLI workflows (Argon2id keystore, Trust Store, crash-safe OTP vault, TUN probe, audit)
+node node/src/secmesh-cli.mjs tun-probe
 node node/src/secmesh-cli.mjs audit
 
 # 4. Verify all 28 Lean 4.35.0 theorems & strict axiom allowlist + README drift check

@@ -23,6 +23,11 @@ extern "C" {
  * ========================================================================= */
 void secmesh_secure_zero(void *ptr, size_t len);
 int  secmesh_ct_memeq(const uint8_t *a, const uint8_t *b, size_t len);
+int  secmesh_mem_lock(void *ptr, size_t len);
+int  secmesh_mem_unlock(void *ptr, size_t len);
+/* Run Moonlab NIST SP 800-90B RCT + APT health tests on an external entropy/pad buffer.
+ * Returns 0 on PASS, negative on health failure or invalid input. */
+int  secmesh_sp80090b_audit_buffer(const uint8_t *buf, size_t len);
 
 /* =========================================================================
  * 2. Health-Tested, Bell-Gated Conditioned Entropy Engine

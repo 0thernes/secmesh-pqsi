@@ -4,6 +4,7 @@
  * SecMesh-PQSI Native C11 CLI (JSON interface for Node/Python/Rosette-Wire interop)
  */
 #include "secmesh_pqsi.h"
+#include "secmesh_tun.h"
 #include "../third_party/moonlab/crypto/mlkem/mlkem.h"
 #include "../third_party/moonlab/crypto/sha3/sha3.h"
 #include "../third_party/moonlab/applications/qrng_di.h"
@@ -295,9 +296,187 @@ static int cmd_ising_barrier(int argc, char **argv) {
     return 0;
 }
 
+static int cmd_tun_probe(void) {
+    secmesh_tun_probe_t p;
+    secmesh_tun_probe(&p);
+    printf("{\"op\":\"tun_probe\",\"supported_os\":%s,\"driver_available\":%s,"
+           "\"has_privilege\":%s,\"backend\":\"%s\",\"detail\":\"%s\"}\n",
+           p.supported_os ? "true" : "false",
+           p.driver_available ? "true" : "false",
+           p.has_privilege ? "true" : "false",
+           p.backend, p.detail);
+    return 0;
+}
+
+static int cmd_sp80090b_file(const char *filepath) {
+    if (!filepath || !*filepath) return 2;
+    FILE *fp = fopen(filepath, "rb");
+    if (!fp) {
+        printf("{\"op\":\"sp80090b_file\",\"ok\":false,\"error\":\"open_failed\"}\n");
+        return 1;
+    }
+    const size_t SAMPLE = 65536;
+    uint8_t *buf = (uint8_t *)malloc(SAMPLE);
+    if (!buf) { fclose(fp); return 2; }
+    size_t n = fread(buf, 1, SAMPLE, fp);
+    fclose(fp);
+    int rc = secmesh_sp80090b_audit_buffer(buf, n);
+    secmesh_secure_zero(buf, SAMPLE);
+    free(buf);
+    printf("{\"op\":\"sp80090b_file\",\"ok\":%s,\"bytes_audited\":%zu}\n",
+           rc == 0 ? "true" : "false", n);
+    return rc == 0 ? 0 : 1;
+}
+
+/* Persistent constant-time C11 coprocessor over line-delimited stdin/stdout.
+ * Protocol (space-separated tokens, all binary arguments hex-encoded):
+ *   PING
+ *   GF128 <a_16B_hex> <b_16B_hex>
+ *   CW_MAC <r_16B_hex> <pad_16B_hex> <msg_hex_or_->
+ *   CW_VERIFY <tag_16B_hex> <r_16B_hex> <pad_16B_hex> <msg_hex_or_->
+ *   HYBRID <kpq_hex> <kit_32B_hex_or_-> <transcript_hex_or_->
+ *   MLKEM_ENCAPS <ek_1184B_hex> <m_32B_hex>
+ *   SP80090B <buf_hex>
+ *   QUIT
+ */
+static int cmd_ct_worker(void) {
+    const size_t LINE_CAP = 262144;
+    const size_t BIN_CAP  = 131072;
+    char *line = (char *)malloc(LINE_CAP);
+    uint8_t *buf = (uint8_t *)malloc(BIN_CAP);
+    if (!line || !buf) { free(line); free(buf); return 2; }
+    (void)secmesh_mem_lock(buf, BIN_CAP);
+
+    while (fgets(line, (int)LINE_CAP, stdin) != NULL) {
+        size_t len = strlen(line);
+        while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) line[--len] = '\0';
+        if (len == 0) continue;
+
+        char *save = NULL;
+        char *op = strtok(line, " ");
+        (void)save;
+        if (!op) continue;
+
+        if (strcmp(op, "QUIT") == 0) {
+            printf("{\"ok\":true,\"op\":\"quit\"}\n");
+            fflush(stdout);
+            break;
+        } else if (strcmp(op, "PING") == 0) {
+            printf("{\"ok\":true,\"op\":\"pong\",\"engine\":\"secmesh-c11-ct-v3\"}\n");
+        } else if (strcmp(op, "GF128") == 0) {
+            char *ah = strtok(NULL, " ");
+            char *bh = strtok(NULL, " ");
+            uint8_t a[16], b[16], out[16];
+            if (!ah || !bh || hex_to_bytes(ah, a, 16) != 16 || hex_to_bytes(bh, b, 16) != 16) {
+                printf("{\"ok\":false,\"error\":\"bad_args\"}\n");
+            } else {
+                secmesh_gf128_mul(out, a, b);
+                printf("{\"ok\":true,\"out_hex\":\"");
+                print_hex(out, 16);
+                printf("\"}\n");
+            }
+            secmesh_secure_zero(a, 16); secmesh_secure_zero(b, 16); secmesh_secure_zero(out, 16);
+        } else if (strcmp(op, "CW_MAC") == 0) {
+            char *rh = strtok(NULL, " ");
+            char *ph = strtok(NULL, " ");
+            char *mh = strtok(NULL, " ");
+            uint8_t r[16], pad[16], tag[16];
+            int mlen = (mh && strcmp(mh, "-") == 0) ? 0 : (mh ? hex_to_bytes(mh, buf, BIN_CAP) : -1);
+            if (!rh || !ph || mlen < 0 || hex_to_bytes(rh, r, 16) != 16 || hex_to_bytes(ph, pad, 16) != 16) {
+                printf("{\"ok\":false,\"error\":\"bad_args\"}\n");
+            } else {
+                secmesh_cw_mac_compute(tag, r, pad, buf, (size_t)mlen);
+                printf("{\"ok\":true,\"tag_hex\":\"");
+                print_hex(tag, 16);
+                printf("\"}\n");
+            }
+            secmesh_secure_zero(r, 16); secmesh_secure_zero(pad, 16);
+            secmesh_secure_zero(tag, 16);
+            if (mlen > 0) secmesh_secure_zero(buf, (size_t)mlen);
+        } else if (strcmp(op, "CW_VERIFY") == 0) {
+            char *th = strtok(NULL, " ");
+            char *rh = strtok(NULL, " ");
+            char *ph = strtok(NULL, " ");
+            char *mh = strtok(NULL, " ");
+            uint8_t tag[16], r[16], pad[16];
+            int mlen = (mh && strcmp(mh, "-") == 0) ? 0 : (mh ? hex_to_bytes(mh, buf, BIN_CAP) : -1);
+            if (!th || !rh || !ph || mlen < 0 ||
+                hex_to_bytes(th, tag, 16) != 16 || hex_to_bytes(rh, r, 16) != 16 || hex_to_bytes(ph, pad, 16) != 16) {
+                printf("{\"ok\":false,\"error\":\"bad_args\"}\n");
+            } else {
+                int valid = secmesh_cw_mac_verify(tag, r, pad, buf, (size_t)mlen);
+                printf("{\"ok\":true,\"valid\":%s}\n", valid ? "true" : "false");
+            }
+            secmesh_secure_zero(tag, 16); secmesh_secure_zero(r, 16); secmesh_secure_zero(pad, 16);
+            if (mlen > 0) secmesh_secure_zero(buf, (size_t)mlen);
+        } else if (strcmp(op, "HYBRID") == 0) {
+            char *pqh = strtok(NULL, " ");
+            char *ith = strtok(NULL, " ");
+            char *trh = strtok(NULL, " ");
+            uint8_t kpq[256], kit[32], kout[32];
+            int pqlen = pqh ? hex_to_bytes(pqh, kpq, sizeof kpq) : -1;
+            int has_it = (ith && strcmp(ith, "-") != 0);
+            int itlen = has_it ? hex_to_bytes(ith, kit, 32) : 0;
+            int trlen = (trh && strcmp(trh, "-") == 0) ? 0 : (trh ? hex_to_bytes(trh, buf, BIN_CAP) : -1);
+            if (pqlen <= 0 || (has_it && itlen != 32) || trlen < 0) {
+                printf("{\"ok\":false,\"error\":\"bad_args\"}\n");
+            } else {
+                int rc = secmesh_hybrid_combine(kout, kpq, (size_t)pqlen,
+                                                has_it ? kit : NULL, has_it ? 32u : 0u,
+                                                buf, (size_t)trlen);
+                if (rc == 0) {
+                    printf("{\"ok\":true,\"key_hex\":\"");
+                    print_hex(kout, 32);
+                    printf("\"}\n");
+                } else {
+                    printf("{\"ok\":false,\"error\":\"combine_failed\"}\n");
+                }
+            }
+            secmesh_secure_zero(kpq, sizeof kpq); secmesh_secure_zero(kit, 32); secmesh_secure_zero(kout, 32);
+            if (trlen > 0) secmesh_secure_zero(buf, (size_t)trlen);
+        } else if (strcmp(op, "MLKEM_ENCAPS") == 0) {
+            char *ekh = strtok(NULL, " ");
+            char *mh  = strtok(NULL, " ");
+            uint8_t ek[MLKEM768_PUBLICKEYBYTES], m[32], ct[MLKEM768_CIPHERTEXTBYTES], ss[32];
+            if (!ekh || !mh || hex_to_bytes(ekh, ek, sizeof ek) != MLKEM768_PUBLICKEYBYTES ||
+                hex_to_bytes(mh, m, 32) != 32 || !moonlab_mlkem768_check_ek(ek)) {
+                printf("{\"ok\":false,\"error\":\"bad_mlkem_args\"}\n");
+            } else {
+                moonlab_mlkem768_encaps(ct, ss, ek, m);
+                printf("{\"ok\":true,\"ct_hex\":\"");
+                print_hex(ct, sizeof ct);
+                printf("\",\"ss_hex\":\"");
+                print_hex(ss, 32);
+                printf("\"}\n");
+            }
+            secmesh_secure_zero(m, 32); secmesh_secure_zero(ss, 32);
+        } else if (strcmp(op, "SP80090B") == 0) {
+            char *bh = strtok(NULL, " ");
+            int blen = bh ? hex_to_bytes(bh, buf, BIN_CAP) : -1;
+            if (blen < 512) {
+                printf("{\"ok\":false,\"error\":\"need_512_bytes\"}\n");
+            } else {
+                int rc = secmesh_sp80090b_audit_buffer(buf, (size_t)blen);
+                printf("{\"ok\":true,\"passed\":%s,\"bytes\":%d}\n", rc == 0 ? "true" : "false", blen);
+            }
+            if (blen > 0) secmesh_secure_zero(buf, (size_t)blen);
+        } else {
+            printf("{\"ok\":false,\"error\":\"unknown_op\"}\n");
+        }
+        fflush(stdout);
+        secmesh_secure_zero(line, len);
+    }
+
+    secmesh_secure_zero(buf, BIN_CAP);
+    (void)secmesh_mem_unlock(buf, BIN_CAP);
+    free(buf);
+    free(line);
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: secmesh_core <mlkem-kat|mlkem-encaps <ek_hex> <m_hex>|finite-key [S N QBER eps di]|qgt [theta phi alpha]|chern-law [alpha N]|ising-barrier [N k J phi h]|bb144|bandwidth [bps sec]|entropy-status>\n");
+        fprintf(stderr, "Usage: secmesh_core <mlkem-kat|mlkem-encaps <ek_hex> <m_hex>|finite-key [S N QBER eps di]|qgt [theta phi alpha]|chern-law [alpha N]|ising-barrier [N k J phi h]|bb144|bandwidth [bps sec]|entropy-status|tun-probe|sp80090b-file <path>|ct-worker>\n");
         return 1;
     }
     const char *cmd = argv[1];
@@ -319,6 +498,9 @@ int main(int argc, char **argv) {
         return cmd_bandwidth(bps, sec);
     }
     if (strcmp(cmd, "entropy-status") == 0) return cmd_entropy_status();
+    if (strcmp(cmd, "tun-probe") == 0) return cmd_tun_probe();
+    if (strcmp(cmd, "sp80090b-file") == 0 && argc >= 3) return cmd_sp80090b_file(argv[2]);
+    if (strcmp(cmd, "ct-worker") == 0) return cmd_ct_worker();
     fprintf(stderr, "Unknown command: %s\n", cmd);
     return 1;
 }

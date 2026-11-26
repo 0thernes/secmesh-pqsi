@@ -60,6 +60,7 @@ void secmesh_gf128_mul(uint8_t out[16], const uint8_t a[16], const uint8_t b[16]
             vh = (vh >> 1) ^ (0xE100000000000000ULL & rmask);
         }
     }
+    __asm__ __volatile__("" : "+r"(zh), "+r"(zl) :: "memory");
     store_be64(out, zh);
     store_be64(out + 8, zl);
 }

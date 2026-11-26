@@ -1,11 +1,12 @@
 {
   "schema": "rosette-wire/composition/v1",
-  "id": "secmesh-pqsi-full-audit-v2",
+  "id": "secmesh-pqsi-full-audit-v3",
   "components": [
     "moonlab-c11-fips203",
     "openssl-3.5-fips203-204-205",
     "secmesh-finite-key-v2",
-    "carter-wegman-gf128"
+    "carter-wegman-gf128",
+    "artichoke-v3-onion-ratchet-vpn"
   ],
   "inputs": {
     "nRounds": 450000,

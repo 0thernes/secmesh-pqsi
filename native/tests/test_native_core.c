@@ -7,6 +7,7 @@
  * Shamir Byzantine Secret Sharing, Finite-Key E91 v2, QGTL, and BB [[144,12,12]].
  */
 #include "secmesh_pqsi.h"
+#include "secmesh_tun.h"
 #include "../third_party/moonlab/crypto/sha3/sha3.h"
 #include "../third_party/moonlab/crypto/aes/aes.h"
 #include "../third_party/moonlab/crypto/mlkem/mlkem.h"
@@ -392,6 +393,51 @@ static void test_chern_ghz_ising_and_null_hardening(void) {
     int64_t dTrSq = mU * mU - fidSq;
     CHECK(mU == 25 && fidSq == 625 && dTrSq == 0,
           "T7c Complex pure-state Gram conservation & Mayers-Lo-Chau collinear fidelity exact");
+
+    /* v3.0 Onion-Artichoke Native Hardening: mlock, SP 800-90B pad audit, TUN probe & RFC 791 IPv4 */
+    uint8_t secret_page[64] = {0};
+    int locked = secmesh_mem_lock(secret_page, sizeof secret_page);
+    if (locked == 0) (void)secmesh_mem_unlock(secret_page, sizeof secret_page);
+    CHECK(locked == 0 || locked == -1,
+          "v3.0 secmesh_mem_lock/unlock safe on host OS without UB");
+
+    uint8_t good_pad[2048], bad_pad[2048];
+    CHECK(secmesh_os_csprng(good_pad, sizeof good_pad) == 0 &&
+          secmesh_sp80090b_audit_buffer(good_pad, sizeof good_pad) == 0,
+          "v3.0 SP 800-90B pad audit PASS on OS CSPRNG 2048B pad");
+    memset(bad_pad, 0xAA, sizeof bad_pad);
+    CHECK(secmesh_sp80090b_audit_buffer(bad_pad, sizeof bad_pad) < 0 &&
+          secmesh_sp80090b_audit_buffer(good_pad, 64) < 0,
+          "v3.0 SP 800-90B pad audit FAILS CLOSED on constant or short pad");
+    secmesh_secure_zero(good_pad, sizeof good_pad);
+
+    secmesh_tun_probe_t tp;
+    secmesh_tun_probe(&tp);
+    secmesh_tun_handle_t *th = NULL;
+    CHECK(tp.backend[0] != '\0' &&
+          secmesh_tun_open("bad;name", &th) == SECMESH_TUN_ERR_INVALID &&
+          secmesh_tun_open("", &th) == SECMESH_TUN_ERR_INVALID &&
+          th == NULL,
+          "v3.0 TUN/Wintun probe reports backend and rejects shell-injected ifname");
+
+    /* Valid 28-byte RFC 791 IPv4 packet (10.99.0.1 -> 10.99.0.2, UDP) */
+    uint8_t ip4[28] = {
+        0x45, 0x00, 0x00, 0x1C, 0x00, 0x01, 0x00, 0x00, 0x40, 0x11,
+        0x00, 0x00, 10, 99, 0, 1, 10, 99, 0, 2,
+        0x00, 0x50, 0x00, 0x50, 0x00, 0x08, 0x00, 0x00
+    };
+    uint16_t csum = secmesh_ipv4_checksum(ip4, 20);
+    ip4[10] = (uint8_t)(csum >> 8);
+    ip4[11] = (uint8_t)(csum & 0xFFu);
+    secmesh_ipv4_hdr_t hdr;
+    int parse_ok = secmesh_ipv4_parse(ip4, sizeof ip4, &hdr);
+    ip4[19] ^= 0x01; /* corrupt dst IP without updating checksum */
+    secmesh_ipv4_hdr_t hdr_bad;
+    int parse_bad = secmesh_ipv4_parse(ip4, sizeof ip4, &hdr_bad);
+    CHECK(parse_ok == 0 && hdr.checksum_valid == 1 && hdr.version == 4 &&
+          hdr.src_ip_be == 0x0A630001u && hdr.dst_ip_be == 0x0A630002u &&
+          parse_bad == 0 && hdr_bad.checksum_valid == 0,
+          "v3.0 RFC 791 IPv4 parser & Internet checksum verify valid & detect tampered header");
 }
 
 int main(void) {

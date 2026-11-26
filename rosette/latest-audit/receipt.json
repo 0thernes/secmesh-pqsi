@@ -1,8 +1,8 @@
 {
   "schema": "rosette-wire/receipt/v1",
-  "compositionId": "secmesh-pqsi-full-audit-v2",
-  "compositionSha256": "06aeabb0266d713537c09da78980c46afbf9c21003ac7c37f7bef39693983560",
-  "timestampUtc": "2026-11-26T02:40:59.891Z",
+  "compositionId": "secmesh-pqsi-full-audit-v3",
+  "compositionSha256": "0bddf95f29d810c6dbd3af96ab68da5b7616e451f7a750e056c8711cd8136536",
+  "timestampUtc": "2026-11-26T23:51:01.281Z",
   "runtime": {
     "node": "v25.8.2",
     "openssl": "3.5.5",
@@ -13,7 +13,7 @@
       "ok": true,
       "ekBytes": 1184,
       "ctBytes": 1088,
-      "sharedSecretSha3Prefix": "69e980a617670d62b81483ff7bd4f42a",
+      "sharedSecretSha3Prefix": "503f552d5620a6f1387fae69b39c6d88",
       "implementations": [
         "Moonlab-C11-FIPS203",
         "OpenSSL-3.5.5-FIPS203"
@@ -32,6 +32,7 @@
     "honestCertBits": 19054,
     "alignedEveCertBits": 0,
     "v1BrokenAt50k": 3220,
-    "v2CorrectedAt50k": 88
+    "v2CorrectedAt50k": 88,
+    "tunBackend": "windows-wintun"
   }
 }

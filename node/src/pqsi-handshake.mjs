@@ -28,11 +28,10 @@ export function gf128Mul(aBuf, bBuf) {
   for (let i = 0; i < 16; i++) {
     const bi = bBuf[i];
     for (let bit = 7; bit >= 0; bit--) {
-      const m = ((bi >> bit) & 1) ? MASK64 : 0n;
+      const m = (-BigInt((bi >> bit) & 1)) & MASK64;
       zh ^= vh & m;
       zl ^= vl & m;
-      const lsb = vl & 1n;
-      const rm = lsb ? MASK64 : 0n;
+      const rm = (-(vl & 1n)) & MASK64;
       vl = ((vl >> 1n) | ((vh & 1n) << 63n)) & MASK64;
       vh = ((vh >> 1n) ^ (R_POLY & rm)) & MASK64;
     }

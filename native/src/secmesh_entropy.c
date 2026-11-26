@@ -20,11 +20,13 @@
 #include <windows.h>
 #include <bcrypt.h>
 #elif defined(__linux__)
+#include <sys/mman.h>
 #include <sys/random.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #else
+#include <sys/mman.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -47,11 +49,43 @@ void secmesh_secure_zero(void *ptr, size_t len) {
 
 int secmesh_ct_memeq(const uint8_t *a, const uint8_t *b, size_t len) {
     if (len > 0 && (!a || !b)) return 0;
-    uint8_t diff = 0;
+    volatile const uint8_t *va = (volatile const uint8_t *)a;
+    volatile const uint8_t *vb = (volatile const uint8_t *)b;
+    uint32_t diff = 0;
     for (size_t i = 0; i < len; i++) {
-        diff |= (uint8_t)(a[i] ^ b[i]);
+        diff |= (uint32_t)(va[i] ^ vb[i]);
     }
-    return diff == 0 ? 1 : 0;
+    /* Compiler optimization barrier + branchless equality mask (1 iff diff == 0) */
+    __asm__ __volatile__("" : "+r"(diff) :: "memory");
+    return (int)((diff - 1u) >> 31);
+}
+
+int secmesh_mem_lock(void *ptr, size_t len) {
+    if (!ptr || len == 0) return -1;
+#ifdef _WIN32
+    return VirtualLock(ptr, len) ? 0 : -1;
+#else
+    return (mlock(ptr, len) == 0) ? 0 : -1;
+#endif
+}
+
+int secmesh_mem_unlock(void *ptr, size_t len) {
+    if (!ptr || len == 0) return -1;
+#ifdef _WIN32
+    return VirtualUnlock(ptr, len) ? 0 : -1;
+#else
+    return (munlock(ptr, len) == 0) ? 0 : -1;
+#endif
+}
+
+int secmesh_sp80090b_audit_buffer(const uint8_t *buf, size_t len) {
+    if (!buf || len < 512) return -1;
+    health_test_ctx_t ht;
+    if (health_tests_init(&ht) != HEALTH_SUCCESS) return -1;
+    int rc = (health_tests_run_batch(&ht, buf, len) == HEALTH_SUCCESS) ? 0 : -2;
+    health_tests_free(&ht);
+    secmesh_secure_zero(&ht, sizeof ht);
+    return rc;
 }
 
 /* =========================================================================
