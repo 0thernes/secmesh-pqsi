@@ -390,4 +390,36 @@ await test('Security Cycle 9: Strict CLI hex/NaN guards, fail-closed finite-key,
   }, /budget|depth/);
 });
 
+await test('Security & AD Cycle 10: Canonical CW-128 record framing, kItOpt length guard & Eshkol T7 AD module', () => {
+  // 1. dualSurvivabilityCombine must refuse non-32-byte kItOpt (H10.04)
+  assert.throws(() => {
+    dualSurvivabilityCombine({
+      kX25519: crypto.randomBytes(32),
+      kMlKem: crypto.randomBytes(32),
+      kItOpt: crypto.randomBytes(16),
+      transcriptBuf: Buffer.from('tx'),
+    });
+  }, /32-byte/);
+  // 2. Canonical length-prefixed CW-128 record framing rejects shifted AAD/ct boundaries (H10.04)
+  const sk = crypto.randomBytes(32);
+  const cw = { r: crypto.randomBytes(16), b: crypto.randomBytes(16) };
+  const otp = crypto.randomBytes(64);
+  const rec = sealRecord(sk, Buffer.from('secret-payload'), Buffer.from('aad-part'), { otpPadOpt: otp, cwKeyOpt: cw });
+  assert.equal(openRecord(sk, rec, Buffer.from('aad-part'), { otpPadOpt: otp, cwKeyOpt: cw }).toString(), 'secret-payload');
+  assert.throws(() => {
+    openRecord(sk, rec, Buffer.from('aad-par'), { otpPadOpt: otp, cwKeyOpt: cw });
+  }, /Carter-Wegman/);
+  // 3. 5th Eshkol v1.3.6 AD module covering T7a Toner Monogamy & T7b Commitment Conservation (H10.06)
+  const eskT7 = path.join(REPO_ROOT, 'eshkol', 'monogamy_commitment_ad.esk');
+  const rT7 = evaluateEshkolFile(eskT7);
+  assert.ok(rT7.regions.includes('secmesh-monogamy-commitment-ad'));
+  const mDsae = rT7.lines.find(l => l.includes('d(S_AE)/d(S_AB)'));
+  const exactDsae = -2.4 / Math.sqrt(8.0 - 2.4 * 2.4);
+  assert.ok(Math.abs(parseFloat(mDsae.split('= ')[1]) - exactDsae) < 1e-12);
+  const mDrdc = rT7.lines.find(l => l.includes('d(r_A)/d(C_AB)'));
+  assert.ok(Math.abs(parseFloat(mDrdc.split('= ')[1]) - (-0.6 / 0.8)) < 1e-12);
+  const mDov = rT7.lines.find(l => l.includes('d(Overlap)/d(TV)'));
+  assert.ok(Math.abs(parseFloat(mDov.split('= ')[1]) - (-1.0)) < 1e-12);
+});
+
 console.log(`=== Node.js Suite Summary: ${passed}/${passed} passed ===`);

@@ -9,7 +9,7 @@ During the clean-room rebuild of `BoogerCheeseOnRye/SecMesh@aff7dc6`, we queried
 
 ## 1. Directly Integrated, Adapted, or Extended (10 Repositories)
 
-| # | Repository | Pinned Commit SHA | License | Language | Mode | Exact Role in `secmesh-pqsi v2.3.0` |
+| # | Repository | Pinned Commit SHA | License | Language | Mode | Exact Role in `secmesh-pqsi v2.4.0` |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | `tsotchke/moonlab` | `cd3b2347e3` | MIT | C | **Vendored C11 (18 files)** | Compiled directly into `secmesh_core`: FIPS 202 SHA3/SHAKE, FIPS 197 AES-256, SP 800-90A CTR_DRBG, FIPS 203 ML-KEM-512/768/1024, SP 800-90B health tests, Toeplitz DI-QRNG |
 | 2 | `tsotchke/quantum_geometric_tensor` | `770994aa8d` | MIT | C | **Adapted C11 + Lean** | Provost–Vallée QGT metric & Berry curvature (`secmesh_quantum_geo.c`), QGT Concurrence Surplus (`T4a`–`T4b`), and Topological Chern–Concurrence–Entropy Conservation Law (`T4d`) |

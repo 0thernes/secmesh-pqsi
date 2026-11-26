@@ -626,7 +626,7 @@ def main() -> int:
         "empirical_preregistered_ab": run_preregistered_defense_stats(),
     }
     out_path = RESULTS_DIR / "exact_verification_report.json"
-    out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
     digest = hashlib.sha256(out_path.read_bytes()).hexdigest()
     print(f"Exact verification PASS — wrote {out_path} (sha256={digest[:16]}...)")
     print(json.dumps(report, indent=2))

@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #else
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #endif
@@ -85,6 +86,7 @@ int secmesh_os_csprng(uint8_t *out, size_t len) {
     if (fd < 0) return -1;
     while (done < len) {
         ssize_t n = read(fd, out + done, len - done);
+        if (n < 0 && errno == EINTR) continue;
         if (n <= 0) { close(fd); return -1; }
         done += (size_t)n;
     }
@@ -96,6 +98,7 @@ int secmesh_os_csprng(uint8_t *out, size_t len) {
     size_t done = 0;
     while (done < len) {
         ssize_t n = read(fd, out + done, len - done);
+        if (n < 0 && errno == EINTR) continue;
         if (n <= 0) { close(fd); return -1; }
         done += (size_t)n;
     }

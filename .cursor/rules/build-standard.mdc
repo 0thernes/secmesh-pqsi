@@ -5,6 +5,6 @@ alwaysApply: true
 Follow `AGENTS.md` at repository root as the canonical specification for `secmesh-pqsi`.
 Key invariants:
 - Zero Mathlib, zero `sorry`/`admit`/`native_decide`/custom `axiom` in all Lean 4.35 proof modules (`lean/PalomarChallenge.lean` stubs only).
-- Compile native C11 with `-std=c11 -D_DEFAULT_SOURCE -O2 -Wall -Wextra -Werror` and keep 58/58 native tests (+ 500 fuzz), 17/17 Node tests (incl. live Eshkol AD), 14/14 Python pytest tests, and 27/27 Lean theorems across 6 kernels passing.
+- Compile native C11 with `-std=c11 -D_DEFAULT_SOURCE -O2 -Wall -Wextra -Werror` and keep 61/61 native tests (+ 500 fuzz), 18/18 Node tests (incl. 5 live Eshkol AD modules), 14/14 Python pytest tests, and 27/27 Lean theorems across 6 kernels passing.
 - Commit and push straight to `main`; never add blocking hooks, branch protection, commit signing, or banned bot configs (Build Standard v1.2.0 R1–R8).
 - Classify all review findings using the 10-class taxonomy (`bug`, `error`, `issue`, `problem`, `concern`, `dilemma`, `conflict`, `gap`, `hole`, `blindspot`).

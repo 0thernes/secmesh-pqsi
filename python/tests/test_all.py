@@ -174,7 +174,7 @@ def test_differential_node_suite_and_report():
         text=True,
         check=True,
     )
-    assert "Node.js Suite Summary: 17/17 passed" in proc.stdout
+    assert "Node.js Suite Summary: 18/18 passed" in proc.stdout
     assert RESULTS_REPORT.exists()
     data = json.loads(RESULTS_REPORT.read_text(encoding="utf-8"))
     for key in [
@@ -310,7 +310,7 @@ def test_t4de_t6_and_t7_invariants_and_bounded_ci():
 
 def test_eshkol_modules_balanced_sexprs():
     esk_files = sorted((REPO_ROOT / "eshkol").glob("*.esk"))
-    assert len(esk_files) == 4
+    assert len(esk_files) == 5
     for ef in esk_files:
         text = ef.read_text(encoding="utf-8")
         # Strip `;` line comments and string literals before checking parenthesis balance

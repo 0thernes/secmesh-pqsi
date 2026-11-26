@@ -340,6 +340,31 @@ static void test_chern_ghz_ising_and_null_hardening(void) {
     CHECK(secmesh_ising_graph_energy(4, J_asym, h4, sig_ok, &dir0, &lap0, &cut0) == -4 &&
           secmesh_ising_graph_energy(4, J4, h_neg, sig_ok, &dir0, &lap0, &cut0) == -4,
           "Hardening H8.04: Ising graph energy rejects asymmetric J and negative h (-4)");
+
+    /* Cycle 10 Hardening: Ising int64 overflow UB guard (-5), NaN ceiling/entropy fail-closed, qber_errors > sample */
+    int64_t J_huge[4] = {0, (int64_t)1 << 61, (int64_t)1 << 61, 0};
+    int64_t h_zero[2] = {0, 0};
+    int8_t sig_two[2] = {1, -1};
+    CHECK(secmesh_ising_graph_energy(2, J_huge, h_zero, sig_two, &dir0, &lap0, &cut0) == -5,
+          "Hardening H10.02: Ising graph energy catches 64-bit overflow via __int128 (-5, zero UB)");
+    CHECK(secmesh_bw_mesh_ceiling(100000000ULL, NAN, 6685u) == 0ULL &&
+          secmesh_bw_mesh_ceiling(100000000ULL, INFINITY, 6685u) == 0ULL &&
+          secmesh_bin_entropy(NAN) == 0.0 && secmesh_h_vn_from_chsh(NAN) == 0.0,
+          "Hardening H10.03: Bandwidth ceiling & entropy fail closed on NaN/Inf (zero UB)");
+    secmesh_fk_input_t fk_bad_qber = {
+        .chsh_s = 2.828,
+        .cnts = {112500ULL, 112500ULL, 112500ULL, 112500ULL},
+        .n_key = 450000ULL,
+        .qber_errors = 20000ULL,
+        .qber_sample = 10000ULL,
+        .eps_total = 1e-6,
+        .ec_efficiency = 1.16,
+        .use_di_min_ent = 1
+    };
+    secmesh_fk_result_t fk_bad_res;
+    secmesh_finite_key_eval(&fk_bad_qber, &fk_bad_res);
+    CHECK(fk_bad_res.admitted == 0 && fk_bad_res.cert_bits == 0,
+          "Hardening H10.03: Finite-key gate fails closed when qber_errors > qber_sample");
 }
 
 int main(void) {

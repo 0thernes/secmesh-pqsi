@@ -2,6 +2,19 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] — 2026-11-25
+
+### Added
+- **5th Live Eshkol v1.3.6 Forward-Mode Dual-Number AD Module (`eshkol/monogamy_commitment_ad.esk`, `H10.06`):** Closes AD coverage across all 7 theorem families (`T1`–`T7`) by differentiating Theorem `T7a` Toner Quantum CHSH Monogamy $S_{AE}^{\max}(S_{AB}) = \sqrt{8 - S_{AB}^2}$, CKW Berry-monopole isolation $r_A(\mathcal{C}_{AB}) = \sqrt{1 - \mathcal{C}_{AB}^2}$, and Theorem `T7b` Hiding–Binding Conservation $\mathrm{Overlap}(\mathrm{TV}) = 1 - \mathrm{TV}$ to `< 1e-12` analytical accuracy.
+- **Expanded Regression Suites:** Native C11 expanded from `58/58` to **`61/61`** (`__int128` Ising overflow refusal, `NaN`/`Inf` bandwidth & entropy UB refusal, `qber_errors > qber_sample` fail-closed); Node 25 expanded from `17/17` to **`18/18`** (canonical CW-128 record framing boundary tamper rejection, `kItOpt` 32-byte length validation, live 5th Eshkol T7 AD module).
+
+### Fixed (Cycle 10 Deep Cryptographic Framing, C11 Stack-Zeroization & Signed-UB Hardening)
+- **Shamir Byzantine Stack Secret Zeroization (`bug`, `H10.01`):** Added `secmesh_secure_zero(&st, sizeof st)` on all exit paths of `secmesh_shamir_reconstruct_byzantine` so reconstructed master secrets and candidate share buffers never linger on the C stack.
+- **Signed 64-Bit Overflow UB in `secmesh_ising_graph_energy` (`bug`, `H10.02`):** Upgraded Ising accumulators in `native/src/secmesh_quantum_geo.c` to `__int128` with strict `[INT64_MIN, INT64_MAX]` bounds checking (returning `-5`), eliminating signed-integer-overflow UB on adversarial weights.
+- **C11 `NaN`/`Inf` UB & Bounds Guards (`bug`, `H10.03`):** Added `isfinite` guards to `secmesh_bw_mesh_ceiling` (eliminating `(uint64_t)floor(NAN)` UB), `secmesh_bin_entropy`, `secmesh_h_vn_from_chsh`, and `secmesh_finite_key_eval` (`qber_errors <= qber_sample <= n_key`, `isfinite(ec_efficiency)`).
+- **Canonical Length-Prefixed CW-128 Record Framing & Handshake Error Zeroization (`bug`/`hole`, `H10.04`):** Replaced unframed `aad || iv || wireCt || gcmTag` in `sealRecord`/`openRecord` with canonical domain-separated `SecMesh-PQSI-v2|REC| || u32be(|aad|) || aad || iv || u32be(|wireCt|) || wireCt || gcmTag` closing AAD/ciphertext boundary-shift ambiguity against unbounded PSI adversaries; enforced strict 32-byte `kItOpt` length in `dualSurvivabilityCombine`; zeroized responder KEM/X25519 secrets on handshake error paths.
+- **POSIX `/dev/urandom` `EINTR` Signal-Safety (`bug`, `H10.05`):** Added `errno == EINTR` retry loop in `native/src/secmesh_entropy.c` fallback reads.
+
 ## [2.3.0] — 2026-11-25
 
 ### Fixed (Cycle 9 Full-Page Visual PDF, CLI/Node Security, Web App Parity & Mega Atlas Hygiene)

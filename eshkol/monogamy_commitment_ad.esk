@@ -1,0 +1,37 @@
+;; SPDX-License-Identifier: Apache-2.0
+;; Copyright (c) 2026 Alexander S. Donahue
+;;
+;; Eshkol v1.3.6 Toner Quantum CHSH Monogamy (T7a) & Hiding-Binding Conservation (T7b)
+;; Forward-Mode Dual-Number AD Sensitivity Module.
+
+;; Theorem T7a: Maximal Eve CHSH score under Toner quantum monogamy S_AB^2 + S_AE^2 <= 8
+(define (toner-max-eve-chsh s-ab)
+  (sqrt (- 8.0 (* s-ab s-ab))))
+
+;; Theorem T7a (CKW): Residual Berry monopole ceiling r_A(C_AB) = sqrt(1 - C_AB^2)
+(define (ckw-monopole-ceiling c-ab)
+  (sqrt (- 1.0 (* c-ab c-ab))))
+
+;; Theorem T7b: Forced commitment equivocation overlap Overlap(TV) = 1 - TV
+(define (commitment-overlap tv)
+  (- 1.0 tv))
+
+;; Exact Conservation Residual TV + Overlap(TV) - 1 == 0
+(define (commitment-conservation-err tv)
+  (- (+ tv (commitment-overlap tv)) 1.0))
+
+(with-region 'secmesh-monogamy-commitment-ad
+  (let* ((s0 2.4)
+         (s-ae (toner-max-eve-chsh s0))
+         (dsae-dsab (derivative toner-max-eve-chsh s0))
+         (c0 0.6)
+         (dr-dc (derivative ckw-monopole-ceiling c0))
+         (tv0 0.1)
+         (cons-err (commitment-conservation-err tv0))
+         (dov-dtv (derivative commitment-overlap tv0)))
+    (display "SecMesh-PQSI Eshkol Monogamy & Commitment AD Report") (newline)
+    (display "  T7a max S_AE at S_AB=2.4           = ") (display s-ae) (newline)
+    (display "  T7a d(S_AE)/d(S_AB) at S_AB=2.4    = ") (display dsae-dsab) (newline)
+    (display "  T7a CKW d(r_A)/d(C_AB) at C_AB=0.6 = ") (display dr-dc) (newline)
+    (display "  T7b conservation err at TV=0.1     = ") (display cons-err) (newline)
+    (display "  T7b d(Overlap)/d(TV) at TV=0.1     = ") (display dov-dtv) (newline)))

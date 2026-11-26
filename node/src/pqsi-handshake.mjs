@@ -198,6 +198,9 @@ export function thresholdHedgedNonce(rSignerBuf, rAuditorBuf) {
 // 2. Universal Dual-Survivability Hybrid PQ + IT Key Combiner (Theorem T2b)
 // ============================================================================
 export function dualSurvivabilityCombine({ kX25519, kMlKem, kItOpt = null, transcriptBuf }) {
+  if (kItOpt !== null && (!Buffer.isBuffer(kItOpt) || kItOpt.length !== 32)) {
+    throw new Error('kItOpt must be null or a 32-byte Buffer');
+  }
   const kPqConcat = Buffer.concat([kX25519, kMlKem]);
   const dom = Buffer.from('SecMesh-PQSI-v2.0|DualSurvivabilityCombiner|PQ', 'utf8');
   const tlen = Buffer.alloc(8);
@@ -290,6 +293,7 @@ export function runPQSIHandshake(initiatorId, responderId, { preSharedItKey = nu
   const initKemPubDer = initKem.publicKey.export({ type: 'spki', format: 'der' });
 
   const initIdBuf = Buffer.from(initiatorId.nodeId, 'utf8');
+  if (initIdBuf.length > 65535) throw new Error('initiator nodeId exceeds 65535 bytes');
   const initIdLen = Buffer.alloc(2);
   initIdLen.writeUInt16BE(initIdBuf.length, 0);
   const clientHelloBody = Buffer.concat([
@@ -324,6 +328,11 @@ export function runPQSIHandshake(initiatorId, responderId, { preSharedItKey = nu
   const { ciphertext: kemCt, sharedKey: kMlKemResp } = crypto.encapsulate(initKemPubObj);
 
   const respIdBuf = Buffer.from(responderId.nodeId, 'utf8');
+  if (respIdBuf.length > 65535) {
+    kX25519Resp.fill(0);
+    kMlKemResp.fill(0);
+    throw new Error('responder nodeId exceeds 65535 bytes');
+  }
   const respIdLen = Buffer.alloc(2);
   respIdLen.writeUInt16BE(respIdBuf.length, 0);
   const serverHelloBody = Buffer.concat([
@@ -342,9 +351,13 @@ export function runPQSIHandshake(initiatorId, responderId, { preSharedItKey = nu
 
   // Step 3: Initiator verifies Responder signature (+ IT-MAC), computes X25519 + ML-KEM decaps
   if (!compositeVerify(responderId.pub, fullTranscript, serverSig)) {
+    kX25519Resp.fill(0);
+    kMlKemResp.fill(0);
     throw new Error('Responder composite PQ signature verification failed');
   }
   if (preSharedCwKey && !carterWegmanVerify(serverCwTag, preSharedCwKey.r, preSharedCwKey.bServer, fullTranscript)) {
+    kX25519Resp.fill(0);
+    kMlKemResp.fill(0);
     throw new Error('Responder Carter-Wegman IT-MAC verification failed');
   }
 
@@ -421,6 +434,14 @@ export function runPQSIHandshake(initiatorId, responderId, { preSharedItKey = nu
  *   - Computational layer: AES-256-GCM (nonce-bound, AAD-bound)
  *   - Optional Post-Super-Intelligence layer: Exact One-Time Pad (OTP) + GF(2^128) Carter-Wegman IT-MAC
  */
+function buildCanonicalRecordMacInput(aad, iv, wireCt, gcmTag) {
+  const aadLen = Buffer.alloc(4);
+  aadLen.writeUInt32BE(aad.length, 0);
+  const ctLen = Buffer.alloc(4);
+  ctLen.writeUInt32BE(wireCt.length, 0);
+  return Buffer.concat([Buffer.from('SecMesh-PQSI-v2|REC|', 'utf8'), aadLen, aad, iv, ctLen, wireCt, gcmTag]);
+}
+
 export function sealRecord(sessionKey, plaintextBuf, aadBuf, { otpPadOpt = null, cwKeyOpt = null } = {}) {
   const pt = Buffer.isBuffer(plaintextBuf) ? plaintextBuf : Buffer.from(plaintextBuf);
   const aad = Buffer.isBuffer(aadBuf) ? aadBuf : Buffer.from(aadBuf || '');
@@ -438,7 +459,7 @@ export function sealRecord(sessionKey, plaintextBuf, aadBuf, { otpPadOpt = null,
     for (let i = 0; i < aeadCt.length; i++) wireCt[i] = aeadCt[i] ^ otpPadOpt[i];
   }
   if (cwKeyOpt) {
-    const macInput = Buffer.concat([aad, iv, wireCt, gcmTag]);
+    const macInput = buildCanonicalRecordMacInput(aad, iv, wireCt, gcmTag);
     cwTag = carterWegmanMac(cwKeyOpt.r, cwKeyOpt.b, macInput);
   }
   return {
@@ -454,7 +475,7 @@ export function openRecord(sessionKey, record, aadBuf, { otpPadOpt = null, cwKey
   const aad = Buffer.isBuffer(aadBuf) ? aadBuf : Buffer.from(aadBuf || '');
   if (cwKeyOpt) {
     if (!record.cwTag) throw new Error('Missing mandatory Carter-Wegman IT-MAC tag');
-    const macInput = Buffer.concat([aad, record.iv, record.ciphertext, record.gcmTag]);
+    const macInput = buildCanonicalRecordMacInput(aad, record.iv, record.ciphertext, record.gcmTag);
     if (!carterWegmanVerify(record.cwTag, cwKeyOpt.r, cwKeyOpt.b, macInput)) {
       throw new Error('Carter-Wegman IT-MAC verification failed (forged/corrupted record)');
     }

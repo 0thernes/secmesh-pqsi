@@ -349,9 +349,15 @@ int secmesh_shamir_reconstruct_byzantine(const secmesh_share_t *shares,
     st.min_agree = num_shares - max_byzantine;
     st.max_steps = 200000ULL; /* Bound worst-case combinatorial DoS */
     byz_dfs(&st, 0, 0);
-    if (st.budget_exceeded) return -5;
-    if (!st.found) return -3; /* More than max_byzantine corruptions! */
-    *secret_out = st.secret;
-    if (corrupted_detected_out) *corrupted_detected_out = st.corrupted;
-    return 0;
+    int rc = 0;
+    if (st.budget_exceeded) {
+        rc = -5;
+    } else if (!st.found) {
+        rc = -3; /* More than max_byzantine corruptions! */
+    } else {
+        *secret_out = st.secret;
+        if (corrupted_detected_out) *corrupted_detected_out = st.corrupted;
+    }
+    secmesh_secure_zero(&st, sizeof st);
+    return rc;
 }

@@ -25,13 +25,13 @@
  *            eps_PE + eps_QBER + eps_s + eps_PA + eps_cor = eps_total
  * ========================================================================= */
 double secmesh_bin_entropy(double p) {
-    if (p <= 0.0 || p >= 1.0) return 0.0;
+    if (!isfinite(p) || p <= 0.0 || p >= 1.0) return 0.0;
     return -(p * log2(p) + (1.0 - p) * log2(1.0 - p));
 }
 
 double secmesh_h_vn_from_chsh(double chsh) {
     const double tsirelson = 2.0 * 1.41421356237309504880;
-    if (chsh <= 2.0) return 0.0;
+    if (!isfinite(chsh) || chsh <= 2.0) return 0.0;
     if (chsh >= tsirelson) return 1.0;
     double inner = (chsh * 0.5) * (chsh * 0.5) - 1.0;
     if (inner < 0.0) inner = 0.0;
@@ -80,7 +80,8 @@ void secmesh_finite_key_eval(const secmesh_fk_input_t *in, secmesh_fk_result_t *
     memset(out, 0, sizeof *out);
     if (!in || in->n_key == 0 ||
         !isfinite(in->eps_total) || !(in->eps_total > 0.0 && in->eps_total < 1.0) ||
-        !isfinite(in->chsh_s)) return;
+        !isfinite(in->chsh_s) || !isfinite(in->ec_efficiency) ||
+        in->qber_sample > in->n_key || in->qber_errors > in->qber_sample) return;
 
     /* Disjoint composable epsilon budget: 5 equal disjoint lanes summing to eps_total */
     const double eps_pe   = in->eps_total * 0.2;
@@ -282,22 +283,28 @@ int secmesh_ising_graph_energy(uint32_t n, const int64_t *J_flat, const int64_t 
             if (wij < 0 || wij != wji) return -4;
         }
     }
-    int64_t dir = 0, lap = 0, cut_pair = 0, field = 0;
+    __int128 dir = 0, lap = 0, cut_pair = 0, field = 0;
     for (uint32_t i = 0; i < n; i++) {
-        int64_t si = (int64_t)sig[i];
-        field += h_vec[i] * (1 - si);
+        __int128 si = (__int128)sig[i];
+        field += (__int128)h_vec[i] * (1 - si);
         for (uint32_t j = 0; j < n; j++) {
-            int64_t sj = (int64_t)sig[j];
-            int64_t w  = J_flat[(size_t)i * n + j];
-            int64_t d  = si - sj;
+            __int128 sj = (__int128)sig[j];
+            __int128 w  = (__int128)J_flat[(size_t)i * n + j];
+            __int128 d  = si - sj;
             dir += w * d * d;
             lap += w * si * d;
             cut_pair += w * (1 - si * sj);
         }
     }
-    *dirichlet_out      = dir;
-    *laplacian_quad_out = lap;
-    *ising_cut_out      = cut_pair + 2 * field;
+    __int128 cut_tot = cut_pair + 2 * field;
+    if (dir < (__int128)INT64_MIN || dir > (__int128)INT64_MAX ||
+        lap < (__int128)INT64_MIN || lap > (__int128)INT64_MAX ||
+        cut_tot < (__int128)INT64_MIN || cut_tot > (__int128)INT64_MAX) {
+        return -5; /* Overflow guard (zero signed UB) */
+    }
+    *dirichlet_out      = (int64_t)dir;
+    *laplacian_quad_out = (int64_t)lap;
+    *ising_cut_out      = (int64_t)cut_tot;
     return 0;
 }
 
@@ -481,8 +488,11 @@ const secmesh_bw_profile_t *secmesh_bw_get_profile(uint32_t idx) {
 
 uint64_t secmesh_bw_mesh_ceiling(uint64_t link_bps, double round_seconds,
                                  uint32_t one_way_bytes) {
-    if (one_way_bytes == 0 || round_seconds <= 0.0) return 0;
+    if (one_way_bytes == 0 || !isfinite(round_seconds) || round_seconds <= 0.0) return 0;
     double budget_bytes = ((double)link_bps / 8.0) * round_seconds;
-    uint64_t max_peers = (uint64_t)floor(budget_bytes / (double)one_way_bytes);
-    return max_peers + 1ULL;
+    if (!isfinite(budget_bytes) || budget_bytes < 0.0) return 0;
+    double peers_d = floor(budget_bytes / (double)one_way_bytes);
+    if (!isfinite(peers_d) || peers_d >= 18446744073709551615.0) return UINT64_MAX;
+    uint64_t max_peers = (uint64_t)peers_d;
+    return (max_peers == UINT64_MAX) ? UINT64_MAX : (max_peers + 1ULL);
 }

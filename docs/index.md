@@ -1,6 +1,6 @@
 # SecMesh-PQSI Documentation Index (`docs/index.md`)
 
-Welcome to the documentation hub for `secmesh-pqsi` v2.3.0.
+Welcome to the documentation hub for `secmesh-pqsi` v2.4.0.
 
 ## Start Here
 - [Repository Overview & Quickstart](../README.md)

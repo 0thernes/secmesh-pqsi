@@ -2,7 +2,7 @@
   "schema": "rosette-wire/receipt/v1",
   "compositionId": "secmesh-pqsi-full-audit-v2",
   "compositionSha256": "06aeabb0266d713537c09da78980c46afbf9c21003ac7c37f7bef39693983560",
-  "timestampUtc": "2026-11-26T01:17:40.366Z",
+  "timestampUtc": "2026-11-26T01:56:43.474Z",
   "runtime": {
     "node": "v25.8.2",
     "openssl": "3.5.5",
@@ -13,7 +13,7 @@
       "ok": true,
       "ekBytes": 1184,
       "ctBytes": 1088,
-      "sharedSecretSha3Prefix": "ac2b4ef40c51f67f1fc84d372f54d172",
+      "sharedSecretSha3Prefix": "1f03e53d4b850ca262f53cce7ef7a71e",
       "implementations": [
         "Moonlab-C11-FIPS203",
         "OpenSSL-3.5.5-FIPS203"
