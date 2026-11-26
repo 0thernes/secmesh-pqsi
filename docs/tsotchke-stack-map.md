@@ -9,11 +9,11 @@ During the clean-room rebuild of `BoogerCheeseOnRye/SecMesh@aff7dc6`, we queried
 
 ## 1. Directly Integrated, Adapted, or Extended (10 Repositories)
 
-| # | Repository | Pinned Commit SHA | License | Language | Mode | Exact Role in `secmesh-pqsi v2.4.0` |
+| # | Repository | Pinned Commit SHA | License | Language | Mode | Exact Role in `secmesh-pqsi v2.5.0` |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | `tsotchke/moonlab` | `cd3b2347e3` | MIT | C | **Vendored C11 (18 files)** | Compiled directly into `secmesh_core`: FIPS 202 SHA3/SHAKE, FIPS 197 AES-256, SP 800-90A CTR_DRBG, FIPS 203 ML-KEM-512/768/1024, SP 800-90B health tests, Toeplitz DI-QRNG |
 | 2 | `tsotchke/quantum_geometric_tensor` | `770994aa8d` | MIT | C | **Adapted C11 + Lean** | Provost–Vallée QGT metric & Berry curvature (`secmesh_quantum_geo.c`), QGT Concurrence Surplus (`T4a`–`T4b`), and Topological Chern–Concurrence–Entropy Conservation Law (`T4d`) |
-| 3 | `tsotchke/eshkol` | `eb224260b4` | MIT | C++ | **Executable AD Modules** | 4 Eshkol v1.3.6 S-expression AD modules (`eshkol/{finite_key_ad,qgt_geodesic,bandwidth_opt,chern_ising_ad}.esk`) executed live by our forward-mode dual-number AD evaluator (`node/src/eshkol-ad-runtime.mjs`) |
+| 3 | `tsotchke/eshkol` | `eb224260b4` | MIT | C++ | **Executable AD Modules** | 5 Eshkol v1.3.6 S-expression AD modules (`eshkol/{finite_key_ad,qgt_geodesic,bandwidth_opt,chern_ising_ad,monogamy_commitment_ad}.esk`) executed live by our forward-mode dual-number AD evaluator (`node/src/eshkol-ad-runtime.mjs`) |
 | 4 | `tsotchke/rosette-wire` | `bb34bbe753` | Apache-2.0 | Spec | **Protocol Schema** | Canonical SHA-256 verifiable execution receipt bundles (`node/src/rosette-receipt.mjs`, `rosette/latest-audit/`) |
 | 5 | `Tsotchke-Corporation/pq-consensus-bandwidth` | `245c3be58e` | Apache-2.0 | Go | **Extended Law** | Generalized from CometBFT consensus to complete-graph $K_N$ ceilings + CW-128 & SLH-DSA profiles (`T5d`, `secmesh_quantum_geo.c`) |
 | 6 | `tsotchke/libirrep` | `6c6acab796` | MIT | C | **Algebraic + SU(2) Core** | Group-algebra $\mathbb{F}_2[\mathbb{Z}_{12} \times \mathbb{Z}_6]$ Bravyi `[[144,12,12]]` BB qLDPC (`T4c`) + collective $\mathrm{SU}(2)$ spin-$j$ ($j=N/2$) GHZ Heisenberg QFI & Casimir scaling (`T4e`) |

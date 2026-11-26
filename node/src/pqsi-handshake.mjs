@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Alexander S. Donahue
 //
-// SecMesh-PQSI v2.0 — Real Post-Quantum + Information-Theoretic (Post-Super-Intelligence)
+// SecMesh-PQSI v2 — Real Post-Quantum + Information-Theoretic (Post-Super-Intelligence)
 // Cryptographic Handshake, Authenticated Framing, Dual-Survivability Combiner,
 // GF(2^128) Carter-Wegman IT-MAC, and Shamir Byzantine Threshold Sharing.
 //
@@ -18,6 +18,9 @@ const R_POLY = 0xE100000000000000n;
 const MASK64 = 0xFFFFFFFFFFFFFFFFn;
 
 export function gf128Mul(aBuf, bBuf) {
+  if (!Buffer.isBuffer(aBuf) || aBuf.length !== 16 || !Buffer.isBuffer(bBuf) || bBuf.length !== 16) {
+    throw new Error('gf128Mul requires two 16-byte Buffers');
+  }
   let vh = aBuf.readBigUInt64BE(0);
   let vl = aBuf.readBigUInt64BE(8);
   let zh = 0n;
@@ -41,6 +44,9 @@ export function gf128Mul(aBuf, bBuf) {
 }
 
 export function carterWegmanMac(rBuf, padBBuf, msgBuf) {
+  if (!Buffer.isBuffer(rBuf) || rBuf.length !== 16 || !Buffer.isBuffer(padBBuf) || padBBuf.length !== 16) {
+    throw new Error('carterWegmanMac requires 16-byte rBuf and padBBuf Buffers');
+  }
   const msg = Buffer.isBuffer(msgBuf) ? msgBuf : Buffer.from(msgBuf);
   let acc = Buffer.alloc(16);
   const blk = Buffer.alloc(16);
@@ -80,12 +86,16 @@ export function carterWegmanVerify(tagBuf, rBuf, padBBuf, msgBuf) {
  * derives a domain-separated unique 16-byte pad per monotonic sequence number `seq`.
  */
 export function resolveCwFramePad(padSource, seqBigInt) {
+  if (typeof seqBigInt !== 'bigint' || seqBigInt < 0n || seqBigInt > 0xFFFFFFFFFFFFFFFFn) {
+    return null;
+  }
   if (Array.isArray(padSource)) {
     const idx = Number(seqBigInt);
     if (!Number.isInteger(idx) || idx < 0 || idx >= padSource.length) return null;
     const pad = padSource[idx];
     return Buffer.isBuffer(pad) && pad.length === 16 ? pad : null;
   }
+  if (!Buffer.isBuffer(padSource) || padSource.length < 16) return null;
   const seqBuf = Buffer.alloc(8);
   seqBuf.writeBigUInt64BE(seqBigInt, 0);
   return crypto
@@ -102,14 +112,21 @@ export function resolveCwFramePad(padSource, seqBigInt) {
  */
 export function sealCwFrame(rBuf, padSource, seq, payloadBuf) {
   const seqBig = BigInt(seq);
+  if (seqBig < 0n || seqBig > 0xFFFFFFFFFFFFFFFFn) {
+    throw new Error(`Invalid CW-128 sequence number: ${seqBig}`);
+  }
   const seqBuf = Buffer.alloc(8);
   seqBuf.writeBigUInt64BE(seqBig, 0);
   const padB = resolveCwFramePad(padSource, seqBig);
   if (!padB) throw new Error(`No fresh CW-128 one-time pad available for seq=${seqBig}`);
   const payload = Buffer.isBuffer(payloadBuf) ? payloadBuf : Buffer.from(payloadBuf);
   const macInput = Buffer.concat([seqBuf, payload]);
-  const tag = carterWegmanMac(rBuf, padB, macInput);
-  return Buffer.concat([seqBuf, tag, payload]);
+  try {
+    const tag = carterWegmanMac(rBuf, padB, macInput);
+    return Buffer.concat([seqBuf, tag, payload]);
+  } finally {
+    if (!Array.isArray(padSource)) padB.fill(0);
+  }
 }
 
 /**
@@ -173,7 +190,13 @@ export function verifyCwFrame(frameBuf, rBuf, padSource, seenSeqs) {
   const tag = frameBuf.subarray(8, 24);
   const payload = frameBuf.subarray(24);
   const macInput = Buffer.concat([seqBuf, payload]);
-  if (!carterWegmanVerify(tag, rBuf, padB, macInput)) {
+  let macOk = false;
+  try {
+    macOk = carterWegmanVerify(tag, rBuf, padB, macInput);
+  } finally {
+    if (!Array.isArray(padSource)) padB.fill(0);
+  }
+  if (!macOk) {
     return { ok: false, reason: 'cw-mac-reject', seq: seqBig };
   }
   if (seenSeqs) seenSeqs.add(seqBig);
@@ -443,10 +466,19 @@ function buildCanonicalRecordMacInput(aad, iv, wireCt, gcmTag) {
 }
 
 export function sealRecord(sessionKey, plaintextBuf, aadBuf, { otpPadOpt = null, cwKeyOpt = null } = {}) {
+  if (!Buffer.isBuffer(sessionKey) || sessionKey.length !== 32) {
+    throw new Error('sessionKey must be a 32-byte Buffer');
+  }
+  if (otpPadOpt !== null && !Buffer.isBuffer(otpPadOpt)) {
+    throw new Error('otpPadOpt must be null or a Buffer');
+  }
+  if (cwKeyOpt && (!Buffer.isBuffer(cwKeyOpt.r) || cwKeyOpt.r.length !== 16 || !Buffer.isBuffer(cwKeyOpt.b) || cwKeyOpt.b.length !== 16)) {
+    throw new Error('cwKeyOpt must provide 16-byte r and b Buffers');
+  }
   const pt = Buffer.isBuffer(plaintextBuf) ? plaintextBuf : Buffer.from(plaintextBuf);
   const aad = Buffer.isBuffer(aadBuf) ? aadBuf : Buffer.from(aadBuf || '');
   const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv('aes-256-gcm', sessionKey, iv);
+  const cipher = crypto.createCipheriv('aes-256-gcm', sessionKey, iv, { authTagLength: 16 });
   cipher.setAAD(aad);
   const aeadCt = Buffer.concat([cipher.update(pt), cipher.final()]);
   const gcmTag = cipher.getAuthTag();
@@ -454,9 +486,13 @@ export function sealRecord(sessionKey, plaintextBuf, aadBuf, { otpPadOpt = null,
   let wireCt = aeadCt;
   let cwTag = null;
   if (otpPadOpt) {
-    if (otpPadOpt.length < aeadCt.length) throw new Error('OTP pad shorter than plaintext');
+    if (otpPadOpt.length < aeadCt.length) {
+      aeadCt.fill(0);
+      throw new Error('OTP pad shorter than plaintext');
+    }
     wireCt = Buffer.alloc(aeadCt.length);
     for (let i = 0; i < aeadCt.length; i++) wireCt[i] = aeadCt[i] ^ otpPadOpt[i];
+    aeadCt.fill(0);
   }
   if (cwKeyOpt) {
     const macInput = buildCanonicalRecordMacInput(aad, iv, wireCt, gcmTag);
@@ -472,8 +508,27 @@ export function sealRecord(sessionKey, plaintextBuf, aadBuf, { otpPadOpt = null,
 }
 
 export function openRecord(sessionKey, record, aadBuf, { otpPadOpt = null, cwKeyOpt = null } = {}) {
+  if (!Buffer.isBuffer(sessionKey) || sessionKey.length !== 32) {
+    throw new Error('sessionKey must be a 32-byte Buffer');
+  }
+  if (
+    !record ||
+    !Buffer.isBuffer(record.iv) ||
+    record.iv.length !== 12 ||
+    !Buffer.isBuffer(record.gcmTag) ||
+    record.gcmTag.length !== 16 ||
+    !Buffer.isBuffer(record.ciphertext)
+  ) {
+    throw new Error('Malformed record: requires 12-byte iv, 16-byte gcmTag, and Buffer ciphertext');
+  }
+  if (otpPadOpt !== null && !Buffer.isBuffer(otpPadOpt)) {
+    throw new Error('otpPadOpt must be null or a Buffer');
+  }
   const aad = Buffer.isBuffer(aadBuf) ? aadBuf : Buffer.from(aadBuf || '');
   if (cwKeyOpt) {
+    if (!Buffer.isBuffer(cwKeyOpt.r) || cwKeyOpt.r.length !== 16 || !Buffer.isBuffer(cwKeyOpt.b) || cwKeyOpt.b.length !== 16) {
+      throw new Error('cwKeyOpt must provide 16-byte r and b Buffers');
+    }
     if (!record.cwTag) throw new Error('Missing mandatory Carter-Wegman IT-MAC tag');
     const macInput = buildCanonicalRecordMacInput(aad, record.iv, record.ciphertext, record.gcmTag);
     if (!carterWegmanVerify(record.cwTag, cwKeyOpt.r, cwKeyOpt.b, macInput)) {
@@ -486,8 +541,12 @@ export function openRecord(sessionKey, record, aadBuf, { otpPadOpt = null, cwKey
     aeadCt = Buffer.alloc(record.ciphertext.length);
     for (let i = 0; i < record.ciphertext.length; i++) aeadCt[i] = record.ciphertext[i] ^ otpPadOpt[i];
   }
-  const decipher = crypto.createDecipheriv('aes-256-gcm', sessionKey, record.iv);
-  decipher.setAAD(aad);
-  decipher.setAuthTag(record.gcmTag);
-  return Buffer.concat([decipher.update(aeadCt), decipher.final()]);
+  try {
+    const decipher = crypto.createDecipheriv('aes-256-gcm', sessionKey, record.iv, { authTagLength: 16 });
+    decipher.setAAD(aad);
+    decipher.setAuthTag(record.gcmTag);
+    return Buffer.concat([decipher.update(aeadCt), decipher.final()]);
+  } finally {
+    if (otpPadOpt && aeadCt !== record.ciphertext) aeadCt.fill(0);
+  }
 }

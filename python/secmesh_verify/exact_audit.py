@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 Alexander S. Donahue
 """
-Independent Exact-Arithmetic Falsification & Verification Suite for SecMesh-PQSI v2.0.
+Independent Exact-Arithmetic Falsification & Verification Suite for SecMesh-PQSI v2.
 
 Uses exact Python `int`, `fractions.Fraction`, and 60-digit `decimal.Decimal` arithmetic
 to independently verify every mathematical theorem T1-T6, cross-check the native C11
@@ -79,22 +79,28 @@ def verify_t1() -> dict[str, Any]:
     actual_tail_at_v1_radius = decimal.Decimal(2) * (eps_s_v1 / decimal.Decimal(8)) ** decimal.Decimal("0.25")
     assert actual_tail_at_v1_radius > decimal.Decimal("0.028")
 
-    # T1c: Quarter-circle duality u^2 + v^2 = 1 and 50-digit strict gap sweep
-    max_gap = decimal.Decimal(0)
-    max_gap_s = decimal.Decimal(2)
+    # T1c: Quarter-circle duality u^2 + v^2 = 1 and 50-digit strict gap sweep + exact golden-section max
     tsir = decimal.Decimal(2) * decimal.Decimal(2).sqrt()
     for i in range(1, 1000):
         s = decimal.Decimal(2) + (tsir - decimal.Decimal(2)) * decimal.Decimal(i) / decimal.Decimal(1000)
         u2 = (s / 2) ** 2 - 1
         v2 = 2 - (s / 2) ** 2
         assert abs((u2 + v2) - 1) < decimal.Decimal("1e-55")
-        hmin = dec_h_min_di(s)
-        hvn = dec_h_vn_di(s)
-        gap = hvn - hmin
+        gap = dec_h_vn_di(s) - dec_h_min_di(s)
         assert gap > 0, f"Expected strict gap at S={s}"
-        if gap > max_gap:
-            max_gap = gap
-            max_gap_s = s
+
+    # 50-digit golden-section search for exact continuous optimum S* in (2, 2*sqrt(2))
+    lo, hi = decimal.Decimal(2), tsir
+    phi = (decimal.Decimal(5).sqrt() - decimal.Decimal(1)) / decimal.Decimal(2)
+    for _ in range(240):
+        c = hi - phi * (hi - lo)
+        d = lo + phi * (hi - lo)
+        if (dec_h_vn_di(c) - dec_h_min_di(c)) > (dec_h_vn_di(d) - dec_h_min_di(d)):
+            hi = d
+        else:
+            lo = c
+    max_gap_s = (lo + hi) / decimal.Decimal(2)
+    max_gap = dec_h_vn_di(max_gap_s) - dec_h_min_di(max_gap_s)
 
     # Exact rational witness at S = 5/2
     hmin_25 = dec_h_min_di(decimal.Decimal("2.5"))
@@ -460,11 +466,38 @@ def verify_t7() -> dict[str, Any]:
             assert not (tv2 < d_den and 2 * ov < d_den)
             checked_pairs += 1
 
+    # T7c: Fuchs-van de Graaff sandwich & Quantum Microcrypt EFI conservation (CS-031 / QC-022)
+    # Exhaustive check over equal-norm 3-outcome integer amplitude vectors with M <= 25
+    t7c_checked = 0
+    t7c_tight_hits = 0
+    by_norm: dict[int, list[tuple[int, int, int]]] = {}
+    for a in range(6):
+        for b in range(6):
+            for c in range(6):
+                m_val = a * a + b * b + c * c
+                if 1 <= m_val <= 25:
+                    by_norm.setdefault(m_val, []).append((a, b, c))
+    for m_val, vecs in by_norm.items():
+        for r_vec in vecs:
+            for s_vec in vecs:
+                tv2 = sum(abs(x * x - y * y) for x, y in zip(r_vec, s_vec, strict=True))
+                b_fid = sum(x * y for x, y in zip(r_vec, s_vec, strict=True))
+                ov = sum(min(x * x, y * y) for x, y in zip(r_vec, s_vec, strict=True))
+                assert ov <= b_fid <= m_val
+                assert 2 * m_val <= tv2 + 2 * b_fid
+                assert tv2 * tv2 + 4 * b_fid * b_fid <= 4 * m_val * m_val
+                if tv2 > 0 and b_fid > 0 and tv2 * tv2 + 4 * b_fid * b_fid == 4 * m_val * m_val:
+                    t7c_tight_hits += 1
+                t7c_checked += 1
+    assert t7c_tight_hits > 0
+
     return {
         "t7a_toner_grid_points_checked": checked_triples,
         "t7a_max_sAB2_plus_sAE2": max_toner_sum,
         "t7b_exhaustive_dist_pairs_checked": checked_pairs,
         "t7b_conservation_exact": True,
+        "t7c_fuchs_vdg_amp_pairs_checked": t7c_checked,
+        "t7c_pythagorean_tight_witnesses": t7c_tight_hits,
         "status": "PASS",
     }
 

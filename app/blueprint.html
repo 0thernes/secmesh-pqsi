@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecMesh-PQSI v2.4.0 — Lean 4.35 Formal Proof Blueprint &amp; Dependency Graph</title>
+<title>SecMesh-PQSI v2.5.0 — Lean 4.35 Formal Proof Blueprint &amp; Dependency Graph</title>
 <style>
   :root {
     --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
@@ -32,14 +32,20 @@
   a { color: var(--accent); }
   .legend { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.6rem; }
   .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 0.3rem; vertical-align: middle; }
+  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+  .filter-bar input { flex: 1 1 220px; background: #0a101b; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.65rem; font-size: 0.85rem; }
+  .filter-btn { background: #122036; color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 0.25rem 0.65rem; font-size: 0.78rem; cursor: pointer; }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: #132a46; }
+  a:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>⬡ SecMesh-PQSI v2.4.0 — Zero-Mathlib Lean 4.35.0 Formal Proof Blueprint</h1>
+    <h1>⬡ SecMesh-PQSI v2.5.0 — Zero-Mathlib Lean 4.35.0 Formal Proof Blueprint</h1>
     <div style="margin-top:0.25rem">
-      <span class="pill">27 / 27 Theorems + 4 Adversarial Counterexamples (60 Audited Decls)</span>
+      <span class="pill">28 / 28 Theorems + 5 Adversarial Counterexamples (63 Audited Decls)</span>
       <span class="pill">All 6 Kernels (Palomar Comparator)</span>
       <span class="pill zero">0 Mathlib · 0 Proof Sorry · 0 native_decide</span>
     </div>
@@ -180,18 +186,18 @@
       </a>
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean">
         <rect x="490" y="362" width="210" height="46" rx="8" fill="#0f2922" stroke="#34d399" stroke-width="2"/>
-        <text x="595" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">T7b Commitment No-Go</text>
-        <text x="595" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">TV(P₀,P₁) + Overlap = 1</text>
+        <text x="595" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">T7b / T7c EFI &amp; Fuchs–vdG</text>
+        <text x="595" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">TV+Ov=1 &amp; TV²+B² ≤ 1</text>
       </a>
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/AdversarialTests.lean">
         <rect x="725" y="362" width="160" height="46" rx="8" fill="#0d2238" stroke="#38bdf8" stroke-width="2"/>
         <text x="805" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">AdversarialTests (0 ax)</text>
-        <text x="805" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">4 Sharp Counterexamples</text>
+        <text x="805" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">5 Sharp Counterexamples</text>
       </a>
       <!-- Master Conjunction -->
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/Solution.lean">
         <rect x="950" y="175" width="150" height="86" rx="10" fill="#0b2e26" stroke="#34d399" stroke-width="2.5"/>
-        <text x="1025" y="205" text-anchor="middle" fill="#34d399" font-size="12.5" font-weight="700">All 27 Theorems</text>
+        <text x="1025" y="205" text-anchor="middle" fill="#34d399" font-size="12.5" font-weight="700">All 28 Theorems</text>
         <text x="1025" y="224" text-anchor="middle" fill="#e6edf7" font-size="10.5">Palomar Comparator</text>
         <text x="1025" y="242" text-anchor="middle" fill="#8ea0ba" font-size="10">6 / 6 Kernels PASS</text>
       </a>
@@ -199,13 +205,22 @@
   </section>
 
   <section class="card">
-    <h2>Complete 27-Theorem Inventory &amp; Axiom Footprints</h2>
+    <h2>Complete 28-Theorem Inventory &amp; Axiom Footprints</h2>
+    <div class="filter-bar">
+      <input id="bpSearch" type="search" placeholder="Filter theorems by ID, Lean name, module, or topic (e.g. T7c, Microcrypt, ML-KEM)..." aria-label="Filter theorems">
+      <button type="button" class="filter-btn active" data-ax="ALL">All (28)</button>
+      <button type="button" class="filter-btn" data-ax="0">0 Axioms</button>
+      <button type="button" class="filter-btn" data-ax="PQ">Zero Classical.choice</button>
+      <button type="button" class="filter-btn" data-ax="PCQ">Standard PCQ</button>
+    </div>
+    <div class="table-wrap">
     <table>
       <thead>
         <tr><th>ID</th><th>Lean Declaration</th><th>Module</th><th>Axioms</th><th>Mathematical Statement</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
+    </div>
   </section>
 </main>
 
@@ -239,16 +254,38 @@ const DATA = [
   ['T6b', 't6b_cryptosymbology_subliminal_and_threshold_closure', 'SpinDefenseCryptosymbology.lean', 'PQ', 'Deterministic 0-capacity, 2^k kleptography & threshold-hedged XOR closure.'],
   ['T7a', 't7a_toner_chsh_monogamy_and_eve_isolation', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Toner quantum CHSH monogamy S_AB²+S_AE² ≤ 8 & CKW Berry-monopole Eve isolation.'],
   ['T7b', 't7b_hiding_binding_conservation_nogo', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Exact TV(P₀,P₁)+Overlap=1 proving unconditional commitment impossibility & hybrid necessity.'],
+  ['T7c', 't7c_fuchs_vandegraaff_microcrypt_efi', 'MonogamyCommitmentNoGo.lean', 'PCQ', 'Fuchs–van de Graaff 1−B ≤ TV & TV²+B² ≤ 1, pure-state D_tr²+F=1, and Quantum Microcrypt/EFI (CS-031/QC-022) fidelity ceiling.'],
 ];
-document.getElementById('rows').innerHTML = DATA.map(([id, decl, mod, ax, desc]) => `
-  <tr>
-    <td><strong>${id}</strong></td>
-    <td><a href="${BASE}${mod}"><code>${decl}</code></a></td>
-    <td><code>${mod}</code></td>
-    <td><span class="pill ${ax === '0' ? 'zero' : (ax === 'PQ' ? 'pq' : '')}">${ax}</span></td>
-    <td>${desc}</td>
-  </tr>
-`).join('');
+let activeAx = 'ALL';
+function renderRows() {
+  const q = (document.getElementById('bpSearch').value || '').trim().toLowerCase();
+  const filtered = DATA.filter(([id, decl, mod, ax, desc]) => {
+    const axOk = activeAx === 'ALL'
+      || (activeAx === '0' && ax === '0')
+      || (activeAx === 'PQ' && (ax === '0' || ax === 'Q' || ax === 'PQ'))
+      || (activeAx === 'PCQ' && ax === 'PCQ');
+    const txtOk = !q || `${id} ${decl} ${mod} ${ax} ${desc}`.toLowerCase().includes(q);
+    return axOk && txtOk;
+  });
+  document.getElementById('rows').innerHTML = filtered.map(([id, decl, mod, ax, desc]) => `
+    <tr>
+      <td><strong>${id}</strong></td>
+      <td><a href="${BASE}${mod}"><code>${decl}</code></a></td>
+      <td><code>${mod}</code></td>
+      <td><span class="pill ${ax === '0' ? 'zero' : (ax === 'PQ' ? 'pq' : '')}">${ax}</span></td>
+      <td>${desc}</td>
+    </tr>
+  `).join('');
+}
+document.getElementById('bpSearch').addEventListener('input', renderRows);
+for (const btn of document.querySelectorAll('.filter-btn')) {
+  btn.addEventListener('click', () => {
+    activeAx = btn.dataset.ax;
+    for (const b of document.querySelectorAll('.filter-btn')) b.classList.toggle('active', b === btn);
+    renderRows();
+  });
+}
+renderRows();
 </script>
 </body>
 </html>

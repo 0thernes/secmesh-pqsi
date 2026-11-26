@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecMesh-PQSI v2.4.0 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
+<title>SecMesh-PQSI v2.5.0 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
 <style>
   :root {
     --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
@@ -19,12 +19,14 @@
   .badge { display: inline-block; font-size: 0.75rem; padding: 0.2rem 0.55rem; border-radius: 999px; border: 1px solid var(--border); background: #132035; color: var(--accent); margin-right: 0.35rem; }
   .badge.warn { color: var(--warn); border-color: #6b4e16; }
   .badge.good { color: var(--good); border-color: #165c44; }
-  main { max-width: 1280px; margin: 0 auto; padding: 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1rem; }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; }
+  main { max-width: 1280px; margin: 0 auto; padding: 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1rem; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; min-width: 0; }
   .card h2 { margin: 0 0 0.6rem; font-size: 1rem; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
   .wide { grid-column: 1 / -1; }
   label { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--muted); margin: 0.45rem 0 0.2rem; }
   input[type=range], select { width: 100%; accent-color: var(--accent); }
+  a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   select { background: #0a101b; color: var(--text); border: 1px solid var(--border); padding: 0.35rem; border-radius: 6px; }
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 0.6rem; margin-top: 0.75rem; }
   .kpi { background: #0a101b; border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.7rem; }
@@ -43,9 +45,9 @@
 <body>
 <header>
   <div>
-    <h1>⬡ SecMesh-PQSI v2.4.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
+    <h1>⬡ SecMesh-PQSI v2.5.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
     <div style="margin-top:0.3rem">
-      <span class="badge good">Lean 4.35 · 27 Theorems · 6 Kernels · 60 Decls</span>
+      <span class="badge good">Lean 4.35 · 28 Theorems · 6 Kernels · 63 Decls</span>
       <span class="badge">Moonlab FIPS 203 + QGTL + libirrep + BB144</span>
       <span class="badge"><a href="blueprint.html" style="color:inherit;text-decoration:none">Interactive Proof Blueprint →</a></span>
       <span class="badge warn">Browser Mode: Client-Side Analytic Simulator (No Physical QKD)</span>
@@ -119,6 +121,7 @@
         <input id="inPeers" type="range" min="2" max="200" step="2" value="32">
       </div>
     </div>
+    <div class="table-wrap">
     <table>
       <thead>
         <tr>
@@ -133,12 +136,13 @@
       </thead>
       <tbody id="bwRows"></tbody>
     </table>
+    </div>
   </section>
 
-  <!-- 4. Theorem T7a Toner CHSH Monogamy & T7b Hiding-Binding Conservation Explorer -->
+  <!-- 4. Theorem T7a Toner CHSH Monogamy, T7b Commitment Conservation & T7c Fuchs-van de Graaff EFI -->
   <section class="card wide">
-    <h2>4. Theorem T7a Toner Quantum CHSH Monogamy &amp; T7b Commitment Conservation</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem">
+    <h2>4. Theorems T7a Toner Monogamy, T7b Commitment Conservation &amp; T7c Quantum Microcrypt EFI</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%, 260px),1fr));gap:1rem">
       <div>
         <label for="inSAB">Alice–Bob CHSH |S_AB| <span id="lblSAB">2.600</span></label>
         <input id="inSAB" type="range" min="0" max="2.8284" step="0.01" value="2.60">
@@ -151,8 +155,9 @@
         <label for="inTV">Commitment Statistical Hiding TV(P₀, P₁) <span id="lblTV">0.100</span></label>
         <input id="inTV" type="range" min="0" max="1.0" step="0.01" value="0.10">
         <div class="kpi-grid">
-          <div class="kpi"><div class="lbl">Forced Equivocation Overlap (T7b)</div><div id="kOverlap" class="val warn">—</div></div>
-          <div class="kpi"><div class="lbl">Conservation TV + Overlap</div><div id="kConsT7b" class="val violet">1.0000</div></div>
+          <div class="kpi"><div class="lbl">Forced Overlap (T7b)</div><div id="kOverlap" class="val warn">—</div></div>
+          <div class="kpi"><div class="lbl">Fuchs–vdG B_max (T7c)</div><div id="kFvdgMax" class="val accent" style="color:var(--accent)">—</div></div>
+          <div class="kpi"><div class="lbl">T7b TV + Overlap</div><div id="kConsT7b" class="val violet">1.0000</div></div>
         </div>
       </div>
     </div>
@@ -160,7 +165,7 @@
 </main>
 
 <footer>
-  SecMesh-PQSI v2.4.0 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, spin_based_neural_network, Rosette-Wire &amp; pq-consensus-bandwidth stack.
+  SecMesh-PQSI v2.5.0 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, spin_based_neural_network, Rosette-Wire &amp; pq-consensus-bandwidth stack.
 </footer>
 
 <script>
@@ -351,8 +356,10 @@ function update() {
 
   const tv = parseFloat(document.getElementById('inTV').value);
   const overlap = Math.max(0, 1 - tv);
+  const bMax = Math.sqrt(Math.max(0, 1 - tv * tv));
   document.getElementById('lblTV').textContent = tv.toFixed(3);
   document.getElementById('kOverlap').textContent = overlap.toFixed(4);
+  document.getElementById('kFvdgMax').textContent = bMax.toFixed(4);
   document.getElementById('kConsT7b').textContent = (tv + overlap).toFixed(4);
 }
 

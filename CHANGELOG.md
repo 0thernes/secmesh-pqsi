@@ -2,6 +2,24 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [2.5.0] — 2026-11-25
+
+### Added (Theorem `T7c` Quantum Microcrypt / EFI Conservation Law & 5th Zero-Axiom Witness)
+- **Theorem `T7c` (`t7c_fuchs_vandegraaff_microcrypt_efi`):** Machine-checked in zero-Mathlib Lean 4.35.0 across all 6 distinct kernels (**28/28 formal theorems**, **63/63 audited declarations** strictly within `[propext, Classical.choice, Quot.sound]`), proving the exact Fuchs–van de Graaff double-sided sandwich ($1 - B \le \mathrm{TV}$ and $\mathrm{TV}^2 + B^2 \le 1$), the pure-state complex Gram trace-distance conservation law $D_{\mathrm{tr}}^2 + F = 1$ (Mayers–Lo–Chau equivocation vs. Helstrom distinguishability), and the sharp Quantum Microcrypt EFI fidelity ceiling $B^2 + \delta^2 \le M^2$ bridging Mega Atlas `CS-031` & `QC-022`.
+- **5th Zero-Axiom Adversarial Witness (`adv_fuchs_vdg_pythagorean_tight`):** Certifies exact `(3, 4, 5)` Pythagorean saturation of Fuchs–van de Graaff (`r=(3,1), s=(1,3)`, `TV = 4/5`, `B = 3/5`, `TV² + B² = 1`) with zero axioms.
+- **Expanded Verification Suites:** Native C11 expanded to **`64/64`**, Node 25 expanded to **`19/19`** (plus `T7c` Eshkol dual-number AD check), Python pytest expanded to **`15/15`** (including zero-placeholder guard and `T7c` Pythagorean tightness), and live bibliography expanded to **`44/44` HTTP 200** (`33/33` Crossref non-retracted DOIs + `1` DataCite/LIPIcs DOI).
+
+### Fixed (Cycle 11 Deep Cryptographic, Security, Figure Precision, WCAG & Zero-Drift Hardening)
+- **CWE-347 AES-256-GCM Tag-Truncation & CW-128 Key-Length Guards (`bug`, `H11.01`):** Enforced `{ authTagLength: 16 }`, strict 16-byte `gcmTag`, 12-byte `iv`, 32-byte `sessionKey`, and strict 16-byte `r`/`padB` validation across `gf128Mul`, `carterWegmanMac`, `sealRecord`, and `openRecord` in `node/src/pqsi-handshake.mjs`, plus `finally` zeroization of derived CW-128/OTP buffers.
+- **Guardian v2 HTTP Control Plane & Engine Bounds (`bug`/`hole`, `H11.02`):** Restricted `/status` & `/health` to `GET`/`HEAD` (`405` on `POST`), added Slowloris timeouts (`headersTimeout`/`requestTimeout`), `Cache-Control: no-store`, `Content-Security-Policy: default-src 'none'`, `Referrer-Policy: no-referrer`, and `HealthFieldEngine` constructor validation.
+- **Eshkol Parser Nesting-Depth DoS Cap (`hole`, `H11.03`):** Added `MAX_TOKENS = 50000`, `MAX_PARSE_DEPTH = 256`, and structural arity checks on special forms in `node/src/eshkol-ad-runtime.mjs`.
+- **Rosette-Wire Canonicalization & Schema Binding (`bug`/`hole`, `H11.04`):** Fixed `canonicalJson` handling of `undefined` / non-finite numbers and enforced schema + `compositionId` cross-file equality in `verifyRosetteBundleDir`.
+- **Strict C11 CLI Argument Parser & `m` Zeroization (`bug`, `H11.05`):** Replaced permissive `atof`/`strtoull` with strict `endptr`/`errno` parsers rejecting `NaN`/negative `bandwidth` `round_s` and garbage tokens, and zeroized `m` on all exit paths in `cmd_mlkem_decap_check`.
+- **Deterministic Seeded Toeplitz Extraction & Finite-Key `NaN` Guards (`bug`, `H11.06`):** Derived deterministic SHAKE-256 Toeplitz seeds when `seed !== null` in `simulateE91Session` (fixing non-deterministic `keyFingerprint` on seeded replays) and guarded `binEntropy`/`chshLowerBoundV2` against `NaN`/`epsPE` edge cases.
+- **Figure 2 & `exact_audit.py` Continuous Peak-Gap Precision (`issue`, `H11.07`):** Upgraded both `exact_audit.py` (50-digit `Decimal` golden-section search) and Figure 2 (`make_figures.py`, 120-step golden-section search) so the continuous optimum matches verbatim across Python, figures, and WP1 (`+0.235703` bit at $S^* = 2.698960 \approx 2.6990$).
+- **WCAG 2.2 AA Mobile Responsiveness & Interactive Blueprint Filter (`concern`, `H11.08`):** Made `app/index.html` and `app/blueprint.html` responsive down to `320px` with scrollable `.table-wrap`, `:focus-visible` focus rings, live Blueprint search + axiom filters, and `T7c` EFI Explorer.
+- **Zero-Drift Hygiene & Zero `Audit-Repo.ps1` Warnings (`issue`, `H11.09`):** Synced all remaining stale doc counts (`4`→`5` Eshkol, `14`→`15` Lean files, `3,694`→`3,764` decls) and eliminated the last placeholder warning in `HARDENING_LOG.md` (`0 warnings`, `76/76 PASS`).
+
 ## [2.4.0] — 2026-11-25
 
 ### Added

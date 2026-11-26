@@ -9,10 +9,31 @@
 #include "../third_party/moonlab/applications/qrng_di.h"
 #include "../third_party/moonlab/applications/moonlab_export.h"
 
+#include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+static int parse_strict_double(const char *s, double *out) {
+    if (!s || !*s || !out) return 0;
+    errno = 0;
+    char *end = NULL;
+    double v = strtod(s, &end);
+    if (errno != 0 || end == s || *end != '\0' || !isfinite(v)) return 0;
+    *out = v;
+    return 1;
+}
+
+static int parse_strict_u64(const char *s, uint64_t *out) {
+    if (!s || !*s || s[0] == '-' || !out) return 0;
+    errno = 0;
+    char *end = NULL;
+    unsigned long long v = strtoull(s, &end, 10);
+    if (errno != 0 || end == s || *end != '\0') return 0;
+    *out = (uint64_t)v;
+    return 1;
+}
 
 static void print_hex(const uint8_t *buf, size_t len) {
     for (size_t i = 0; i < len; i++) printf("%02x", buf[i]);
@@ -86,8 +107,12 @@ static int cmd_mlkem_decap_check(const char *ek_hex, const char *m_hex) {
     /* Interop oracle: given external ek (1184B) and m (32B), encapsulate and output ct + ss */
     uint8_t ek[MLKEM768_PUBLICKEYBYTES], m[32], ct[MLKEM768_CIPHERTEXTBYTES], ss[32];
     if (hex_to_bytes(ek_hex, ek, sizeof ek) != MLKEM768_PUBLICKEYBYTES) return 2;
-    if (hex_to_bytes(m_hex, m, sizeof m) != 32) return 2;
+    if (hex_to_bytes(m_hex, m, sizeof m) != 32) {
+        secmesh_secure_zero(m, sizeof m);
+        return 2;
+    }
     if (!moonlab_mlkem768_check_ek(ek)) {
+        secmesh_secure_zero(m, sizeof m);
         printf("{\"ok\":false,\"error\":\"invalid_ek\"}\n");
         return 3;
     }
@@ -97,6 +122,7 @@ static int cmd_mlkem_decap_check(const char *ek_hex, const char *m_hex) {
     printf("\",\"ss_hex\":\"");
     print_hex(ss, 32);
     printf("\"}\n");
+    secmesh_secure_zero(m, sizeof m);
     secmesh_secure_zero(ss, sizeof ss);
     return 0;
 }
@@ -104,15 +130,23 @@ static int cmd_mlkem_decap_check(const char *ek_hex, const char *m_hex) {
 static int cmd_finite_key(int argc, char **argv) {
     secmesh_fk_input_t in;
     memset(&in, 0, sizeof in);
-    in.chsh_s = (argc > 2) ? atof(argv[2]) : 2.82842712474619;
-    uint64_t n_total = (argc > 3) ? (uint64_t)strtoull(argv[3], NULL, 10) : 50000ULL;
-    double qber_in   = (argc > 4) ? atof(argv[4]) : 0.0;
-    in.eps_total     = (argc > 5) ? atof(argv[5]) : 1e-6;
-    in.use_di_min_ent = (argc > 6) ? atoi(argv[6]) : 1;
-    in.ec_efficiency  = 1.16;
-    if (!isfinite(in.chsh_s) || !isfinite(qber_in) || qber_in < 0.0 || qber_in > 1.0 ||
-        !isfinite(in.eps_total) || in.eps_total <= 0.0 || in.eps_total >= 1.0) {
-        fprintf(stderr, "Invalid finite-key numeric arguments\n");
+    in.chsh_s = 2.82842712474619;
+    uint64_t n_total = 50000ULL;
+    double qber_in = 0.0;
+    in.eps_total = 1e-6;
+    in.use_di_min_ent = 1;
+    in.ec_efficiency = 1.16;
+    if (argc > 2 && !parse_strict_double(argv[2], &in.chsh_s)) { fprintf(stderr, "Invalid CHSH argument\n"); return 2; }
+    if (argc > 3 && !parse_strict_u64(argv[3], &n_total)) { fprintf(stderr, "Invalid N argument\n"); return 2; }
+    if (argc > 4 && !parse_strict_double(argv[4], &qber_in)) { fprintf(stderr, "Invalid QBER argument\n"); return 2; }
+    if (argc > 5 && !parse_strict_double(argv[5], &in.eps_total)) { fprintf(stderr, "Invalid eps argument\n"); return 2; }
+    if (argc > 6) {
+        uint64_t di_flag = 0;
+        if (!parse_strict_u64(argv[6], &di_flag) || di_flag > 1ULL) { fprintf(stderr, "Invalid DI flag\n"); return 2; }
+        in.use_di_min_ent = (int)di_flag;
+    }
+    if (qber_in < 0.0 || qber_in > 1.0 || in.eps_total <= 0.0 || in.eps_total >= 1.0) {
+        fprintf(stderr, "Invalid finite-key numeric bounds\n");
         return 2;
     }
 
@@ -139,10 +173,12 @@ static int cmd_finite_key(int argc, char **argv) {
 }
 
 static int cmd_qgt(int argc, char **argv) {
-    double theta = (argc > 2) ? atof(argv[2]) : 1.0471975511965976; /* pi/3 */
-    double phi   = (argc > 3) ? atof(argv[3]) : 0.7853981633974483; /* pi/4 */
-    double alpha = (argc > 4) ? atof(argv[4]) : 0.7853981633974483; /* pi/4 = singlet */
-    if (!isfinite(theta) || !isfinite(phi) || !isfinite(alpha)) {
+    double theta = 1.0471975511965976; /* pi/3 */
+    double phi   = 0.7853981633974483; /* pi/4 */
+    double alpha = 0.7853981633974483; /* pi/4 = singlet */
+    if ((argc > 2 && !parse_strict_double(argv[2], &theta)) ||
+        (argc > 3 && !parse_strict_double(argv[3], &phi)) ||
+        (argc > 4 && !parse_strict_double(argv[4], &alpha))) {
         fprintf(stderr, "Invalid QGT numeric arguments\n");
         return 2;
     }
@@ -173,6 +209,10 @@ static int cmd_bb144(void) {
 }
 
 static int cmd_bandwidth(uint64_t bps, double round_s) {
+    if (!isfinite(round_s) || round_s <= 0.0) {
+        fprintf(stderr, "Invalid bandwidth round_s argument\n");
+        return 2;
+    }
     uint32_t cnt = secmesh_bw_profile_count();
     printf("{\"op\":\"mesh_bandwidth\",\"link_bps\":%llu,\"round_s\":%.3f,\"profiles\":[",
            (unsigned long long)bps, round_s);
@@ -208,12 +248,15 @@ static int cmd_entropy_status(void) {
 }
 
 static int cmd_chern_law(int argc, char **argv) {
-    double alpha = (argc > 2) ? atof(argv[2]) : 0.7853981633974483; /* pi/4 */
-    uint32_t nq  = (argc > 3) ? (uint32_t)strtoul(argv[3], NULL, 10) : 8u;
-    if (!isfinite(alpha) || nq == 0u) {
+    double alpha = 0.7853981633974483; /* pi/4 */
+    uint64_t nq64 = 8ULL;
+    if ((argc > 2 && !parse_strict_double(argv[2], &alpha)) ||
+        (argc > 3 && !parse_strict_u64(argv[3], &nq64)) ||
+        nq64 == 0ULL || nq64 > 1000000000ULL) {
         fprintf(stderr, "Invalid chern-law arguments\n");
         return 2;
     }
+    uint32_t nq = (uint32_t)nq64;
     secmesh_chern_ghz_result_t r;
     secmesh_chern_concurrence_ghz(alpha, nq, &r);
     printf("{\"op\":\"chern_concurrence_ghz\",\"alpha\":%.12f,\"n_qubits\":%u,"
@@ -229,15 +272,19 @@ static int cmd_chern_law(int argc, char **argv) {
 }
 
 static int cmd_ising_barrier(int argc, char **argv) {
-    uint32_t n  = (argc > 2) ? (uint32_t)strtoul(argv[2], NULL, 10) : 60u;
-    uint32_t k  = (argc > 3) ? (uint32_t)strtoul(argv[3], NULL, 10) : 10u;
-    double jv   = (argc > 4) ? atof(argv[4]) : 1.0;
-    double phi  = (argc > 5) ? atof(argv[5]) : 2.0;
-    double hv   = (argc > 6) ? atof(argv[6]) : 0.7;
-    if (!isfinite(jv) || !isfinite(phi) || !isfinite(hv) || jv < 0.0 || phi < 0.0 || hv < 0.0) {
+    uint64_t n64 = 60ULL, k64 = 10ULL;
+    double jv = 1.0, phi = 2.0, hv = 0.7;
+    if ((argc > 2 && !parse_strict_u64(argv[2], &n64)) ||
+        (argc > 3 && !parse_strict_u64(argv[3], &k64)) ||
+        (argc > 4 && !parse_strict_double(argv[4], &jv)) ||
+        (argc > 5 && !parse_strict_double(argv[5], &phi)) ||
+        (argc > 6 && !parse_strict_double(argv[6], &hv)) ||
+        n64 > 0xFFFFFFFFULL || k64 > 0xFFFFFFFFULL || jv < 0.0 || phi < 0.0 || hv < 0.0) {
         fprintf(stderr, "Invalid ising-barrier arguments\n");
         return 2;
     }
+    uint32_t n = (uint32_t)n64;
+    uint32_t k = (uint32_t)k64;
     secmesh_ising_barrier_t b;
     secmesh_ising_eval_expander_barrier(n, k, jv, phi, hv, &b);
     printf("{\"op\":\"ising_expander_barrier\",\"n_nodes\":%u,\"compromised_k\":%u,"
@@ -262,8 +309,13 @@ int main(int argc, char **argv) {
     if (strcmp(cmd, "ising-barrier") == 0) return cmd_ising_barrier(argc, argv);
     if (strcmp(cmd, "bb144") == 0) return cmd_bb144();
     if (strcmp(cmd, "bandwidth") == 0) {
-        uint64_t bps = (argc > 2) ? (uint64_t)strtoull(argv[2], NULL, 10) : 100000000ULL;
-        double sec = (argc > 3) ? atof(argv[3]) : 1.0;
+        uint64_t bps = 100000000ULL;
+        double sec = 1.0;
+        if ((argc > 2 && !parse_strict_u64(argv[2], &bps)) ||
+            (argc > 3 && !parse_strict_double(argv[3], &sec))) {
+            fprintf(stderr, "Invalid bandwidth arguments\n");
+            return 2;
+        }
         return cmd_bandwidth(bps, sec);
     }
     if (strcmp(cmd, "entropy-status") == 0) return cmd_entropy_status();

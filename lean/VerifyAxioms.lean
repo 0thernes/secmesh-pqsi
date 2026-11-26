@@ -9,10 +9,10 @@ import SecMeshPQSI.AdversarialTests
 /-!
 # Strict Axiom Allowlist Audit
 
-Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (27 individual
+Every exported theorem in `SecMeshPQSI.Solution` AND `SecMeshPQSI.Palomar` (28 individual
 theorems + master conjunction), the non-vacuity witness
-`SecMeshPQSI.NonVacuity.nonvac_all_hypotheses`, and the 4 adversarial boundary counterexamples
-in `SecMeshPQSI.AdversarialTests` (60 audited declarations total) must depend strictly on a
+`SecMeshPQSI.NonVacuity.nonvac_all_hypotheses`, and the 5 adversarial boundary counterexamples
+in `SecMeshPQSI.AdversarialTests` (63 audited declarations total) must depend strictly on a
 subset of the three standard Lean 4 axioms `[propext, Classical.choice, Quot.sound]`.
 -/
 
@@ -43,6 +43,7 @@ subset of the three standard Lean 4 axioms `[propext, Classical.choice, Quot.sou
 #print axioms SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure
 #print axioms SecMeshPQSI.Solution.t7a_toner_chsh_monogamy_and_eve_isolation
 #print axioms SecMeshPQSI.Solution.t7b_hiding_binding_conservation_nogo
+#print axioms SecMeshPQSI.Solution.t7c_fuchs_vandegraaff_microcrypt_efi
 #print axioms SecMeshPQSI.Solution.prove_all_secmesh_theorems
 #print axioms SecMeshPQSI.NonVacuity.nonvac_all_hypotheses
 #print axioms SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation
@@ -72,7 +73,9 @@ subset of the three standard Lean 4 axioms `[propext, Classical.choice, Quot.sou
 #print axioms SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure
 #print axioms SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation
 #print axioms SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo
+#print axioms SecMeshPQSI.Palomar.t7c_fuchs_vandegraaff_microcrypt_efi
 #print axioms SecMeshPQSI.AdversarialTests.adv_compress1_fails_at_plus_832
 #print axioms SecMeshPQSI.AdversarialTests.adv_v1_chsh_refutes_tsirelson_bound
 #print axioms SecMeshPQSI.AdversarialTests.adv_commitment_disjoint_refutes_hiding
 #print axioms SecMeshPQSI.AdversarialTests.adv_toner_concrete_pythagorean_witness
+#print axioms SecMeshPQSI.AdversarialTests.adv_fuchs_vdg_pythagorean_tight

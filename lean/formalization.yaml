@@ -1,13 +1,13 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 # SPDX-License-Identifier: Apache-2.0
 version: "v0.4"
-release_version: "2.4.0"
+release_version: "2.5.0"
 
 project:
   name: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"
   description: >-
-    Zero-Mathlib Lean 4.35.0 formalization of 27 theorems across seven mathematical
-    families (T1-T7) plus 4 zero-axiom adversarial boundary counterexamples underlying
+    Zero-Mathlib Lean 4.35.0 formalization of 28 theorems across seven mathematical
+    families (T1-T7) plus 5 zero-axiom adversarial boundary counterexamples underlying
     the SecMesh-PQSI hybrid cryptographic defense engine:
     (T1) forensic resolution of finite-key DI-QKD/E91 defects in upstream SecMesh v1;
     (T2) unconditional information-theoretic Post-Super-Intelligence (PSI) security
@@ -191,7 +191,7 @@ automation:
       notes: >-
         Assisted with formal Lean 4.35 proof engineering, C11/Node/Python/Eshkol
         implementation, differential testing, and manuscript drafting under human
-        supervision. All 27 theorems are verified independently by all 6 distinct Lean 4.35
+        supervision. All 28 theorems are verified independently by all 6 distinct Lean 4.35
         proof kernels (results/six_kernel_audit.txt).
 
 fidelity:

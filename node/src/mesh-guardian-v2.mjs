@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Alexander S. Donahue
 //
-// SecMesh-PQSI v2.0 — Hardened Cyber-Defense Mesh Guardian
+// SecMesh-PQSI v2 — Hardened Cyber-Defense Mesh Guardian
 // Fixes all network/security bugs in BoogerCheeseOnRye/SecMesh mesh-guardian.mjs:
 //   1. Binds loopback 127.0.0.1 by default (no accidental 0.0.0.0 exposure)
 //   2. Removes wildcard Access-Control-Allow-Origin: * on control/status endpoints
@@ -20,6 +20,18 @@ export const MAX_FRAME_BYTES = 65536;
 
 export class HealthFieldEngine {
   constructor({ nodeCount = 60, defenderCount = 6, firewall = 0.7, threat = 0.2 } = {}) {
+    if (!Number.isInteger(nodeCount) || nodeCount < 1 || nodeCount > 100000) {
+      throw new Error('HealthFieldEngine requires integer nodeCount in [1, 100000]');
+    }
+    if (!Number.isInteger(defenderCount) || defenderCount < 0) {
+      throw new Error('HealthFieldEngine requires non-negative integer defenderCount');
+    }
+    if (!Number.isFinite(firewall) || firewall < 0 || firewall > 1) {
+      throw new Error('HealthFieldEngine requires finite firewall in [0, 1]');
+    }
+    if (!Number.isFinite(threat) || threat < 0) {
+      throw new Error('HealthFieldEngine requires finite non-negative threat');
+    }
     this.nodeCount = nodeCount;
     this.defenderCount = defenderCount;
     this.firewall = firewall;
@@ -226,10 +238,20 @@ export function createHardenedGuardian({
       res.setHeader('Vary', 'Origin');
     }
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Content-Security-Policy', "default-src 'none'");
+    res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    if (req.url === '/status' || req.url === '/health') {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.statusCode = 405;
+      res.setHeader('Allow', 'GET, HEAD');
+      res.end('{"ok":false,"error":"method_not_allowed"}');
+      return;
+    }
+    const pathname = (req.url || '/').split('?')[0];
+    if (pathname === '/status' || pathname === '/health') {
       // Never leak raw secret keys or internal stack paths
-      res.end(JSON.stringify({
+      const body = JSON.stringify({
         ok: true,
         service: 'secmesh-pqsi-guardian-v2',
         host,
@@ -242,12 +264,15 @@ export function createHardenedGuardian({
         cwAuthRequired: !!cwControlKey,
         recentCount: state.recent.length,
         statusDigest: crypto.createHash('sha256').update(JSON.stringify(state.byVector)).digest('hex').slice(0, 16),
-      }));
+      });
+      res.end(req.method === 'HEAD' ? '' : body);
     } else {
       res.statusCode = 404;
-      res.end('{"ok":false,"error":"not_found"}');
+      res.end(req.method === 'HEAD' ? '' : '{"ok":false,"error":"not_found"}');
     }
   });
+  statusServer.headersTimeout = 5000;
+  statusServer.requestTimeout = 10000;
 
   return {
     state,

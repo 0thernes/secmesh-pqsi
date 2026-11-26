@@ -229,6 +229,452 @@ theorem t7b_hiding_binding_conservation_nogo :
   · intro ⟨hlt1, hlt2⟩
     omega
 
+-- ============================================================================
+-- T7c: Fuchs-van de Graaff Sandwich & Quantum Microcrypt EFI Conservation Law
+--      (Mega Atlas CS-031 / QC-022: Quantum Cryptography Below One-Way Functions)
+-- ============================================================================
+
+def sumIntT7 : Nat → (Nat → Int) → Int
+  | 0, _ => 0
+  | n + 1, f => sumIntT7 n f + f n
+
+private theorem sumNat_le_sumNat (n : Nat) (f g : Nat → Nat)
+    (h : ∀ i, i < n → f i ≤ g i) : sumNat n f ≤ sumNat n g := by
+  induction n with
+  | zero => exact Nat.le_refl 0
+  | succ k ih =>
+    simp only [sumNat]
+    exact Nat.add_le_add (ih (fun i hi => h i (by omega))) (h k (by omega))
+
+private theorem sumNat_congr (n : Nat) (f g : Nat → Nat)
+    (h : ∀ i, i < n → f i = g i) : sumNat n f = sumNat n g := by
+  induction n with
+  | zero => rfl
+  | succ k ih =>
+    simp only [sumNat, ih (fun i hi => h i (by omega)), h k (by omega)]
+
+private theorem sumNat_mul_right (n c : Nat) (f : Nat → Nat) :
+    sumNat n (fun i => f i * c) = sumNat n f * c := by
+  induction n with
+  | zero => simp [sumNat]
+  | succ k ih => simp [sumNat, ih, Nat.add_mul]
+
+private theorem nat_absDiff_sq_add_two_mul (a b : Nat) :
+    absDiffNat a b * absDiffNat a b + 2 * (a * b) = a * a + b * b := by
+  unfold absDiffNat
+  by_cases h : a ≤ b
+  · simp only [h, ↓reduceIte]
+    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+    have hsub : a + d - a = d := by omega
+    rw [hsub]
+    simp only [Nat.mul_add, Nat.add_mul]
+    have hcomm : d * a = a * d := Nat.mul_comm d a
+    omega
+  · simp only [h, ↓reduceIte]
+    have hlt : b ≤ a := by omega
+    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hlt
+    have hsub : b + d - b = d := by omega
+    rw [hsub]
+    simp only [Nat.mul_add, Nat.add_mul]
+    have hcomm : d * b = b * d := Nat.mul_comm d b
+    omega
+
+private theorem nat_two_mul_le_sq_add (a b : Nat) : 2 * (a * b) ≤ a * a + b * b := by
+  have h := nat_absDiff_sq_add_two_mul a b
+  omega
+
+private theorem nat_min_sq_le_mul (a b : Nat) : min (a * a) (b * b) ≤ a * b := by
+  by_cases h : a ≤ b
+  · have hsq : a * a ≤ b * b := Nat.mul_le_mul h h
+    rw [Nat.min_eq_left hsq]
+    exact Nat.mul_le_mul_left a h
+  · have hba : b ≤ a := by omega
+    have hsq : b * b ≤ a * a := Nat.mul_le_mul hba hba
+    rw [Nat.min_eq_right hsq]
+    exact Nat.mul_le_mul_right b hba
+
+private theorem nat_absDiff_sq_factor (a b : Nat) :
+    absDiffNat (a * a) (b * b) = absDiffNat a b * (a + b) := by
+  unfold absDiffNat
+  by_cases h : a ≤ b
+  · have hsq : a * a ≤ b * b := Nat.mul_le_mul h h
+    simp only [h, hsq, ↓reduceIte]
+    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+    have h1 : a + d - a = d := by omega
+    rw [h1]
+    simp only [Nat.mul_add, Nat.add_mul]
+    have hcomm : d * a = a * d := Nat.mul_comm d a
+    omega
+  · have hba : b ≤ a := by omega
+    have hsq : b * b ≤ a * a := Nat.mul_le_mul hba hba
+    have hnot : ¬ (a * a ≤ b * b) := by
+      intro hle
+      obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hba
+      have hdpos : 0 < d := by omega
+      have hmul : (b + d) * (b + d) = b * b + 2 * (b * d) + d * d := by
+        simp only [Nat.mul_add, Nat.add_mul]
+        have hc : d * b = b * d := Nat.mul_comm d b
+        omega
+      have hd2 : 0 < d * d := Nat.mul_pos hdpos hdpos
+      omega
+    simp only [h, hnot, ↓reduceIte]
+    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hba
+    have h1 : b + d - b = d := by omega
+    rw [h1]
+    simp only [Nat.mul_add, Nat.add_mul]
+    have hcomm : d * b = b * d := Nat.mul_comm d b
+    omega
+
+private theorem sumNat_cauchy_schwarz (T : Nat) (f g : Nat → Nat) :
+    sumNat T (fun t => f t * g t) * sumNat T (fun t => f t * g t) ≤
+    sumNat T (fun t => f t * f t) * sumNat T (fun t => g t * g t) := by
+  induction T with
+  | zero => simp [sumNat]
+  | succ k ih =>
+    simp only [sumNat]
+    let Sfg := sumNat k (fun t => f t * g t)
+    let Sf := sumNat k (fun t => f t * f t)
+    let Sg := sumNat k (fun t => g t * g t)
+    let a := f k
+    let b := g k
+    change (Sfg + a * b) * (Sfg + a * b) ≤ (Sf + a * a) * (Sg + b * b)
+    have ih' : Sfg * Sfg ≤ Sf * Sg := ih
+    have hcross : 2 * (Sfg * (a * b)) ≤ Sf * (b * b) + Sg * (a * a) := by
+      have hpt : ∀ t, t < k → 2 * ((f t * b) * (g t * a)) ≤ (f t * b) * (f t * b) + (g t * a) * (g t * a) :=
+        fun t _ => nat_two_mul_le_sq_add (f t * b) (g t * a)
+      have hsum := sumNat_le_sumNat k _ _ hpt
+      have hL : sumNat k (fun t => 2 * ((f t * b) * (g t * a))) = 2 * (Sfg * (a * b)) := by
+        rw [sumNat_mul_left]
+        congr 1
+        rw [← sumNat_mul_right]
+        apply sumNat_congr
+        intro t _
+        have h1 : (f t * b) * (g t * a) = (f t * g t) * (a * b) := by
+          rw [Nat.mul_assoc, Nat.mul_left_comm b (g t) a, ← Nat.mul_assoc, Nat.mul_comm b a]
+        exact h1
+      have hR : sumNat k (fun t => (f t * b) * (f t * b) + (g t * a) * (g t * a)) =
+          Sf * (b * b) + Sg * (a * a) := by
+        rw [sumNat_add]
+        congr 1
+        · rw [← sumNat_mul_right]
+          apply sumNat_congr
+          intro t _
+          rw [Nat.mul_assoc, Nat.mul_left_comm b (f t) b, ← Nat.mul_assoc, Nat.mul_assoc]
+        · rw [← sumNat_mul_right]
+          apply sumNat_congr
+          intro t _
+          rw [Nat.mul_assoc, Nat.mul_left_comm a (g t) a, ← Nat.mul_assoc, Nat.mul_assoc]
+      rw [hL, hR] at hsum
+      exact hsum
+    have hlhs : (Sfg + a * b) * (Sfg + a * b) = Sfg * Sfg + 2 * (Sfg * (a * b)) + (a * b) * (a * b) := by
+      simp only [Nat.mul_add, Nat.add_mul]
+      have hc : a * b * Sfg = Sfg * (a * b) := Nat.mul_comm (a * b) Sfg
+      omega
+    have hrhs : (Sf + a * a) * (Sg + b * b) = Sf * Sg + Sf * (b * b) + Sg * (a * a) + (a * a) * (b * b) := by
+      simp only [Nat.mul_add, Nat.add_mul]
+      have hc : a * a * Sg = Sg * (a * a) := Nat.mul_comm (a * a) Sg
+      omega
+    have hab : (a * b) * (a * b) = (a * a) * (b * b) := by
+      rw [Nat.mul_assoc, Nat.mul_left_comm b a b, ← Nat.mul_assoc, Nat.mul_assoc]
+    rw [hlhs, hrhs, hab]
+    omega
+
+private theorem sumIntT7_add (n : Nat) (f g : Nat → Int) :
+    sumIntT7 n (fun i => f i + g i) = sumIntT7 n f + sumIntT7 n g := by
+  induction n with
+  | zero => rfl
+  | succ k ih => simp [sumIntT7, ih]; omega
+
+private theorem sumIntT7_mul_right (n : Nat) (c : Int) (f : Nat → Int) :
+    sumIntT7 n (fun i => f i * c) = sumIntT7 n f * c := by
+  induction n with
+  | zero => simp [sumIntT7]
+  | succ k ih => simp [sumIntT7, ih, Int.add_mul]
+
+private theorem sumIntT7_mul_left (n : Nat) (c : Int) (f : Nat → Int) :
+    sumIntT7 n (fun i => c * f i) = c * sumIntT7 n f := by
+  induction n with
+  | zero => simp [sumIntT7]
+  | succ k ih => simp [sumIntT7, ih, Int.mul_add]
+
+private theorem sumIntT7_le_sumIntT7 (n : Nat) (f g : Nat → Int)
+    (h : ∀ i, i < n → f i ≤ g i) : sumIntT7 n f ≤ sumIntT7 n g := by
+  induction n with
+  | zero => exact Int.le_refl 0
+  | succ k ih =>
+    simp only [sumIntT7]
+    exact Int.add_le_add (ih (fun i hi => h i (by omega))) (h k (by omega))
+
+private theorem sumIntT7_congr (n : Nat) (f g : Nat → Int)
+    (h : ∀ i, i < n → f i = g i) : sumIntT7 n f = sumIntT7 n g := by
+  induction n with
+  | zero => rfl
+  | succ k ih =>
+    simp only [sumIntT7, ih (fun i hi => h i (by omega)), h k (by omega)]
+
+private theorem complex_pair_cross_le (a1 b1 c1 d1 a2 b2 c2 d2 : Int) :
+    2 * ((a1 * c1 + b1 * d1) * (a2 * c2 + b2 * d2) +
+         (a1 * d1 - b1 * c1) * (a2 * d2 - b2 * c2)) ≤
+    (a1 * a1 + b1 * b1) * (c2 * c2 + d2 * d2) +
+    (c1 * c1 + d1 * d1) * (a2 * a2 + b2 * b2) := by
+  have hx := int_sq_nonneg ((a1 * c2 - b1 * d2) - (a2 * c1 - b2 * d1))
+  have hy := int_sq_nonneg ((a1 * d2 + b1 * c2) - (a2 * d1 + b2 * c1))
+  have hid : ((a1 * c2 - b1 * d2) - (a2 * c1 - b2 * d1)) *
+             ((a1 * c2 - b1 * d2) - (a2 * c1 - b2 * d1)) +
+             ((a1 * d2 + b1 * c2) - (a2 * d1 + b2 * c1)) *
+             ((a1 * d2 + b1 * c2) - (a2 * d1 + b2 * c1)) =
+             (a1 * a1 + b1 * b1) * (c2 * c2 + d2 * d2) +
+             (c1 * c1 + d1 * d1) * (a2 * a2 + b2 * b2) -
+             2 * ((a1 * c1 + b1 * d1) * (a2 * c2 + b2 * d2) +
+                  (a1 * d1 - b1 * c1) * (a2 * d2 - b2 * c2)) := by
+    have p1 : (a1 * c2 - b1 * d2) * (a1 * c2 - b1 * d2) +
+              (a1 * d2 + b1 * c2) * (a1 * d2 + b1 * c2) =
+              (a1 * a1 + b1 * b1) * (c2 * c2 + d2 * d2) := by
+      simp only [Int.mul_add, Int.add_mul, Int.mul_sub, Int.sub_mul]
+      have m2 : a1 * c2 * (b1 * d2) = a1 * d2 * (b1 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 b1 d2, Int.mul_comm c2 d2,
+            Int.mul_left_comm b1 d2 c2, ← Int.mul_assoc]
+      have m3 : b1 * d2 * (a1 * c2) = a1 * d2 * (b1 * c2) := by
+        rw [Int.mul_comm (b1 * d2) (a1 * c2), m2]
+      have m4 : b1 * c2 * (a1 * d2) = a1 * d2 * (b1 * c2) := Int.mul_comm _ _
+      have s1 : a1 * c2 * (a1 * c2) = a1 * a1 * (c2 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 a1 c2, ← Int.mul_assoc]
+      have s2 : b1 * d2 * (b1 * d2) = b1 * b1 * (d2 * d2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d2 b1 d2, ← Int.mul_assoc]
+      have s3 : a1 * d2 * (a1 * d2) = a1 * a1 * (d2 * d2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d2 a1 d2, ← Int.mul_assoc]
+      have s4 : b1 * c2 * (b1 * c2) = b1 * b1 * (c2 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 b1 c2, ← Int.mul_assoc]
+      omega
+    have p2 : (a2 * c1 - b2 * d1) * (a2 * c1 - b2 * d1) +
+              (a2 * d1 + b2 * c1) * (a2 * d1 + b2 * c1) =
+              (c1 * c1 + d1 * d1) * (a2 * a2 + b2 * b2) := by
+      have hcomm : (c1 * c1 + d1 * d1) * (a2 * a2 + b2 * b2) =
+          (a2 * a2 + b2 * b2) * (c1 * c1 + d1 * d1) := Int.mul_comm _ _
+      rw [hcomm]
+      simp only [Int.mul_add, Int.add_mul, Int.mul_sub, Int.sub_mul]
+      have m2 : a2 * c1 * (b2 * d1) = a2 * d1 * (b2 * c1) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c1 b2 d1, Int.mul_comm c1 d1,
+            Int.mul_left_comm b2 d1 c1, ← Int.mul_assoc]
+      have m3 : b2 * d1 * (a2 * c1) = a2 * d1 * (b2 * c1) := by
+        rw [Int.mul_comm (b2 * d1) (a2 * c1), m2]
+      have m4 : b2 * c1 * (a2 * d1) = a2 * d1 * (b2 * c1) := Int.mul_comm _ _
+      have s1 : a2 * c1 * (a2 * c1) = a2 * a2 * (c1 * c1) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c1 a2 c1, ← Int.mul_assoc]
+      have s2 : b2 * d1 * (b2 * d1) = b2 * b2 * (d1 * d1) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d1 b2 d1, ← Int.mul_assoc]
+      have s3 : a2 * d1 * (a2 * d1) = a2 * a2 * (d1 * d1) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d1 a2 d1, ← Int.mul_assoc]
+      have s4 : b2 * c1 * (b2 * c1) = b2 * b2 * (c1 * c1) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c1 b2 c1, ← Int.mul_assoc]
+      omega
+    have p3 : (a1 * c2 - b1 * d2) * (a2 * c1 - b2 * d1) +
+              (a1 * d2 + b1 * c2) * (a2 * d1 + b2 * c1) =
+              (a1 * c1 + b1 * d1) * (a2 * c2 + b2 * d2) +
+              (a1 * d1 - b1 * c1) * (a2 * d2 - b2 * c2) := by
+      simp only [Int.mul_add, Int.add_mul, Int.mul_sub, Int.sub_mul]
+      have t1 : a1 * c2 * (a2 * c1) = a1 * c1 * (a2 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 a2 c1, Int.mul_comm c2 c1,
+            Int.mul_left_comm a2 c1 c2, ← Int.mul_assoc]
+      have t2 : a1 * c2 * (b2 * d1) = a1 * d1 * (b2 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 b2 d1, Int.mul_comm c2 d1,
+            Int.mul_left_comm b2 d1 c2, ← Int.mul_assoc]
+      have t3 : b1 * d2 * (a2 * c1) = b1 * c1 * (a2 * d2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d2 a2 c1, Int.mul_comm d2 c1,
+            Int.mul_left_comm a2 c1 d2, ← Int.mul_assoc]
+      have t4 : b1 * d2 * (b2 * d1) = b1 * d1 * (b2 * d2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d2 b2 d1, Int.mul_comm d2 d1,
+            Int.mul_left_comm b2 d1 d2, ← Int.mul_assoc]
+      have t5 : a1 * d2 * (a2 * d1) = a1 * d1 * (a2 * d2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d2 a2 d1, Int.mul_comm d2 d1,
+            Int.mul_left_comm a2 d1 d2, ← Int.mul_assoc]
+      have t6 : a1 * d2 * (b2 * c1) = a1 * c1 * (b2 * d2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm d2 b2 c1, Int.mul_comm d2 c1,
+            Int.mul_left_comm b2 c1 d2, ← Int.mul_assoc]
+      have t7 : b1 * c2 * (a2 * d1) = b1 * d1 * (a2 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 a2 d1, Int.mul_comm c2 d1,
+            Int.mul_left_comm a2 d1 c2, ← Int.mul_assoc]
+      have t8 : b1 * c2 * (b2 * c1) = b1 * c1 * (b2 * c2) := by
+        rw [Int.mul_assoc, Int.mul_left_comm c2 b2 c1, Int.mul_comm c2 c1,
+            Int.mul_left_comm b2 c1 c2, ← Int.mul_assoc]
+      omega
+    have hsub1 (X Y : Int) : (X - Y) * (X - Y) = X * X + Y * Y - 2 * (X * Y) := by
+      simp only [Int.mul_sub, Int.sub_mul]
+      have hc : Y * X = X * Y := Int.mul_comm Y X
+      omega
+    have hs1 := hsub1 (a1 * c2 - b1 * d2) (a2 * c1 - b2 * d1)
+    have hs2 := hsub1 (a1 * d2 + b1 * c2) (a2 * d1 + b2 * c1)
+    rw [hs1, hs2]
+    omega
+  omega
+
+private theorem complex_cauchy_schwarz_int (D : Nat) (uRe uIm vRe vIm : Nat → Int) :
+    let dotRe := sumIntT7 D (fun i => uRe i * vRe i + uIm i * vIm i)
+    let dotIm := sumIntT7 D (fun i => uRe i * vIm i - uIm i * vRe i)
+    let normU := sumIntT7 D (fun i => uRe i * uRe i + uIm i * uIm i)
+    let normV := sumIntT7 D (fun i => vRe i * vRe i + vIm i * vIm i)
+    dotRe * dotRe + dotIm * dotIm ≤ normU * normV := by
+  induction D with
+  | zero => simp [sumIntT7]
+  | succ k ih =>
+    dsimp only at ih ⊢
+    simp only [sumIntT7]
+    let dr := sumIntT7 k (fun i => uRe i * vRe i + uIm i * vIm i)
+    let di := sumIntT7 k (fun i => uRe i * vIm i - uIm i * vRe i)
+    let nU := sumIntT7 k (fun i => uRe i * uRe i + uIm i * uIm i)
+    let nV := sumIntT7 k (fun i => vRe i * vRe i + vIm i * vIm i)
+    let a2 := uRe k
+    let b2 := uIm k
+    let c2 := vRe k
+    let d2 := vIm k
+    let qr := a2 * c2 + b2 * d2
+    let qi := a2 * d2 - b2 * c2
+    change (dr + qr) * (dr + qr) + (di + qi) * (di + qi) ≤
+           (nU + (a2 * a2 + b2 * b2)) * (nV + (c2 * c2 + d2 * d2))
+    have ih' : dr * dr + di * di ≤ nU * nV := ih
+    have hbase : qr * qr + qi * qi = (a2 * a2 + b2 * b2) * (c2 * c2 + d2 * d2) :=
+      lagrange_cs2 a2 b2 c2 d2
+    have hcross : 2 * (dr * qr + di * qi) ≤ nU * (c2 * c2 + d2 * d2) + nV * (a2 * a2 + b2 * b2) := by
+      have hpt : ∀ t, t < k →
+          2 * ((uRe t * vRe t + uIm t * vIm t) * qr + (uRe t * vIm t - uIm t * vRe t) * qi) ≤
+          (uRe t * uRe t + uIm t * uIm t) * (c2 * c2 + d2 * d2) +
+          (vRe t * vRe t + vIm t * vIm t) * (a2 * a2 + b2 * b2) :=
+        fun t _ => complex_pair_cross_le (uRe t) (uIm t) (vRe t) (vIm t) a2 b2 c2 d2
+      have hsum := sumIntT7_le_sumIntT7 k _ _ hpt
+      have hL : sumIntT7 k (fun t =>
+          2 * ((uRe t * vRe t + uIm t * vIm t) * qr + (uRe t * vIm t - uIm t * vRe t) * qi)) =
+          2 * (dr * qr + di * qi) := by
+        rw [sumIntT7_mul_left, sumIntT7_add, sumIntT7_mul_right, sumIntT7_mul_right]
+      have hR : sumIntT7 k (fun t =>
+          (uRe t * uRe t + uIm t * uIm t) * (c2 * c2 + d2 * d2) +
+          (vRe t * vRe t + vIm t * vIm t) * (a2 * a2 + b2 * b2)) =
+          nU * (c2 * c2 + d2 * d2) + nV * (a2 * a2 + b2 * b2) := by
+        rw [sumIntT7_add, sumIntT7_mul_right, sumIntT7_mul_right]
+      rw [hL, hR] at hsum
+      exact hsum
+    have hexpL : (dr + qr) * (dr + qr) + (di + qi) * (di + qi) =
+        (dr * dr + di * di) + 2 * (dr * qr + di * qi) + (qr * qr + qi * qi) := by
+      simp only [Int.mul_add, Int.add_mul]
+      have h1 : qr * dr = dr * qr := Int.mul_comm qr dr
+      have h2 : qi * di = di * qi := Int.mul_comm qi di
+      omega
+    have hexpR : (nU + (a2 * a2 + b2 * b2)) * (nV + (c2 * c2 + d2 * d2)) =
+        nU * nV + nU * (c2 * c2 + d2 * d2) + nV * (a2 * a2 + b2 * b2) +
+        (a2 * a2 + b2 * b2) * (c2 * c2 + d2 * d2) := by
+      have hc : (a2 * a2 + b2 * b2) * nV = nV * (a2 * a2 + b2 * b2) := Int.mul_comm _ _
+      rw [Int.add_mul, Int.mul_add nU, Int.mul_add (a2 * a2 + b2 * b2), hc]
+      omega
+    rw [hexpL, hexpR, hbase]
+    omega
+
+/-- **T7c (Fuchs-van de Graaff Sandwich & Quantum Microcrypt EFI Conservation Law — Mega Atlas CS-031 / QC-022):**
+(1) For ANY finite outcome space `Fin T` and non-negative amplitude vectors `r, s : Nat → Nat`
+    representing distributions `P0(t) = r(t)^2 / M`, `P1(t) = s(t)^2 / M` with equal mass `M`:
+    - Overlap-Fidelity hierarchy & Fuchs-van de Graaff lower bound: `ov ≤ B ≤ M` and
+      `2 M ≤ tv2 + 2 B` (i.e., `1 - B(P0, P1) ≤ TV(P0, P1)`).
+    - Exact Fuchs-van de Graaff upper bound: `tv2^2 + 4 B^2 ≤ 4 M^2`
+      (i.e., `TV(P0, P1)^2 + B(P0, P1)^2 ≤ 1`).
+    - Quantitative Microcrypt EFI Fidelity Ceiling: any statistical separation `2 δ ≤ tv2`
+      forces `B^2 + δ^2 ≤ M^2`.
+(2) For ANY complex pure quantum states `u, v ∈ ℂ^D` of equal squared norm `M`:
+    exact Gram trace-distance conservation `D_tr^2 M^2 + |⟨u, v⟩|^2 = M^2` (`D_tr^2 M^2 ≥ 0`),
+    proving Mayers-Lo-Chau perfect-hiding equivocation (`D_tr = 0 → |⟨u, v⟩|^2 = M^2`) and
+    Helstrom perfect-binding leakage (`⟨u, v⟩ = 0 → D_tr^2 M^2 = M^2`) without `Classical.choice`. -/
+theorem t7c_fuchs_vandegraaff_microcrypt_efi :
+    (∀ (T M : Nat) (r s : Nat → Nat),
+      sumNat T (fun t => r t * r t) = M →
+      sumNat T (fun t => s t * s t) = M →
+      let tv2 := sumNat T (fun t => absDiffNat (r t * r t) (s t * s t))
+      let B   := sumNat T (fun t => r t * s t)
+      let ov  := sumNat T (fun t => min (r t * r t) (s t * s t))
+      ov ≤ B ∧
+      B ≤ M ∧
+      2 * M ≤ tv2 + 2 * B ∧
+      tv2 * tv2 + 4 * (B * B) ≤ 4 * (M * M) ∧
+      (∀ delta : Nat, 2 * delta ≤ tv2 → B * B + delta * delta ≤ M * M)) ∧
+    (∀ (D : Nat) (M : Int) (uRe uIm vRe vIm : Nat → Int),
+      sumIntT7 D (fun i => uRe i * uRe i + uIm i * uIm i) = M →
+      sumIntT7 D (fun i => vRe i * vRe i + vIm i * vIm i) = M →
+      let dotRe := sumIntT7 D (fun i => uRe i * vRe i + uIm i * vIm i)
+      let dotIm := sumIntT7 D (fun i => uRe i * vIm i - uIm i * vRe i)
+      let fidSq := dotRe * dotRe + dotIm * dotIm
+      let dTrSq := M * M - fidSq
+      0 ≤ dTrSq ∧
+      dTrSq + fidSq = M * M ∧
+      (dTrSq = 0 → fidSq = M * M) ∧
+      (dotRe = 0 ∧ dotIm = 0 → dTrSq = M * M)) := by
+  constructor
+  · intro T M r s hr hs
+    dsimp only
+    let tv2 := sumNat T (fun t => absDiffNat (r t * r t) (s t * s t))
+    let B   := sumNat T (fun t => r t * s t)
+    let ov  := sumNat T (fun t => min (r t * r t) (s t * s t))
+    have hovB : ov ≤ B := sumNat_le_sumNat T _ _ (fun t _ => nat_min_sq_le_mul (r t) (s t))
+    have h2BM : 2 * B ≤ 2 * M := by
+      have h1 := sumNat_le_sumNat T (fun t => 2 * (r t * s t)) (fun t => r t * r t + s t * s t)
+        (fun t _ => nat_two_mul_le_sq_add (r t) (s t))
+      rw [sumNat_mul_left, sumNat_add, hr, hs] at h1
+      omega
+    have hBM : B ≤ M := by omega
+    have hcons : tv2 + 2 * ov = 2 * M :=
+      (t7b_hiding_binding_conservation_nogo T M (fun t => r t * r t) (fun t => s t * s t) hr hs).1
+    have hlow : 2 * M ≤ tv2 + 2 * B := by omega
+    have htv_eq : tv2 = sumNat T (fun t => absDiffNat (r t) (s t) * (r t + s t)) :=
+      sumNat_congr T _ _ (fun t _ => nat_absDiff_sq_factor (r t) (s t))
+    have hcs := sumNat_cauchy_schwarz T (fun t => absDiffNat (r t) (s t)) (fun t => r t + s t)
+    have hSf_add : sumNat T (fun t => absDiffNat (r t) (s t) * absDiffNat (r t) (s t)) + 2 * B = 2 * M := by
+      have h1 := sumNat_congr T
+        (fun t => absDiffNat (r t) (s t) * absDiffNat (r t) (s t) + 2 * (r t * s t))
+        (fun t => r t * r t + s t * s t)
+        (fun t _ => nat_absDiff_sq_add_two_mul (r t) (s t))
+      rw [sumNat_add, sumNat_mul_left, sumNat_add, hr, hs] at h1
+      omega
+    have hSg_eq : sumNat T (fun t => (r t + s t) * (r t + s t)) = 2 * M + 2 * B := by
+      have h1 := sumNat_congr T
+        (fun t => (r t + s t) * (r t + s t))
+        (fun t => (r t * r t + s t * s t) + 2 * (r t * s t))
+        (fun t _ => by
+          simp only [Nat.mul_add, Nat.add_mul]
+          have hc : s t * r t = r t * s t := Nat.mul_comm (s t) (r t)
+          omega)
+      rw [h1, sumNat_add, sumNat_add, sumNat_mul_left, hr, hs]
+      omega
+    have hSf_eq : sumNat T (fun t => absDiffNat (r t) (s t) * absDiffNat (r t) (s t)) = 2 * M - 2 * B := by
+      omega
+    rw [← htv_eq, hSf_eq, hSg_eq] at hcs
+    have hprod : (2 * M - 2 * B) * (2 * M + 2 * B) + 4 * (B * B) = 4 * (M * M) := by
+      obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hBM
+      have hsub : 2 * M - 2 * B = 2 * d := by omega
+      have hadd : 2 * M + 2 * B = 4 * B + 2 * d := by omega
+      rw [hsub, hadd, hd]
+      simp only [Nat.mul_add, Nat.add_mul]
+      have h1 : d * B = B * d := Nat.mul_comm d B
+      have h2 : 2 * d * (4 * B) = 8 * (B * d) := by
+        rw [Nat.mul_assoc, Nat.mul_left_comm d 4 B, ← Nat.mul_assoc, Nat.mul_assoc, Nat.mul_comm d B]
+        omega
+      have h3 : 2 * d * (2 * d) = 4 * (d * d) := by
+        rw [Nat.mul_assoc, Nat.mul_left_comm d 2 d, ← Nat.mul_assoc, Nat.mul_assoc]
+      omega
+    have hfvdg : tv2 * tv2 + 4 * (B * B) ≤ 4 * (M * M) := by omega
+    refine ⟨hovB, hBM, hlow, hfvdg, ?_⟩
+    intro delta hdelta
+    change B * B + delta * delta ≤ M * M
+    have hdelta' : 2 * delta ≤ tv2 := hdelta
+    have hsq : (2 * delta) * (2 * delta) ≤ tv2 * tv2 := Nat.mul_le_mul hdelta' hdelta'
+    have h4d : (2 * delta) * (2 * delta) = 4 * (delta * delta) := by
+      rw [Nat.mul_assoc, Nat.mul_left_comm delta 2 delta, ← Nat.mul_assoc, Nat.mul_assoc]
+    omega
+  · intro D M uRe uIm vRe vIm hu hv
+    dsimp only
+    have hcs := complex_cauchy_schwarz_int D uRe uIm vRe vIm
+    dsimp only at hcs
+    rw [hu, hv] at hcs
+    refine ⟨by omega, by omega, ?_, ?_⟩
+    · intro h0; omega
+    · intro ⟨hre, him⟩
+      rw [hre, him]
+      omega
+
 end
 
 end SecMeshPQSI.MonogamyCommitmentNoGo

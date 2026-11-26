@@ -53,6 +53,20 @@ theorem adv_toner_concrete_pythagorean_witness :
     sAB * sAB + sAE * sAE ≤ 8 * (5 * 5 * 5 * 5) := by
   decide
 
+/-- Concrete (3, 4, 5) Pythagorean saturation of Fuchs-van de Graaff (`T7c`):
+for `r = (3, 1)` (`P0 = (9/10, 1/10)`) and `s = (1, 3)` (`P1 = (1/10, 9/10)`),
+`M = 10`, `tv2 = 16` (`TV = 4/5`), `B = 6` (`B = 3/5`), `ov = 2`, attaining
+exact equality `tv2^2 + 4 B^2 = 256 + 144 = 400 = 4 M^2` (proving `T7c` cannot be tightened). -/
+theorem adv_fuchs_vdg_pythagorean_tight :
+    let r : Nat → Nat := fun t => if t = 0 then 3 else 1
+    let s : Nat → Nat := fun t => if t = 0 then 1 else 3
+    sumNat 2 (fun t => r t * r t) = 10 ∧
+    sumNat 2 (fun t => s t * s t) = 10 ∧
+    sumNat 2 (fun t => absDiffNat (r t * r t) (s t * s t)) = 16 ∧
+    sumNat 2 (fun t => r t * s t) = 6 ∧
+    16 * 16 + 4 * (6 * 6) = 4 * (10 * 10) := by
+  decide
+
 end
 
 end SecMeshPQSI.AdversarialTests

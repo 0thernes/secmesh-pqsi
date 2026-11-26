@@ -263,6 +263,30 @@ def T7b_HidingBindingConservationNoGo : Prop :=
     (∀ eps : Nat, tv2 ≤ 2 * eps → D - eps ≤ ov) ∧
     ¬ (tv2 < D ∧ 2 * ov < D)
 
+def T7c_FuchsVanDeGraaffMicrocryptEFI : Prop :=
+  (∀ (T M : Nat) (r s : Nat → Nat),
+    sumNat T (fun t => r t * r t) = M →
+    sumNat T (fun t => s t * s t) = M →
+    let tv2 := sumNat T (fun t => absDiffNat (r t * r t) (s t * s t))
+    let B   := sumNat T (fun t => r t * s t)
+    let ov  := sumNat T (fun t => min (r t * r t) (s t * s t))
+    ov ≤ B ∧
+    B ≤ M ∧
+    2 * M ≤ tv2 + 2 * B ∧
+    tv2 * tv2 + 4 * (B * B) ≤ 4 * (M * M) ∧
+    (∀ delta : Nat, 2 * delta ≤ tv2 → B * B + delta * delta ≤ M * M)) ∧
+  (∀ (D : Nat) (M : Int) (uRe uIm vRe vIm : Nat → Int),
+    sumIntT7 D (fun i => uRe i * uRe i + uIm i * uIm i) = M →
+    sumIntT7 D (fun i => vRe i * vRe i + vIm i * vIm i) = M →
+    let dotRe := sumIntT7 D (fun i => uRe i * vRe i + uIm i * vIm i)
+    let dotIm := sumIntT7 D (fun i => uRe i * vIm i - uIm i * vRe i)
+    let fidSq := dotRe * dotRe + dotIm * dotIm
+    let dTrSq := M * M - fidSq
+    0 ≤ dTrSq ∧
+    dTrSq + fidSq = M * M ∧
+    (dTrSq = 0 → fidSq = M * M) ∧
+    (dotRe = 0 ∧ dotIm = 0 → dTrSq = M * M))
+
 def AllSecMeshTheorems : Prop :=
   T1a_V1TsirelsonViolation ∧
   T1b_HoeffdingRange2Factor4 ∧
@@ -290,7 +314,8 @@ def AllSecMeshTheorems : Prop :=
   T6a_IsingLaplacianPSDAndCheegerBarrier ∧
   T6b_CryptosymbologySubliminalAndThresholdClosure ∧
   T7a_TonerCHSHMonogamyAndEveIsolation ∧
-  T7b_HidingBindingConservationNoGo
+  T7b_HidingBindingConservationNoGo ∧
+  T7c_FuchsVanDeGraaffMicrocryptEFI
 
 end
 end SecMeshPQSI.Challenge

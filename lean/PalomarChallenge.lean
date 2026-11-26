@@ -455,5 +455,30 @@ theorem t7b_hiding_binding_conservation_nogo :
       ¬ (tv2 < D ∧ 2 * ov < D) := by
   sorry
 
+theorem t7c_fuchs_vandegraaff_microcrypt_efi :
+    (∀ (T M : Nat) (r s : Nat → Nat),
+      sumNat T (fun t => r t * r t) = M →
+      sumNat T (fun t => s t * s t) = M →
+      let tv2 := sumNat T (fun t => absDiffNat (r t * r t) (s t * s t))
+      let B   := sumNat T (fun t => r t * s t)
+      let ov  := sumNat T (fun t => min (r t * r t) (s t * s t))
+      ov ≤ B ∧
+      B ≤ M ∧
+      2 * M ≤ tv2 + 2 * B ∧
+      tv2 * tv2 + 4 * (B * B) ≤ 4 * (M * M) ∧
+      (∀ delta : Nat, 2 * delta ≤ tv2 → B * B + delta * delta ≤ M * M)) ∧
+    (∀ (D : Nat) (M : Int) (uRe uIm vRe vIm : Nat → Int),
+      sumInt D (fun i => uRe i * uRe i + uIm i * uIm i) = M →
+      sumInt D (fun i => vRe i * vRe i + vIm i * vIm i) = M →
+      let dotRe := sumInt D (fun i => uRe i * vRe i + uIm i * vIm i)
+      let dotIm := sumInt D (fun i => uRe i * vIm i - uIm i * vRe i)
+      let fidSq := dotRe * dotRe + dotIm * dotIm
+      let dTrSq := M * M - fidSq
+      0 ≤ dTrSq ∧
+      dTrSq + fidSq = M * M ∧
+      (dTrSq = 0 → fidSq = M * M) ∧
+      (dotRe = 0 ∧ dotIm = 0 → dTrSq = M * M)) := by
+  sorry
+
 end
 end SecMeshPQSI.Palomar

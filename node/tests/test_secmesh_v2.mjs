@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Alexander S. Donahue
 //
-// SecMesh-PQSI v2.0 Node.js Test Suite:
+// SecMesh-PQSI v2 Node.js Test Suite:
 //   - Positive, Negative, Differential (Moonlab C11 <-> OpenSSL 3.5.5),
 //     Regression (SecMesh v1 10 defects), Hardened Guardian network security,
 //     and Rosette-Wire verifiable receipt replay.
@@ -14,7 +14,10 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import fs from 'node:fs';
+import os from 'node:os';
 import {
+  gf128Mul,
   carterWegmanMac,
   carterWegmanVerify,
   sealCwFrame,
@@ -32,6 +35,8 @@ import {
   TSIRELSON,
   P_ANTI_EXACT,
   P_CORR_EXACT,
+  binEntropy,
+  chshLowerBoundV2,
   minEntropyDI,
   vonNeumannEntropyDI,
   evaluateFiniteKeyV2,
@@ -40,7 +45,7 @@ import {
   simulateE91Session,
 } from '../src/finite-key-v2.mjs';
 import { createHardenedGuardian, HealthFieldEngine } from '../src/mesh-guardian-v2.mjs';
-import { createRosetteBundle, verifyRosetteBundleDir } from '../src/rosette-receipt.mjs';
+import { canonicalJson, createRosetteBundle, verifyRosetteBundleDir } from '../src/rosette-receipt.mjs';
 import { runCrossImplMlkem768Check } from '../src/secmesh-cli.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -54,7 +59,7 @@ async function test(name, fn) {
   console.log(`  [PASS] ${name}`);
 }
 
-console.log('=== SecMesh-PQSI v2.0 Node.js Differential, Security & Regression Suite ===');
+console.log('=== SecMesh-PQSI v2 Node.js Differential, Security & Regression Suite ===');
 
 await test('Regression T1a: SecMesh v1 0.146/0.854 exceeds Tsirelson (2.832 > 2*sqrt(2)); v2 exact', () => {
   const sV1 = 4 * (1 - 2 * 0.146);
@@ -286,7 +291,7 @@ await test('Theorem T6b: Cryptosymbology threshold-hedged nonce XOR dual-closure
   assert.throws(() => thresholdHedgedNonce(Buffer.alloc(16), Buffer.alloc(32)));
 });
 
-await test('Eshkol v1.3.6 Forward-Mode Dual-Number AD Execution across all 4 .esk modules', () => {
+await test('Eshkol v1.3.6 Forward-Mode Dual-Number AD Execution across 4 core .esk modules', () => {
   const eskDir = path.join(REPO_ROOT, 'eshkol');
   const rFk = evaluateEshkolFile(path.join(eskDir, 'finite_key_ad.esk'));
   assert.ok(rFk.regions.includes('secmesh-finite-key-ad'));
@@ -420,6 +425,77 @@ await test('Security & AD Cycle 10: Canonical CW-128 record framing, kItOpt leng
   assert.ok(Math.abs(parseFloat(mDrdc.split('= ')[1]) - (-0.6 / 0.8)) < 1e-12);
   const mDov = rT7.lines.find(l => l.includes('d(Overlap)/d(TV)'));
   assert.ok(Math.abs(parseFloat(mDov.split('= ')[1]) - (-1.0)) < 1e-12);
+  const mBceil = rT7.lines.find(l => l.includes('T7c B_max(0.8)'));
+  assert.ok(Math.abs(parseFloat(mBceil.split('= ')[1]) - 0.6) < 1e-12);
+  const mDbdtv = rT7.lines.find(l => l.includes('d(B_max)/d(TV)'));
+  assert.ok(Math.abs(parseFloat(mDbdtv.split('= ')[1]) - (-0.8 / 0.6)) < 1e-12);
+});
+
+await test('Security Cycle 11: GCM tag-truncation refusal, CW-128 length guards, HTTP 405, Eshkol parse-depth, Rosette schema & seeded Toeplitz determinism', async () => {
+  // 1. H11.01: AES-256-GCM tag-truncation (CWE-347) & key/IV/CW-128 length refusal
+  const sk = crypto.randomBytes(32);
+  const rec = sealRecord(sk, Buffer.from('hello-pqsi'), Buffer.from('aad'));
+  const truncRec = { ...rec, gcmTag: rec.gcmTag.subarray(0, 4) };
+  assert.throws(() => openRecord(sk, truncRec, Buffer.from('aad')), /Malformed record|16-byte/);
+  assert.throws(() => openRecord(crypto.randomBytes(16), rec, Buffer.from('aad')), /32-byte/);
+  assert.throws(() => gf128Mul(Buffer.alloc(15), Buffer.alloc(16)), /16-byte/);
+  assert.throws(() => carterWegmanMac(Buffer.alloc(16), Buffer.alloc(15), Buffer.from('x')), /16-byte/);
+
+  // 2. H11.02: HealthFieldEngine invalid parameter refusal & Guardian HTTP 405 + hardening headers
+  assert.throws(() => new HealthFieldEngine({ nodeCount: 0 }), /nodeCount/);
+  assert.throws(() => new HealthFieldEngine({ firewall: 1.5 }), /firewall/);
+  const g = createHardenedGuardian({ host: '127.0.0.1', listenPort: 0, statusPort: 0 });
+  const ports = await g.start();
+  try {
+    const rPost = await fetch(`http://127.0.0.1:${ports.statusPort}/status`, { method: 'POST' });
+    assert.equal(rPost.status, 405);
+    const rGet = await fetch(`http://127.0.0.1:${ports.statusPort}/status?ignored=1`);
+    assert.equal(rGet.status, 200);
+    assert.equal(rGet.headers.get('cache-control'), 'no-store');
+    assert.equal(rGet.headers.get('content-security-policy'), "default-src 'none'");
+  } finally {
+    await g.stop();
+  }
+
+  // 3. H11.03: Eshkol parser recursion-depth DoS cap & malformed special forms
+  assert.throws(() => evaluateEshkolSource('('.repeat(300) + '1' + ')'.repeat(300)), /nesting depth/);
+  assert.throws(() => evaluateEshkolSource('(lambda 42 x)'), /Malformed lambda/);
+
+  // 4. H11.04: Rosette canonicalJson undefined/NaN handling & schema/compositionId verification
+  assert.equal(canonicalJson({ b: 2, a: undefined, c: [1, undefined] }), '{"b":2,"c":[1,null]}');
+  assert.throws(() => canonicalJson({ x: Number.NaN }), /non-finite/);
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'secmesh-rosette-c11-'));
+  try {
+    createRosetteBundle({
+      compositionId: 'c11-schema-test',
+      components: ['test'],
+      inputs: { k: 1, ignored: undefined },
+      outputs: { ok: true },
+      checks: [{ name: 'c1', passed: true }],
+      outDir: tmpDir,
+    });
+    assert.equal(verifyRosetteBundleDir(tmpDir).ok, true);
+    const vPath = path.join(tmpDir, 'verification.json');
+    const vObj = JSON.parse(fs.readFileSync(vPath, 'utf8'));
+    vObj.compositionId = 'forged-id';
+    fs.writeFileSync(vPath, JSON.stringify(vObj, null, 2) + '\n');
+    assert.equal(verifyRosetteBundleDir(tmpDir).ok, false);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+
+  // 5. H11.05: Native C11 CLI strict parser refuses NaN/negative bandwidth & garbage tokens
+  assert.throws(() => execFileSync(NATIVE_BIN, ['bandwidth', '100000000', 'NaN'], { stdio: 'pipe' }));
+  assert.throws(() => execFileSync(NATIVE_BIN, ['bandwidth', '100000000', '-1'], { stdio: 'pipe' }));
+  assert.throws(() => execFileSync(NATIVE_BIN, ['finite-key', 'garbage'], { stdio: 'pipe' }));
+
+  // 6. H11.06: Node finite-key NaN guards & deterministic seeded Toeplitz keyFingerprint
+  assert.equal(binEntropy(Number.NaN), 0);
+  assert.equal(chshLowerBoundV2(2.8, [50000, 50000, 50000, 50000], 0), 2);
+  const sim1 = simulateE91Session({ nRounds: 450000, eveRate: 0, seed: 20261125 });
+  const sim2 = simulateE91Session({ nRounds: 450000, eveRate: 0, seed: 20261125 });
+  assert.ok(sim1.keyFingerprint && sim1.keyFingerprint.length === 32);
+  assert.equal(sim1.keyFingerprint, sim2.keyFingerprint);
 });
 
 console.log(`=== Node.js Suite Summary: ${passed}/${passed} passed ===`);

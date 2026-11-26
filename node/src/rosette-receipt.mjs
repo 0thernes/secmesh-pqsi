@@ -9,10 +9,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export function canonicalJson(obj) {
+  if (typeof obj === 'number' && !Number.isFinite(obj)) {
+    throw new Error('canonicalJson rejects non-finite IEEE-754 numbers (NaN/Infinity)');
+  }
+  if (obj === undefined) return 'null';
   if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
-  if (Array.isArray(obj)) return '[' + obj.map(canonicalJson).join(',') + ']';
-  const keys = Object.keys(obj).sort();
-  return '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalJson(obj[k])).join(',') + '}';
+  if (Array.isArray(obj)) return '[' + obj.map((v) => (v === undefined ? 'null' : canonicalJson(v))).join(',') + ']';
+  const keys = Object.keys(obj)
+    .filter((k) => obj[k] !== undefined)
+    .sort();
+  return '{' + keys.map((k) => JSON.stringify(k) + ':' + canonicalJson(obj[k])).join(',') + '}';
 }
 
 export function sha256Hex(str) {
@@ -73,6 +79,13 @@ export function verifyRosetteBundleDir(dir) {
   const cHash = sha256Hex(canonicalJson(composition));
   const rHash = sha256Hex(canonicalJson(receipt));
   const ok =
+    composition.schema === 'rosette-wire/composition/v1' &&
+    receipt.schema === 'rosette-wire/receipt/v1' &&
+    verification.schema === 'rosette-wire/verification/v1' &&
+    typeof composition.id === 'string' &&
+    composition.id.length > 0 &&
+    receipt.compositionId === composition.id &&
+    verification.compositionId === composition.id &&
     receipt.compositionSha256 === cHash &&
     verification.compositionSha256 === cHash &&
     verification.receiptSha256 === rHash &&

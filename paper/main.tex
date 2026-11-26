@@ -54,18 +54,18 @@
 \begin{document}
 
 \begin{abstract}
-We establish the formal mathematical, algebraic, and information-theoretic foundations of \textsc{SecMesh-PQSI}~v2.4.0, a clean-room cryptographic refactoring of legacy \textsc{SecMesh} (\code{BoogerCheeseOnRye/SecMesh@aff7dc6}) rebuilt upon Tsotchke's MIT/Apache-2.0 stack (\code{moonlab}, \code{quantum\_geometric\_tensor}, \code{libirrep}, \code{spin\_based\_neural\_network}, \code{eshkol}, \code{rosette-wire}, and \code{pq-consensus-bandwidth}).
-A forensic audit exposes ten defects in legacy \textsc{SecMesh}~v1---including a super-quantum Tsirelson violation ($S=354/125 > 2\sqrt{2}$), a $4\times$ range-$2$ Hoeffding exponent error (tail $>0.0285$ vs.\ $2.5\times 10^{-7}$), mislabeling collective von Neumann entropy as Pironio DI min-entropy ($+0.2357$ bit overestimate at $S\approx 2.6992$), and a biased $8$-bit denoiser ($93/256$ ones).
+We establish the formal mathematical, algebraic, and information-theoretic foundations of \textsc{SecMesh-PQSI}~v2.5.0, a clean-room cryptographic refactoring of legacy \textsc{SecMesh} (\code{BoogerCheeseOnRye/SecMesh@aff7dc6}) rebuilt upon Tsotchke's MIT/Apache-2.0 stack (\code{moonlab}, \code{quantum\_geometric\_tensor}, \code{libirrep}, \code{spin\_based\_neural\_network}, \code{eshkol}, \code{rosette-wire}, and \code{pq-consensus-bandwidth}).
+A forensic audit exposes ten defects in legacy \textsc{SecMesh}~v1---including a super-quantum Tsirelson violation ($S=354/125 > 2\sqrt{2}$), a $4\times$ range-$2$ Hoeffding exponent error (tail $>0.0285$ vs.\ $2.5\times 10^{-7}$), mislabeling collective von Neumann entropy as Pironio DI min-entropy ($+0.2357$ bit overestimate at $S\approx 2.6990$), and a biased $8$-bit denoiser ($93/256$ ones).
 
-We resolve all ten defects and advance the frontier through seven theorem families (\textbf{T1}--\textbf{T7}, $27$ formal theorems):
+We resolve all ten defects and advance the frontier through seven theorem families (\textbf{T1}--\textbf{T7}, $28$ formal theorems):
 (\textbf{T1})~composable DI-QKD finite-key forensics and quarter-circle duality $u^2+v^2=1$;
 (\textbf{T2})~unconditional PSI triad (OTP bijection, $k$-factor XOR dual-survivability, constructive Toeplitz $2$-universality, Cauchy--Schwarz LHL, general-field Carter--Wegman MAC);
 (\textbf{T3})~Shamir $(t,n)$ secrecy, Byzantine Singleton tightness $n\ge t+2b$, and \code{CS-053} PIR gap $T^2>0$;
 (\textbf{T4})~$D$-dim QGT PSD, the exact ring identity $\det(g)-\frac{1}{4}\Omega^2 = \frac{1}{4}\Con^2\sin^2(\theta/2)$ bridging QGTL to Horodecki CHSH, the \emph{Chern--Concurrence--Entropy Conservation Law} $c_{\mathrm{eff}}^2+\Con^2=1$ ($\Hmin(S_{\max})=1-\log_2(1+|c_{\mathrm{eff}}|)$), \code{libirrep} GHZ Heisenberg QFI ($N^2\tau_N > N \iff N\tau_N > 1$), and Bravyi's $[[144,12,12]]$ Gross qLDPC CSS certification;
 (\textbf{T5})~FIPS~203 NTT ($q=3329,\zeta=17$), zero-overflow Montgomery, tight \code{Compress\_1} margin $|e|\le 831$, and $K_N$ ceilings ($<1.75\%$ IT-hedge);
 (\textbf{T6})~Laplacian PSD, Ising cut bijection, Cheeger contagion barriers, and Simmons/threshold-hedged cryptosymbology; and
-(\textbf{T7})~first-principles Toner quantum CHSH monogamy $S_{AB}^2+S_{AE}^2 \le 8$ with CKW monopole isolation and the exact Hiding--Binding Conservation Law $\mathrm{TV}(P_0,P_1)+\mathrm{Overlap}(P_0,P_1)=1$ proving unconditional commitment impossibility and hybrid PQ+PSI necessity.
-All $27$ theorems compile in \emph{zero-Mathlib} Lean~4.35.0 ($15$ files, $0$ warnings, $0$ proof \code{sorry}s) and pass \emph{all six distinct Lean~4.35 kernels} via \code{lake comparator --paranoid} strictly within \code{[propext, Classical.choice, Quot.sound]}.
+(\textbf{T7})~first-principles Toner quantum CHSH monogamy $S_{AB}^2+S_{AE}^2 \le 8$ with CKW monopole isolation, exact Hiding--Binding Conservation $\mathrm{TV}(P_0,P_1)+\mathrm{Overlap}(P_0,P_1)=1$, and the Fuchs--van de Graaff / Quantum Microcrypt EFI Conservation Law ($1-B \le \mathrm{TV}$, $\mathrm{TV}^2+B^2 \le 1$, and pure-state $D_{\mathrm{tr}}^2+F=1$, bridging \code{CS-031}/\code{QC-022}).
+All $28$ theorems compile in \emph{zero-Mathlib} Lean~4.35.0 ($15$ files, $0$ warnings, $0$ proof \code{sorry}s) and pass \emph{all six distinct Lean~4.35 kernels} via \code{lake comparator --paranoid} strictly within \code{[propext, Classical.choice, Quot.sound]}.
 Software E91 is a mathematical simulator (not physical QKD), open hardness conjectures remain unresolved, and this preprint is not externally peer-reviewed.
 \end{abstract}
 
@@ -91,7 +91,7 @@ Before presenting any theorems, we state our scope boundaries explicitly:
 \begin{itemize}[leftmargin=1.6em]
   \item \textbf{No physical photonic QKD claim:} Software E91/CHSH rounds generated over classical TCP emulate Bell-test statistics for finite-key bound auditing and protocol testing; true device-independent randomness requires physical Bell-test hardware closing detection and locality loopholes~\cite{pironio2010,arnonfriedman2018}.
   \item \textbf{No false resolution of open hardness conjectures:} We do \emph{not} prove $\mathrm{P}\neq\mathrm{NP}$, worst-case-to-average-case MLWE tightness, or general coded/Byzantine PIR capacity; Section~\ref{sec:frontier} separates our kernel-checked structural theorems from open conjectures in the \emph{Unsolved Problems Mega Atlas}~\cite{mega_atlas_2026}.
-  \item \textbf{No external peer review claimed:} All $27$ formal proofs are machine-verified across all six distinct Lean~4.35 kernel implementations via \code{lake comparator --paranoid} (Section~\ref{sec:formal}), but this preprint has not yet undergone external journal peer review.
+  \item \textbf{No external peer review claimed:} All $28$ formal proofs are machine-verified across all six distinct Lean~4.35 kernel implementations via \code{lake comparator --paranoid} (Section~\ref{sec:formal}), but this preprint has not yet undergone external journal peer review.
 \end{itemize}
 
 \begin{table}[t]
@@ -105,7 +105,7 @@ Before presenting any theorems, we state our scope boundaries explicitly:
 \midrule
 C1 & Legacy SecMesh v1 \code{CELL\_P}=[0.146,0.854] violates Tsirelson's bound: $S=354/125$, $354^2 - 8\cdot 125^2 = 316 > 0$. & \tagkc{} (\code{T1a}) \\
 C2 & Legacy v1 Hoeffding bound omits range-$2$ factor $4$, inflating per-cell failure from $2.5{\times}10^{-7}$ to $0.02857$. & \tagkc{} (\code{T1b}) \\
-C3 & Quarter-circle duality $u^2+v^2=1$ yields strict gap $\HvN(S) > \Hmin(S)$ on $(2,2\sqrt{2})$, peaking at $+0.2357$ bit ($S{\approx}2.6992$). & \tagkc{} (\code{T1c}), \tagnm{} \\
+C3 & Quarter-circle duality $u^2+v^2=1$ yields strict gap $\HvN(S) > \Hmin(S)$ on $(2,2\sqrt{2})$, peaking at $+0.2357$ bit ($S{\approx}2.6990$). & \tagkc{} (\code{T1c}), \tagnm{} \\
 C4 & Legacy v1 $8$-bit majority \code{deNoise} biases output to $93/256$ ones and fails single flips on $70/256$ weight-$4$ blocks. & \tagkc{} (\code{T1d}) \\
 C5 & Composable $\varepsilon$-conservation across $5$ disjoint lanes; legacy v1 double-spends $\varepsilon_s$ and omits $\varepsilon_Q, \varepsilon_{\mathrm{cor}}$. & \tagkc{} (\code{T1e}) \\
 C6 & Unconditional PSI triad: OTP bijection, $k$-factor XOR dual-survivability, Toeplitz $2$-universality, LHL Cauchy--Schwarz, Carter--Wegman degree-$d$ bound. & \tagkc{} (\code{T2a}--\code{T2d}) \\
@@ -113,10 +113,10 @@ C7 & Shamir $(t,n)$ exact reconstruction \& $(t{-}1)$-collusion zero leakage; By
 C8 & $D$-dim QGT PSD; exact QGT Concurrence Surplus $\det(g)-\frac{1}{4}\Omega^2 = \frac{1}{4}\Con^2\sin^2(\theta/2)$; Chern--Concurrence--Entropy law $c_{\mathrm{eff}}^2+\Con^2=1$ ($\Hmin(S_{\max})=1-\log_2(1+|c_{\mathrm{eff}}|)$); \code{libirrep} GHZ Heisenberg QFI $N^2\tau_N$; Bravyi $[[144,12,12]]$ CSS cert. & \tagkc{} (\code{T4a}--\code{T4e}), \tagnm{} \\
 C9 & FIPS~203 $q=3329$ prime, $\zeta=17$ primitive $256$-th root; zero-overflow Montgomery; \code{Compress\_1} margin $|e|\le 831$ tight at $+832$; $K_N$ ceiling \& $<1.75\%$ IT-hedge overhead. & \tagkc{} (\code{T5a}--\code{T5d}) \\
 C10 & Discrete Laplacian PSD, Ising ground-state cut bijection, Cheeger expander barrier $2k(J_{\min}\phi_0+h_{\min})$; Simmons deterministic zero-capacity, kleptographic bijection \& threshold-hedged XOR dual-closure. & \tagkc{} (\code{T6a}--\code{T6b}) \\
-C11 & Toner quantum CHSH monogamy $S_{AB}^2{+}S_{AE}^2 \le 8$ with CKW Berry-monopole Eve isolation; exact Hiding--Binding conservation $\mathrm{TV}(P_0,P_1){+}\mathrm{Overlap}(P_0,P_1)=1$ proving unconditional commitment impossibility \& hybrid PQ+PSI necessity. & \tagkc{} (\code{T7a}--\code{T7b}) \\
-C12 & Bit-exact C11 Moonlab $\leftrightarrow$ Node~25 OpenSSL~3.5.5 FIPS~203 ML-KEM-768 interop, live Eshkol AD execution, and C11 $\leftrightarrow$ Node $\leftrightarrow$ Python differential agreement ($<10^{-11}$). & \tagdt{} \\
+C11 & Toner CHSH monogamy $S_{AB}^2{+}S_{AE}^2 \le 8$ \& CKW Eve isolation; Hiding--Binding $\mathrm{TV}{+}\mathrm{Overlap}=1$; Fuchs--van de Graaff $1{-}B \le \mathrm{TV}$, $\mathrm{TV}^2{+}B^2 \le 1$ \& pure-state $D_{\mathrm{tr}}^2{+}F=1$ Quantum Microcrypt EFI ceiling (\code{CS-031}/\code{QC-022}). & \tagkc{} (\code{T7a}--\code{T7c}) \\
+C12 & Bit-exact C11 Moonlab $\leftrightarrow$ Node~25 OpenSSL~3.5.5 FIPS~203 ML-KEM-768 interop, live Eshkol AD execution ($5$ modules), and C11 $\leftrightarrow$ Node $\leftrightarrow$ Python differential agreement ($<10^{-11}$). & \tagdt{} \\
 C13 & Pre-registered $30$-seed paired mesh-controller benchmark (\code{20260001}--\code{20260030}): Holm--Bonferroni $p_{\mathrm{Holm}}=3.73{\times}10^{-9}$, $r_{\mathrm{rb}}=1.000$, bounded bootstrap 95\% CIs (White Paper~II). & \tagnm{} \\
-C14 & Verbatim-verified Mega Atlas \code{QC-021/004/018/030/042}, \code{CS-002/026/028/030/053/061}, \code{STAT-014}, \code{SYS-024} remain open conjectures beyond our proved structural theorems. & \tagop{} \\
+C14 & Verbatim-verified Mega Atlas \code{QC-021/004/018/022/030/042}, \code{CS-002/026/028/030/031/053/061}, \code{STAT-014}, \code{SYS-024} remain open conjectures beyond our proved structural theorems. & \tagop{} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -176,7 +176,7 @@ For any CHSH parameter $S \in (2, 2\sqrt{2})$, set $u = \sqrt{(S/2)^2 - 1}$ (the
     \Hmin(2.5) = 1 - \log_2(1 + \tfrac{\sqrt{7}}{4}) \approx 0.26757 < 0.45644 \approx 1 - h\!\left(\tfrac{1 + 3/4}{2}\right) = \HvN(2.5).
   \]
 \end{enumerate}
-High-precision numerical optimization over $S \in (2, 2\sqrt{2})$ establishes $\max_S\bigl(\HvN(S) - \Hmin(S)\bigr) = 0.235703\text{ bits/round}$ at $S \approx 2.699192$ (Figure~\ref{fig:duality}).
+High-precision numerical optimization over $S \in (2, 2\sqrt{2})$ establishes $\max_S\bigl(\HvN(S) - \Hmin(S)\bigr) = 0.235703\text{ bits/round}$ at $S \approx 2.698960$ (Figure~\ref{fig:duality}).
 \end{theorem}
 
 \begin{figure}[t]
@@ -521,6 +521,18 @@ For ANY finite transcript space $\{0,\dots,T-1\}$ and ANY two scaled distributio
 Immediate from the exact pointwise integer identity $|a-b| + 2\min(a,b) = a + b$ summed over $t < T$; machine-checked in \code{t7b\_hiding\_binding\_conservation\_nogo} and verified over all $81{,}796$ four-outcome integer distribution pairs at $D=10$ in \code{exact\_audit.py}.
 \end{proof}
 
+\begin{theorem}[T7c: Fuchs--van de Graaff Sandwich \& Quantum Microcrypt EFI Conservation]
+\label{thm:t7c}
+Extending \textbf{T7b} to Quantum Microcrypt below one-way functions (Mega Atlas \code{CS-031}/\code{QC-022})~\cite{fuchs1999,brakerski2023efi}:
+\begin{enumerate}[leftmargin=1.8em]
+  \item \textbf{Fuchs--van de Graaff sandwich \& EFI fidelity ceiling:} For any non-negative amplitude vectors $r, s : \{0,\dots,T-1\} \to \mathbb{N}$ with $\sum_t r_t^2 = \sum_t s_t^2 = M$, let $\Delta_2 = \sum_t |r_t^2 - s_t^2|$, $B = \sum_t r_t s_t$, and $O = \sum_t \min(r_t^2, s_t^2)$. Then $O \le B \le M$, $2M \le \Delta_2 + 2B$ ($1 - B/M \le \mathrm{TV}$), and $\Delta_2^2 + 4B^2 \le 4M^2$ ($\mathrm{TV}^2 + (B/M)^2 \le 1$), saturated identically by the $(3,4,5)$ witness $r=(3,1), s=(1,3)$. Any statistical separation $\Delta_2 \ge 2\delta$ forces $B^2 + \delta^2 \le M^2$.
+  \item \textbf{Pure-state Mayers--Lo--Chau Gram conservation:} For any complex pure states $u, v \in \mathbb{C}^D$ (scaled over $\Z[i]$) with $\|u\|^2 = \|v\|^2 = M$, the exact Gram trace-distance squared $D_{\mathrm{tr}}^2 M^2 = M^2 - |\langle u, v \rangle|^2 \ge 0$ satisfies $D_{\mathrm{tr}}^2 M^2 + |\langle u, v \rangle|^2 = M^2$, forcing unit fidelity when $D_{\mathrm{tr}} = 0$ and perfect Helstrom distinguishability when $\langle u, v \rangle = 0$. Thus even quantum commitments in Microcrypt require a computational EFI gap rather than unconditional security.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Exact factorization $|a^2-b^2| = |a-b|(a+b)$ with constructive $\mathbb{N}$ Cauchy--Schwarz yields $\Delta_2^2 \le (2M-2B)(2M+2B) = 4(M^2-B^2)$; complex Lagrange Cauchy--Schwarz gives $|\langle u,v\rangle|^2 \le M^2$. Machine-checked in \code{t7c\_fuchs\_vandegraaff\_microcrypt\_efi} with zero-axiom tightness witness \code{adv\_fuchs\_vdg\_pythagorean\_tight}.
+\end{proof}
+
 % ============================================================================
 \section{Open Hard Problems Frontier (\emph{Unsolved Problems Mega Atlas})}
 \label{sec:frontier}
@@ -529,7 +541,7 @@ Table~\ref{tab:frontier} maps our formal theorems directly to verbatim-verified 
 
 \begin{table}[t]
 \centering
-\caption{Linkage between \textsc{SecMesh-PQSI}~v2.4.0 formal results and verbatim-verified open problems in the \emph{Unsolved Problems Mega Atlas}~v2~\cite{mega_atlas_2026}.}
+\caption{Linkage between \textsc{SecMesh-PQSI}~v2.5.0 formal results and verbatim-verified open problems in the \emph{Unsolved Problems Mega Atlas}~v2~\cite{mega_atlas_2026}.}
 \label{tab:frontier}
 \footnotesize
 \begin{tabularx}{\linewidth}{@{} >{\RaggedRight\arraybackslash}p{2.05cm} >{\RaggedRight\arraybackslash}p{4.05cm} Y Y@{}}
@@ -537,7 +549,8 @@ Table~\ref{tab:frontier} maps our formal theorems directly to verbatim-verified 
 \textbf{Atlas ID} & \textbf{Verbatim Open Problem} & \textbf{Proved Contribution Here} & \textbf{Remaining Open Frontier} \\
 \midrule
 \code{QC-021} & Unconditional DI-QKD at Metropolitan Practical Rates & T1a--T1e, T7a: quarter-circle duality, KL-QBER, composable 5-lane budget, Toner monogamy & Practical loophole-free metropolitan DI-QKD below $N{<}10^5$ \\
-\code{CS-002} & Unconditional Existence of One-Way Functions (Impagliazzo's Five Worlds) & T2a--T2d, T7b: PSI bypasses OWFs for symmetric crypto while T7b proves OWFs remain essential for commitments & Separating Impagliazzo's five worlds ($\mathrm{P}\neq\mathrm{NP}$ / OWFs) \\
+\code{CS-002} & Unconditional Existence of One-Way Functions (Impagliazzo's Five Worlds) & T2a--T2d, T7b: PSI bypasses OWFs for symmetric crypto while T7b proves OWFs remain essential for classical commitments & Separating Impagliazzo's five worlds ($\mathrm{P}\neq\mathrm{NP}$ / OWFs) \\
+\code{CS-031} / \code{QC-022} & Quantum Cryptography Below OWFs (Microcrypt, EFI Pairs \& PRS) & T7c: exact Fuchs--van de Graaff $\mathrm{TV}^2{+}B^2\le 1$, pure-state $D_{\mathrm{tr}}^2{+}F=1$ \& EFI fidelity ceiling & Unconditional Microcrypt / EFI separation from classical OWFs \\
 \code{CS-026} & Exact Quantum \& Classical Hardness of PQ Lattice Problems (LWE, MLWE, SVP) & T5a--T5c: exact algebraic soundness of ML-KEM-768 arithmetic & Worst-to-average MLWE reduction tightness \& SVP exponents \\
 \code{CS-028} & Long-Term Quantum Hardness of Non-Lattice PQ Cryptography & T2b \& SLH-DSA-128s: dual-survivability hedges against single-family break & Long-term quantum cryptanalysis of code/isogeny/MQ families \\
 \code{CS-030} & Standard-Model Fiat--Shamir Soundness \& Falsifiable PQ SNARGs & T6b, T7b: subliminal zero-capacity, threshold nonce closure \& commitment conservation & Standard-model soundness of Fiat--Shamir beyond QROM \\
@@ -554,25 +567,25 @@ Table~\ref{tab:frontier} maps our formal theorems directly to verbatim-verified 
 \section{Formal Verification, Six-Kernel Audit \& Statement Fidelity}
 \label{sec:formal}
 
-All $27$ theorems (\textbf{T1a}--\textbf{T7b}) are formalized in \emph{zero-Mathlib} Lean~4.35.0 across $15$ source files (\code{lean/SecMeshPQSI/*.lean}, \code{Challenge.lean}, \code{Solution.lean}, \code{PalomarChallenge.lean}, \code{PalomarSolution.lean}, \code{VerifyAxioms.lean}) with strict core linters enabled (\code{autoImplicit=false}, \code{relaxedAutoImplicit=false}, \code{linter.unusedVariables=true}, \code{linter.deprecated=true}).
-To exclude vacuous or over-weakened definitions, \code{SecMeshPQSI/NonVacuity.lean} explicitly constructs the concrete prime field instance \code{SimpleField (Fin 5)} and inhabits every hypothesis bundle across \textbf{T1}--\textbf{T7}, while \code{SecMeshPQSI/AdversarialTests.lean} proves four zero-axiom concrete counterexamples to sharpened/false claims (paired with an automated CI check confirming the Lean kernel rejects a deliberately false \code{Compress\_1} claim).
+All $28$ theorems (\textbf{T1a}--\textbf{T7c}) are formalized in \emph{zero-Mathlib} Lean~4.35.0 across $15$ source files (\code{lean/SecMeshPQSI/*.lean}, \code{Challenge.lean}, \code{Solution.lean}, \code{PalomarChallenge.lean}, \code{PalomarSolution.lean}, \code{VerifyAxioms.lean}) with strict core linters enabled (\code{autoImplicit=false}, \code{relaxedAutoImplicit=false}, \code{linter.unusedVariables=true}, \code{linter.deprecated=true}).
+To exclude vacuous or over-weakened definitions, \code{SecMeshPQSI/NonVacuity.lean} explicitly constructs the concrete prime field instance \code{SimpleField (Fin 5)} and inhabits every hypothesis bundle across \textbf{T1}--\textbf{T7}, while \code{SecMeshPQSI/AdversarialTests.lean} proves five zero-axiom concrete counterexamples and tightness witnesses (paired with an automated CI check confirming the Lean kernel rejects a deliberately false \code{Compress\_1} claim).
 
 \subsection*{All-Six-Kernel Independent Replay (Palomar Comparator)}
-Following the Palomar Registry comparator protocol, \code{PalomarChallenge.lean} ($<460$ lines, $<19\text{ KiB}$, zero imports) declares all $27$ standalone theorem contracts, while \code{PalomarSolution.lean} (zero \code{sorry}) discharges every theorem from \code{SecMeshPQSI.*}.
+Following the Palomar Registry comparator protocol, \code{PalomarChallenge.lean} ($<500$ lines, $<20\text{ KiB}$, zero imports) declares all $28$ standalone theorem contracts, while \code{PalomarSolution.lean} (zero \code{sorry}) discharges every theorem from \code{SecMeshPQSI.*}.
 Every theorem passes \code{lake comparator --config palomar\_comparator.json --paranoid} on Ubuntu~Linux CI across \emph{all six distinct Lean~4.35 kernel implementations} (and $5$ local Windows kernels; verbatim logs in \code{results/six\_kernel\_audit.txt} and \code{results/lean\_axioms.txt}):
 \begin{enumerate}[leftmargin=1.8em]
-  \item \code{Lean default} (\code{lean v4.35.0}, \code{lake build} + \code{VerifyAxioms.lean}): PASS ($18/18$ jobs, $0$ warnings, $60/60$ exported declarations strictly within \code{[propext, Classical.choice, Quot.sound]}).
+  \item \code{Lean default} (\code{lean v4.35.0}, \code{lake build} + \code{VerifyAxioms.lean}): PASS ($18/18$ jobs, $0$ warnings, $63/63$ exported declarations strictly within \code{[propext, Classical.choice, Quot.sound]}).
   \item \code{Lean paranoid} (\code{leanchecker} / \code{leanchecker-paranoid}): PASS (exit~$0$).
   \item \code{lean4lean} (independent Lean-in-Lean kernel on Ubuntu Linux CI): PASS.
-  \item \code{con-leche --verified} (verified Lean-in-Lean kernel): PASS (accepted $3{,}638$ Solution and $3{,}701$ PalomarSolution decls locally).
-  \item \code{con-ron --verified} (verified Aeneas Rust kernel): PASS (accepted $3{,}638$ Solution and $3{,}701$ PalomarSolution decls locally).
+  \item \code{con-leche --verified} (verified Lean-in-Lean kernel): PASS (accepted $3{,}713$ Solution and $3{,}764$ PalomarSolution decls locally).
+  \item \code{con-ron --verified} (verified Aeneas Rust kernel): PASS (accepted $3{,}713$ Solution and $3{,}764$ PalomarSolution decls locally).
   \item \code{nanoda\_bin 0.4.19} (independent Rust kernel, \code{unpermitted\_axiom\_hard\_error=true}): PASS (exit~$0$).
 \end{enumerate}
 \emph{Honest platform note:} On Windows hosts, the upstream bundled \code{lean4lean.exe} emits an \code{.olean} \code{incompatible header} error and \code{lake comparator} requires Linux \code{bwrap} namespaces; accordingly, local Windows checks run five distinct kernels while Ubuntu CI runs all six kernels under \code{lake comparator --paranoid}.
 
 \begin{table}[t]
 \centering
-\caption{Statement-Fidelity Audit Table mapping all $27$ Lean~4.35 theorems to paper claims, literature anchors, and verified axiom footprints (\code{0} = no axioms; \code{Q} = \code{[Quot.sound]}; \code{PQ} = \code{[propext, Quot.sound]}; \code{PCQ} = \code{[propext, Classical.choice, Quot.sound]}).}
+\caption{Statement-Fidelity Audit Table mapping all $28$ Lean~4.35 theorems to paper claims, literature anchors, and verified axiom footprints (\code{0} = no axioms; \code{Q} = \code{[Quot.sound]}; \code{PQ} = \code{[propext, Quot.sound]}; \code{PCQ} = \code{[propext, Classical.choice, Quot.sound]}).}
 \label{tab:fidelity}
 \scriptsize
 \begin{tabularx}{\linewidth}{@{}l l Y c@{}}
@@ -606,6 +619,7 @@ T6a & \code{t6a\_ising\_laplacian\_psd\_and\_cheeger\_barrier} & Laplacian PSD, 
 T6b & \code{t6b\_cryptosymbology\_subliminal\_and\_threshold\_closure} & Deterministic $0$-cap., $2^k$ kleptography \& XOR closure~\cite{simmons1984,youngyung1996} & \code{PQ} \\
 T7a & \code{t7a\_toner\_chsh\_monogamy\_and\_eve\_isolation} & Toner $S_{AB}^2{+}S_{AE}^2 \le 8$ \& CKW monopole isolation~\cite{toner2009,ckw2000} & \code{PQ} \\
 T7b & \code{t7b\_hiding\_binding\_conservation\_nogo} & $\mathrm{TV}(P_0,P_1){+}\mathrm{Overlap}=1$ commitment no-go~\cite{mayers1997} & \code{PQ} \\
+T7c & \code{t7c\_fuchs\_vandegraaff\_microcrypt\_efi} & Fuchs--vdG $\mathrm{TV}^2{+}B^2\le 1$, $D_{\mathrm{tr}}^2{+}F=1$ \& EFI~\cite{fuchs1999,brakerski2023efi} & \code{PCQ} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -629,7 +643,7 @@ Running \code{lake build \&\& lake env lean VerifyAxioms.lean}, \code{make test}
 \subsection*{Transparent AI-Contribution and CRediT Statement}
 Alexander S. Donahue (ORCID \code{0009-0006-8168-9648}) is the sole human author responsible for Conceptualization, Methodology, Formal Verification Architecture, Audit Validation, Supervision, and Final Approval.
 An AI coding and theorem-proving assistant (Gemini / Antigravity) assisted under continuous human supervision with exploratory forensic auditing, zero-Mathlib Lean~4.35 proof engineering, C11/Node/Python/Eshkol implementation, and manuscript typesetting.
-No AI system is listed as an author; every mathematical claim in Theorems~\ref{thm:t1a}--\ref{thm:t7b} is independently verified by all six machine-checked Lean~4.35 proof kernels and independent exact-arithmetic software oracles.
+No AI system is listed as an author; every mathematical claim in Theorems~\ref{thm:t1a}--\ref{thm:t7c} is independently verified by all six machine-checked Lean~4.35 proof kernels and independent exact-arithmetic software oracles.
 
 \subsection*{Conflict of Interest}
 The author declares no competing financial or commercial interests. Upstream open-source repositories (\code{BoogerCheeseOnRye/SecMesh} and Tsotchke's MIT/Apache-2.0 repositories) are cited with exact commit hashes and preserved upstream license notices in \code{THIRD\_PARTY\_NOTICES.md}.

@@ -5,7 +5,7 @@
 
 <p align="center">
   <strong>Post-Quantum (PQ) &amp; Post-Super-Intelligence (Information-Theoretic PSI) Cryptographic Mesh Defense Engine</strong><br/>
-  <em>27 Zero-Mathlib Lean 4.35.0 Theorems · All 6 Independent Proof Kernels · C11 Moonlab ↔ OpenSSL 3.5.5 FIPS 203 Interop · Live Eshkol AD · 2 AMS-LaTeX White Papers</em>
+  <em>28 Zero-Mathlib Lean 4.35.0 Theorems · All 6 Independent Proof Kernels · C11 Moonlab ↔ OpenSSL 3.5.5 FIPS 203 Interop · 5 Live Eshkol AD Modules · 2 AMS-LaTeX White Papers</em>
 </p>
 
 <p align="center">
@@ -20,7 +20,7 @@
 
 ---
 
-**SecMesh-PQSI** (`v2.4.0`) is a clean-room cryptographic refactoring of [`BoogerCheeseOnRye/SecMesh@aff7dc6`](https://github.com/BoogerCheeseOnRye/SecMesh) rebuilt atop Tsotchke's MIT/Apache-2.0 cryptographic, representation-theoretic, and quantum-geometry stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`, `quantum_rng`, `classical_rng`; complete live-verified 27-repo audit in [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md)) into a rigorously audited **Post-Quantum + Post-Super-Intelligence (information-theoretic)** defense architecture.
+**SecMesh-PQSI** (`v2.5.0`) is a clean-room cryptographic refactoring of [`BoogerCheeseOnRye/SecMesh@aff7dc6`](https://github.com/BoogerCheeseOnRye/SecMesh) rebuilt atop Tsotchke's MIT/Apache-2.0 cryptographic, representation-theoretic, and quantum-geometry stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`, `quantum_rng`, `classical_rng`; complete live-verified 27-repo audit in [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md)) into a rigorously audited **Post-Quantum + Post-Super-Intelligence (information-theoretic)** defense architecture.
 
 - **Author:** Alexander S. Donahue ([ORCID `0009-0006-8168-9648`](https://orcid.org/0009-0006-8168-9648), Independent Researcher, Spokane, WA, USA)
 - **White Paper I (Formal Foundations):** [PDF (`dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf`)](dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf) · [LaTeX](paper/main.tex) · [arXiv Tarball](dist/arxiv_submission.tar.gz)
@@ -31,7 +31,7 @@
 
 ## 5-Second Verbatim Kernel Proof (`#print axioms`)
 
-Every one of the **27 formal theorems (`T1a`–`T7b`)** across both `SecMeshPQSI.Solution.*` and standalone Palomar `SecMeshPQSI.Palomar.*` compiles in **zero-Mathlib Lean 4.35.0** with **0 warnings**, **0 proof `sorry`s**, **0 `native_decide`**, and **0 custom axioms**, passing **all 6 distinct Lean 4.35 kernels** (`Lean paranoid`, `lean4lean`, `nanoda`, `con-leche --verified`, `con-ron --verified`, `Lean default`) via `lake comparator --config palomar_comparator.json --paranoid` (verified in CI with automated drift checks via [`scripts/check_readme_axioms.py`](scripts/check_readme_axioms.py)):
+Every one of the **28 formal theorems (`T1a`–`T7c`)** across both `SecMeshPQSI.Solution.*` and standalone Palomar `SecMeshPQSI.Palomar.*` compiles in **zero-Mathlib Lean 4.35.0** with **0 warnings**, **0 proof `sorry`s**, **0 `native_decide`**, and **0 custom axioms**, passing **all 6 distinct Lean 4.35 kernels** (`Lean paranoid`, `lean4lean`, `nanoda`, `con-leche --verified`, `con-ron --verified`, `Lean default`) via `lake comparator --config palomar_comparator.json --paranoid` (verified in CI with automated drift checks via [`scripts/check_readme_axioms.py`](scripts/check_readme_axioms.py)):
 
 ```text
 $ cd lean && lake build && lake env lean VerifyAxioms.lean
@@ -48,10 +48,11 @@ $ cd lean && lake build && lake env lean VerifyAxioms.lean
 'SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.t7a_toner_chsh_monogamy_and_eve_isolation' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Solution.t7c_fuchs_vandegraaff_microcrypt_efi' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Solution.prove_all_secmesh_theorems' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.NonVacuity.nonvac_all_hypotheses' depends on axioms: [propext, Quot.sound]
 ```
-*(All 60 exported lines in [`results/lean_axioms.txt`](results/lean_axioms.txt) — 27 `Solution` + master conjunction + `NonVacuity` + 27 `Palomar` + 4 zero-axiom `AdversarialTests` — lie strictly within `[propext, Classical.choice, Quot.sound]`.)*
+*(All 63 exported lines in [`results/lean_axioms.txt`](results/lean_axioms.txt) — 28 `Solution` + master conjunction + `NonVacuity` + 28 `Palomar` + 5 zero-axiom `AdversarialTests` — lie strictly within `[propext, Classical.choice, Quot.sound]`.)*
 
 ---
 
@@ -59,35 +60,35 @@ $ cd lean && lake build && lake env lean VerifyAxioms.lean
 
 | Pillar | What Is Proved / Verified | Key Artifact |
 | --- | --- | --- |
-| **T1 — Forensic Audit of Legacy SecMesh v1** | Resolves 10 real defects in `SecMesh@aff7dc6`: super-quantum $S = 354/125 > 2\sqrt{2}$ (`+316`), $4\times$ range-2 Hoeffding error ($0.02857$ vs $2.5{\times}10^{-7}$), quarter-circle duality $u^2+v^2=1$ ($H_{\mathrm{vN}}^{\mathrm{DI}} - H_{\min}^{\mathrm{DI}}$ peak $+0.2357$ bit at $S \approx 2.6992$), $93/256$ biased `deNoise`, and 5-lane composable $\varepsilon$-conservation. | [`lean/SecMeshPQSI/FiniteKey.lean`](lean/SecMeshPQSI/FiniteKey.lean) |
+| **T1 — Forensic Audit of Legacy SecMesh v1** | Resolves 10 real defects in `SecMesh@aff7dc6`: super-quantum $S = 354/125 > 2\sqrt{2}$ (`+316`), $4\times$ range-2 Hoeffding error ($0.02857$ vs $2.5{\times}10^{-7}$), quarter-circle duality $u^2+v^2=1$ ($H_{\mathrm{vN}}^{\mathrm{DI}} - H_{\min}^{\mathrm{DI}}$ peak $+0.2357$ bit at $S \approx 2.6990$), $93/256$ biased `deNoise`, and 5-lane composable $\varepsilon$-conservation. | [`lean/SecMeshPQSI/FiniteKey.lean`](lean/SecMeshPQSI/FiniteKey.lean) |
 | **T2 — Unconditional PSI Triad** | Shannon OTP bijection, $k$-factor XOR dual-survivability, constructive back-substitution Toeplitz $2$-universality (mirroring Moonlab), integer Cauchy–Schwarz LHL core, and general-field Carter–Wegman degree-$d$ bound ($\le d/2^{128}$ forgery). | [`lean/SecMeshPQSI/InfoTheoretic.lean`](lean/SecMeshPQSI/InfoTheoretic.lean) |
 | **T3 — Shamir, Byzantine & CS-053 PIR** | Exact Shamir $(t,n)$ threshold secrecy over any field, Byzantine Singleton tightness $n \ge t + 2b$, and exact $T^2 > 0$ strict gap between Banawan–Ulukus $M=2$ PIR capacity and star-product rates (Mega Atlas `CS-053`). | [`lean/SecMeshPQSI/ThresholdPIR.lean`](lean/SecMeshPQSI/ThresholdPIR.lean) |
 | **T4 — QGTL Surplus, Chern–Concurrence Law, GHZ QFI & BB144** | $D$-dim QGT PSD; exact QGT Concurrence Surplus $\det(g) - \frac{1}{4}\Omega^2 = \frac{1}{4}\mathcal{C}^2 \sin^2(\theta/2)$ ($3.3{\times}10^{-60}$ residual); **Topological Chern–Concurrence–Entropy Conservation Law** $c_{\mathrm{eff}}^2 + \mathcal{C}^2 = 1$ ($H_{\min}^{\mathrm{DI}}(S_{\max}) = 1 - \log_2(1 + |c_{\mathrm{eff}}|)$); `libirrep` spin-$j$ GHZ Heisenberg QFI ($N^2\tau_N > N \iff N\tau_N > 1$); Bravyi `[[144,12,12]]` Gross BB qLDPC certification ($5{,}184$ CSS checks, weight 6, $k=12$). | [`lean/SecMeshPQSI/QuantumGeometry.lean`](lean/SecMeshPQSI/QuantumGeometry.lean) |
 | **T5 — FIPS 203 ML-KEM & $K_N$ Ceilings** | $q = 3329$ prime & $\zeta = 17$ primitive 256-th NTT root, zero-overflow Montgomery reduction across $|a| < 2^{15}\cdot 3329$, sharp `Compress_1` margin $|e|\le 831$ (tight at $+832$), complete-graph $K_N$ ceiling optimality & `< 1.75%` IT-hedge overhead (`+112 B`). | [`lean/SecMeshPQSI/LatticeBandwidth.lean`](lean/SecMeshPQSI/LatticeBandwidth.lean) |
 | **T6 — Ising Expander Barrier & Cryptosymbology** | Discrete Laplacian PSD, exact Ising spin-flip cut bijection, Cheeger expander contagion work barrier $W_{\min}(k) \ge 2k(J_{\min}\phi_0 + h_{\min})$; Simmons deterministic zero-capacity, $2^k$ kleptographic bijection & threshold-hedged XOR dual-closure. | [`lean/SecMeshPQSI/SpinDefenseCryptosymbology.lean`](lean/SecMeshPQSI/SpinDefenseCryptosymbology.lean) |
-| **T7 — Toner CHSH Monogamy & Commitment No-Go** | First-principles Toner quantum CHSH monogamy $S_{AB}^2 + S_{AE}^2 \le 8$ (trapping any unbounded eavesdropper below $2$ whenever $S_{AB} > 2$) + CKW Berry-monopole isolation; exact Hiding–Binding Conservation Law $\mathrm{TV}(P_0,P_1)+\mathrm{Overlap}(P_0,P_1)=1$ proving unconditional commitment impossibility and hybrid PQ+PSI necessity. | [`lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean`](lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean) |
-| **C11 + Node 25 + Eshkol AD Engine** | **61/61** C11 Moonlab tests (`-Wall -Wextra -Werror`, ASan/UBSan + 500/500 fuzz, `__int128` Ising overflow guard, Shamir stack zeroization, strict hex/`NaN`/LE64 hardening), **18/18** Node 25 tests (bit-exact C11 ↔ OpenSSL 3.5.5 ML-KEM-768 interop, canonical length-prefixed CW-128 record MAC, RFC-6479 bounded sliding-window + IP-map DoS cap, live execution of all **5** Eshkol v1.3.6 AD modules to `<1e-12` covering `T1`–`T7`, non-empty Rosette-Wire receipts), **14/14** pytest (incl. negative Lean kernel rejection & manifest/Atlas sync), **42/42** HTTP-200 citations (**32/32** DOIs Crossref-verified not retracted), pre-registered 30-seed paired benchmark (`p_Holm = 3.73e-9`, bounded bootstrap 95% CIs). | [`native/`](native/), [`node/`](node/), [`eshkol/`](eshkol/), [`python/`](python/) |
+| **T7 — Monogamy, Commitment No-Go & Microcrypt EFI** | Toner CHSH monogamy $S_{AB}^2 + S_{AE}^2 \le 8$ + CKW Berry-monopole isolation (`T7a`); exact Hiding–Binding Conservation $\mathrm{TV}+\mathrm{Overlap}=1$ (`T7b`); exact Fuchs–van de Graaff $1-B \le \mathrm{TV}$, $\mathrm{TV}^2+B^2 \le 1$, pure-state $D_{\mathrm{tr}}^2+F=1$, and Quantum Microcrypt EFI fidelity ceiling (`T7c`, Mega Atlas `CS-031`/`QC-022`). | [`lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean`](lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean) |
+| **C11 + Node 25 + Eshkol AD Engine** | **64/64** C11 Moonlab tests (`-Wall -Wextra -Werror`, ASan/UBSan + 500/500 fuzz, `__int128` Ising overflow guard, Shamir stack zeroization, strict CLI parser), **19/19** Node 25 tests (bit-exact C11 ↔ OpenSSL 3.5.5 ML-KEM-768, strict 16-byte AES-256-GCM tag guard, canonical CW-128, Guardian v2 RFC-6479 + HTTP 405/CSP, parse/eval-depth-capped execution of all **5** Eshkol v1.3.6 AD modules to `<1e-12`, schema-verified Rosette-Wire receipts, deterministic seeded Toeplitz), **15/15** pytest (incl. negative Lean kernel rejection, placeholder & manifest/Atlas sync guards), **44/44** HTTP-200 citations (**33/33** Crossref non-retracted DOIs + **1** DataCite DOI), pre-registered 30-seed paired benchmark (`p_Holm = 3.73e-9`). | [`native/`](native/), [`node/`](node/), [`eshkol/`](eshkol/), [`python/`](python/) |
 
 ---
 
 ## Quickstart
 
 ```bash
-# 1. Build & test the native C11 Moonlab cryptographic core (61/61 tests)
+# 1. Build & test the native C11 Moonlab cryptographic core (64/64 tests)
 make -C native test
 
-# 2. Run Node.js 25 differential, ML-KEM interop, anti-replay CW-128 & live Eshkol AD suite (18/18 tests)
+# 2. Run Node.js 25 differential, ML-KEM interop, anti-replay CW-128 & live Eshkol AD suite (19/19 tests)
 node node/tests/test_secmesh_v2.mjs
 
 # 3. Run the interactive quickstart demo & emit a Rosette-Wire audit bundle
 node examples/quickstart_demo.mjs
 node node/src/secmesh-cli.mjs audit
 
-# 4. Verify all 27 Lean 4.35.0 theorems & strict axiom allowlist + README drift check
+# 4. Verify all 28 Lean 4.35.0 theorems & strict axiom allowlist + README drift check
 cd lean && lake build && lake env lean VerifyAxioms.lean
 cd .. && python scripts/check_readme_axioms.py
 
-# 5. Run exact Python verification, pytest (14/14), ruff, mypy & citation+retraction check (42/42)
+# 5. Run exact Python verification, pytest (15/15), ruff, mypy & citation+retraction check (44/44)
 python python/secmesh_verify/exact_audit.py
 pytest python/tests/test_all.py -v
 python scripts/check_citations.py
@@ -124,7 +125,7 @@ Read [`LIMITATIONS.md`](LIMITATIONS.md) and [`CLAIMS.md`](CLAIMS.md) in full bef
 - **Unconditional PSI confidentiality requires an independent physical QRNG or pre-shared OTP pad.** Without one (`SECMESH_IT_PAD_FILE`), confidentiality relies on hybrid `X25519 + ML-KEM-768`.
 - **Open hardness conjectures remain open.** We do not claim to solve $\mathrm{P}\neq\mathrm{NP}$ (`CS-002`), MLWE reduction tightness (`CS-026`), or general coded/Byzantine PIR capacity (`CS-053`).
 - **Preprint & research status:** Both white papers are self-assessed research preprints backed by six-kernel machine-checked proofs; neither has undergone external journal peer review, and `secmesh-pqsi` is not a FIPS 140-3 certified HSM.
-- **Windows `lean4lean.exe` & local `eshkol-run.exe` notes:** On Windows, bundled `lean4lean.exe` emits an `.olean` `incompatible header` error while Ubuntu Linux CI verifies **all 6 kernels** via `lake comparator --paranoid`. All 4 Eshkol `.esk` modules are executed live by our portable forward-mode dual-number AD runtime (`node/src/eshkol-ad-runtime.mjs`).
+- **Windows `lean4lean.exe` & local `eshkol-run.exe` notes:** On Windows, bundled `lean4lean.exe` emits an `.olean` `incompatible header` error while Ubuntu Linux CI verifies **all 6 kernels** via `lake comparator --paranoid`. All **5** Eshkol `.esk` modules are executed live by our portable forward-mode dual-number AD runtime (`node/src/eshkol-ad-runtime.mjs`).
 
 ---
 
@@ -133,5 +134,5 @@ Read [`LIMITATIONS.md`](LIMITATIONS.md) and [`CLAIMS.md`](CLAIMS.md) in full bef
 - **Tsotchke Complete 27-Repo Audit:** [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md) · **Third-Party Notices:** [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)
 - **Threat Model:** [`docs/threat-model.md`](docs/threat-model.md) · **Literature Log:** [`docs/literature-search-log.md`](docs/literature-search-log.md) · **Export Self-Screen:** [`docs/export-control-self-screen.md`](docs/export-control-self-screen.md)
 - **Architecture:** [`docs/architecture.md`](docs/architecture.md) · **ADRs:** [`docs/adr/README.md`](docs/adr/README.md) · **Errata:** [`ERRATA.md`](ERRATA.md)
-- **Hardening Log (6 Full Cycles):** [`HARDENING_LOG.md`](HARDENING_LOG.md) · **Complete Repo Index:** [`INDEX.md`](INDEX.md)
+- **Hardening Log (11 Full Cycles):** [`HARDENING_LOG.md`](HARDENING_LOG.md) · **Complete Repo Index:** [`INDEX.md`](INDEX.md)
 - **Checksums:** [`MANIFEST.sha256`](MANIFEST.sha256) · **Citation:** [`CITATION.cff`](CITATION.cff) · **Licensing:** [`LICENSE`](LICENSE) (Apache-2.0), [`LICENSE-DOCS`](LICENSE-DOCS) (CC-BY-4.0), [`REUSE.toml`](REUSE.toml)

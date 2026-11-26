@@ -365,6 +365,33 @@ static void test_chern_ghz_ising_and_null_hardening(void) {
     secmesh_finite_key_eval(&fk_bad_qber, &fk_bad_res);
     CHECK(fk_bad_res.admitted == 0 && fk_bad_res.cert_bits == 0,
           "Hardening H10.03: Finite-key gate fails closed when qber_errors > qber_sample");
+
+    /* Cycle 11 Hardening & T7c Fuchs-van de Graaff / Microcrypt EFI checks */
+    uint8_t k_out_tmp[32], k_pq_tmp[32] = {1}, k_it_short[16] = {2};
+    CHECK(secmesh_hybrid_combine(k_out_tmp, k_pq_tmp, 32, k_it_short, 16, NULL, 0) == -2 &&
+          secmesh_hybrid_combine(NULL, k_pq_tmp, 32, NULL, 0, NULL, 0) == -1 &&
+          secmesh_bw_mesh_ceiling(100000000ULL, -1.0, 6685u) == 0ULL,
+          "Hardening H11.05: Hybrid combiner & negative-round bandwidth fail closed");
+
+    /* T7c: Concrete (3, 4, 5) Pythagorean saturation of Fuchs-van de Graaff TV^2 + B^2 <= 1 */
+    uint64_t r0 = 3, r1 = 1, s0 = 1, s1 = 3;
+    uint64_t M_t7c = r0 * r0 + r1 * r1; /* 10 */
+    uint64_t tv2_t7c = (r0 * r0 - s0 * s0) + (s1 * s1 - r1 * r1); /* 16 */
+    uint64_t B_t7c = r0 * s0 + r1 * s1; /* 6 */
+    uint64_t ov_t7c = (s0 * s0) + (r1 * r1); /* 2 */
+    CHECK(M_t7c == 10ULL && ov_t7c <= B_t7c && B_t7c <= M_t7c &&
+          2ULL * M_t7c <= tv2_t7c + 2ULL * B_t7c &&
+          tv2_t7c * tv2_t7c + 4ULL * B_t7c * B_t7c == 4ULL * M_t7c * M_t7c,
+          "T7c Fuchs-van de Graaff (3,4,5) Pythagorean saturation exact (TV^2 + B^2 == 1)");
+
+    /* T7c: Complex pure-state Gram trace-distance conservation D_tr^2*M^2 + |<u,v>|^2 = M^2 */
+    int64_t uRe[2] = {3, 0}, uIm[2] = {4, 0}, vRe[2] = {4, 0}, vIm[2] = {3, 0};
+    int64_t mU = uRe[0]*uRe[0] + uIm[0]*uIm[0] + uRe[1]*uRe[1] + uIm[1]*uIm[1];
+    int64_t dRe = uRe[0]*vRe[0] + uIm[0]*vIm[0], dIm = uRe[0]*vIm[0] - uIm[0]*vRe[0];
+    int64_t fidSq = dRe * dRe + dIm * dIm;
+    int64_t dTrSq = mU * mU - fidSq;
+    CHECK(mU == 25 && fidSq == 625 && dTrSq == 0,
+          "T7c Complex pure-state Gram conservation & Mayers-Lo-Chau collinear fidelity exact");
 }
 
 int main(void) {

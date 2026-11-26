@@ -139,19 +139,32 @@ def fig1_finite_key_contrast() -> None:
 
 
 def fig2_di_entropy_duality() -> None:
-    s_grid = np.linspace(2.0, TSIRELSON, 400)
+    s_grid = np.linspace(2.0, TSIRELSON, 4000)
     y_min = [h_min_di(float(s)) for s in s_grid]
     y_vn = [h_vn_di(float(s)) for s in s_grid]
-    gap = [a - b for a, b in zip(y_vn, y_min, strict=True)]
-    idx_max = int(np.argmax(gap))
+
+    # Exact continuous golden-section optimization matching exact_audit.py to 15 digits
+    lo, hi = 2.0, TSIRELSON
+    phi = (math.sqrt(5.0) - 1.0) / 2.0
+    for _ in range(120):
+        c = hi - phi * (hi - lo)
+        d = lo + phi * (hi - lo)
+        if (h_vn_di(c) - h_min_di(c)) > (h_vn_di(d) - h_min_di(d)):
+            hi = d
+        else:
+            lo = c
+    s_star = 0.5 * (lo + hi)
+    y_min_star = h_min_di(s_star)
+    y_vn_star = h_vn_di(s_star)
+    gap_star = y_vn_star - y_min_star
 
     fig, ax = plt.subplots(figsize=(6.4, 3.5))
     ax.plot(s_grid, y_vn, "--", color="#d97706", lw=2.0, label="Collective von Neumann $H_{\\mathrm{vN}}^{\\mathrm{DI}}(S)$ (Acín\u2013Pironio)")
     ax.plot(s_grid, y_min, "-", color="#059669", lw=2.2, label="Strict DI Min-Entropy $H_{\\min}^{\\mathrm{DI}}(S)$ (Pironio 2010 / Moonlab)")
     ax.fill_between(s_grid, y_min, y_vn, color="#ef4444", alpha=0.14, label="Strict overestimation gap $\\Delta(S) > 0$")
     ax.annotate(
-        f"Max gap $+{gap[idx_max]:.3f}$ bit\nat $S={s_grid[idx_max]:.3f}$",
-        xy=(s_grid[idx_max], 0.5 * (y_min[idx_max] + y_vn[idx_max])),
+        f"Max gap $+{gap_star:.4f}$ bit\nat $S={s_star:.4f}$",
+        xy=(s_star, 0.5 * (y_min_star + y_vn_star)),
         xytext=(2.20, 0.54),
         arrowprops={"arrowstyle": "->", "color": "#991b1b", "lw": 1.15},
         fontsize=8.5,

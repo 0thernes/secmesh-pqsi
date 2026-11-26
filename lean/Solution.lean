@@ -6,7 +6,7 @@ public import Challenge
 public import SecMeshPQSI
 
 /-!
-# Verified Solutions to All 27 Formalized Theorems (`T1`–`T7`)
+# Verified Solutions to All 28 Formalized Theorems (`T1`–`T7`)
 
 Zero-Mathlib Lean 4.35.0 proofs depending strictly on a subset of
 `[propext, Classical.choice, Quot.sound]`, zero `sorry`, zero `native_decide`, zero custom axioms.
@@ -104,6 +104,9 @@ public theorem t7a_toner_chsh_monogamy_and_eve_isolation : T7a_TonerCHSHMonogamy
 public theorem t7b_hiding_binding_conservation_nogo : T7b_HidingBindingConservationNoGo :=
   MonogamyCommitmentNoGo.t7b_hiding_binding_conservation_nogo
 
+public theorem t7c_fuchs_vandegraaff_microcrypt_efi : T7c_FuchsVanDeGraaffMicrocryptEFI :=
+  MonogamyCommitmentNoGo.t7c_fuchs_vandegraaff_microcrypt_efi
+
 public theorem prove_all_secmesh_theorems : AllSecMeshTheorems :=
   ⟨t1a_v1_tsirelson_violation,
    t1b_hoeffding_range2_factor4,
@@ -131,6 +134,7 @@ public theorem prove_all_secmesh_theorems : AllSecMeshTheorems :=
    t6a_ising_laplacian_psd_and_cheeger_barrier,
    t6b_cryptosymbology_subliminal_and_threshold_closure,
    t7a_toner_chsh_monogamy_and_eve_isolation,
-   t7b_hiding_binding_conservation_nogo⟩
+   t7b_hiding_binding_conservation_nogo,
+   t7c_fuchs_vandegraaff_microcrypt_efi⟩
 
 end SecMeshPQSI.Solution

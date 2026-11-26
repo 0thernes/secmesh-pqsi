@@ -6,8 +6,8 @@
     "t1a_s_v1": "354/125",
     "t1a_sq_excess": 316,
     "t1b_actual_per_cell_tail_at_claimed_1e6": 0.028574404296987994,
-    "t1c_max_vn_minus_hmin_gap": 0.23570329549346902,
-    "t1c_max_gap_at_S": 2.6991924932857843,
+    "t1c_max_vn_minus_hmin_gap": 0.2357034249752339,
+    "t1c_max_gap_at_S": 2.698959648854423,
     "t1c_hmin_at_2p5": 0.26756769267675207,
     "t1c_hvn_at_2p5": 0.4564355568004036,
     "t1d_denoise_ones_out_of_256": 93,
@@ -66,6 +66,8 @@
     "t7a_max_sAB2_plus_sAE2": 8.000000000000004,
     "t7b_exhaustive_dist_pairs_checked": 81796,
     "t7b_conservation_exact": true,
+    "t7c_fuchs_vdg_amp_pairs_checked": 542,
+    "t7c_pythagorean_tight_witnesses": 36,
     "status": "PASS"
   },
   "empirical_preregistered_ab": {

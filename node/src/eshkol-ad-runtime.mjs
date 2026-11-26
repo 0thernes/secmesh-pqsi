@@ -20,10 +20,15 @@ const valOf = (x) => (isDual(x) ? x.val : x);
 const dotOf = (x) => (isDual(x) ? x.dot : 0.0);
 const toDual = (x) => (isDual(x) ? x : new Dual(x, 0.0));
 
+const MAX_TOKENS = 50000;
+const MAX_PARSE_DEPTH = 256;
+
 function tokenize(src) {
+  if (typeof src !== 'string') throw new Error('Eshkol source must be a string');
   const tokens = [];
   let i = 0;
   while (i < src.length) {
+    if (tokens.length >= MAX_TOKENS) throw new Error('Eshkol tokenizer token budget exceeded');
     const ch = src[i];
     if (ch === ';') {
       while (i < src.length && src[i] !== '\n') i++;
@@ -56,21 +61,30 @@ function tokenize(src) {
 
 function parse(tokens) {
   let pos = 0;
+  let depth = 0;
   function readExpr() {
     if (pos >= tokens.length) throw new Error('Unexpected EOF');
-    const tok = tokens[pos++];
-    if (tok === '(') {
-      const list = [];
-      while (pos < tokens.length && tokens[pos] !== ')') list.push(readExpr());
-      if (tokens[pos] !== ')') throw new Error('Unclosed "("');
-      pos++;
-      return list;
+    if (++depth > MAX_PARSE_DEPTH) {
+      depth--;
+      throw new Error('Eshkol parser nesting depth exceeded');
     }
-    if (tok === ')') throw new Error('Unexpected ")"');
-    if (tok === "'") return [{ sym: 'quote' }, readExpr()];
-    if (tok.startsWith('"')) return { str: JSON.parse(tok) };
-    if (/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(tok)) return Number(tok);
-    return { sym: tok };
+    try {
+      const tok = tokens[pos++];
+      if (tok === '(') {
+        const list = [];
+        while (pos < tokens.length && tokens[pos] !== ')') list.push(readExpr());
+        if (tokens[pos] !== ')') throw new Error('Unclosed "("');
+        pos++;
+        return list;
+      }
+      if (tok === ')') throw new Error('Unexpected ")"');
+      if (tok === "'") return [{ sym: 'quote' }, readExpr()];
+      if (tok.startsWith('"')) return { str: JSON.parse(tok) };
+      if (/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(tok)) return Number(tok);
+      return { sym: tok };
+    } finally {
+      depth--;
+    }
   }
   const forms = [];
   while (pos < tokens.length) forms.push(readExpr());
@@ -169,6 +183,9 @@ export function evaluateEshkolSource(src) {
         return v;
       }
       if (kw === 'lambda') {
+        if (expr.length < 3 || !Array.isArray(expr[1]) || !expr[1].every((p) => p && typeof p === 'object' && 'sym' in p)) {
+          throw new Error('Malformed lambda expression');
+        }
         const params = expr[1].map((p) => p.sym);
         const body = expr.slice(2);
         return (...args) => {
@@ -180,7 +197,11 @@ export function evaluateEshkolSource(src) {
         };
       }
       if (kw === 'define') {
+        if (expr.length < 3) throw new Error('Malformed define expression');
         if (Array.isArray(expr[1])) {
+          if (expr[1].length < 1 || !expr[1].every((p) => p && typeof p === 'object' && 'sym' in p)) {
+            throw new Error('Malformed function define signature');
+          }
           const name = expr[1][0].sym;
           const params = expr[1].slice(1).map((p) => p.sym);
           const body = expr.slice(2);
@@ -194,25 +215,40 @@ export function evaluateEshkolSource(src) {
           scope.map.set(name, fn);
           return fn;
         }
+        if (!expr[1] || typeof expr[1] !== 'object' || !('sym' in expr[1])) {
+          throw new Error('Malformed variable define target');
+        }
         const val = evalExpr(expr[2], scope);
         scope.map.set(expr[1].sym, val);
         return val;
       }
       if (kw === 'let' || kw === 'let*') {
+        if (expr.length < 3 || !Array.isArray(expr[1])) throw new Error(`Malformed ${kw} expression`);
         const bindings = expr[1];
         const body = expr.slice(2);
         const child = { map: new Map(), parent: scope };
         if (kw === 'let') {
-          const vals = bindings.map(([k, v]) => [k.sym, evalExpr(v, scope)]);
+          const vals = bindings.map((pair) => {
+            if (!Array.isArray(pair) || pair.length !== 2 || !pair[0] || !('sym' in pair[0])) {
+              throw new Error('Malformed let binding');
+            }
+            return [pair[0].sym, evalExpr(pair[1], scope)];
+          });
           for (const [k, v] of vals) child.map.set(k, v);
         } else {
-          for (const [k, v] of bindings) child.map.set(k.sym, evalExpr(v, child));
+          for (const pair of bindings) {
+            if (!Array.isArray(pair) || pair.length !== 2 || !pair[0] || !('sym' in pair[0])) {
+              throw new Error('Malformed let* binding');
+            }
+            child.map.set(pair[0].sym, evalExpr(pair[1], child));
+          }
         }
         let out = null;
         for (const b of body) out = evalExpr(b, child);
         return out;
       }
       if (kw === 'with-region') {
+        if (expr.length < 3) throw new Error('Malformed with-region expression');
         const regionName = evalExpr(expr[1], scope);
         regions.push(regionName && regionName.sym ? regionName.sym : String(regionName));
         let out = null;

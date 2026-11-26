@@ -18,9 +18,9 @@
   <text x="64" y="334" fill="#10b981" font-family="ui-monospace,Consolas,monospace" font-size="22">C11 Moonlab FIPS 203 ML-KEM-768 ↔ OpenSSL 3.5.5 Bit-Exact Interop  ·  CW-128 Anti-Replay</text>
   <text x="64" y="378" fill="#60a5fa" font-family="ui-monospace,Consolas,monospace" font-size="22">Chern–Concurrence c²+C²=1 · Toner Monogamy S_AB²+S_AE²≤8 · Bravyi [[144,12,12]]</text>
   <rect x="64" y="450" width="260" height="58" rx="10" fill="#0f2922" stroke="#10b981" stroke-width="2"/>
-  <text x="194" y="487" text-anchor="middle" fill="#6ee7b7" font-family="ui-monospace,Consolas,monospace" font-size="20" font-weight="600">61/61 C11 + Fuzz</text>
+  <text x="194" y="487" text-anchor="middle" fill="#6ee7b7" font-family="ui-monospace,Consolas,monospace" font-size="20" font-weight="600">64/64 C11 + Fuzz</text>
   <rect x="348" y="450" width="260" height="58" rx="10" fill="#0f2238" stroke="#3b82f6" stroke-width="2"/>
-  <text x="478" y="487" text-anchor="middle" fill="#93c5fd" font-family="ui-monospace,Consolas,monospace" font-size="20" font-weight="600">18/18 Node + AD</text>
+  <text x="478" y="487" text-anchor="middle" fill="#93c5fd" font-family="ui-monospace,Consolas,monospace" font-size="20" font-weight="600">19/19 Node + AD</text>
   <rect x="632" y="450" width="260" height="58" rx="10" fill="#1e1b3a" stroke="#8b5cf6" stroke-width="2"/>
   <text x="762" y="487" text-anchor="middle" fill="#c4b5fd" font-family="ui-monospace,Consolas,monospace" font-size="20" font-weight="600">6/6 Lean Kernels</text>
   <rect x="916" y="450" width="300" height="58" rx="10" fill="#2a1d12" stroke="#f59e0b" stroke-width="2"/>

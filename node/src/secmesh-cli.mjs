@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Alexander S. Donahue
 //
-// SecMesh-PQSI v2.0 CLI — Real Post-Quantum + Post-Super-Intelligence Cyber-Defense Engine
+// SecMesh-PQSI v2 CLI — Real Post-Quantum + Post-Super-Intelligence Cyber-Defense Engine
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';

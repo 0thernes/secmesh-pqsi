@@ -33,6 +33,7 @@
 'SecMeshPQSI.Solution.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.t7a_toner_chsh_monogamy_and_eve_isolation' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Solution.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Solution.t7c_fuchs_vandegraaff_microcrypt_efi' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.Solution.prove_all_secmesh_theorems' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.NonVacuity.nonvac_all_hypotheses' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation' does not depend on any axioms
@@ -68,7 +69,9 @@
 'SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation' depends on axioms: [propext, Quot.sound]
 'SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo' depends on axioms: [propext, Quot.sound]
+'SecMeshPQSI.Palomar.t7c_fuchs_vandegraaff_microcrypt_efi' depends on axioms: [propext, Classical.choice, Quot.sound]
 'SecMeshPQSI.AdversarialTests.adv_compress1_fails_at_plus_832' does not depend on any axioms
 'SecMeshPQSI.AdversarialTests.adv_v1_chsh_refutes_tsirelson_bound' does not depend on any axioms
 'SecMeshPQSI.AdversarialTests.adv_commitment_disjoint_refutes_hiding' does not depend on any axioms
 'SecMeshPQSI.AdversarialTests.adv_toner_concrete_pythagorean_witness' does not depend on any axioms
+'SecMeshPQSI.AdversarialTests.adv_fuchs_vdg_pythagorean_tight' does not depend on any axioms

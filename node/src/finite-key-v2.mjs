@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Alexander S. Donahue
 //
-// SecMesh-PQSI v2.0 — Composable Finite-Key E91 / DI-QKD Admission Gate
+// SecMesh-PQSI v2 — Composable Finite-Key E91 / DI-QKD Admission Gate
 // Fixes all 10 mathematical and cryptographic defects identified in
 // BoogerCheeseOnRye/SecMesh@aff7dc6 (node-tests/entangle-qkd.mjs & finite-key-e91.tex).
 
@@ -17,7 +17,7 @@ export const CELL_P_EXACT = [
 ];
 
 export function binEntropy(p) {
-  if (p <= 0 || p >= 1) return 0;
+  if (!Number.isFinite(p) || p <= 0 || p >= 1) return 0;
   return -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p));
 }
 
@@ -53,10 +53,20 @@ export function vonNeumannEntropyDI(S) {
  * Fixes the exact factor-of-2 radius / factor-of-4 exponent bug in SecMesh v1!
  */
 export function chshLowerBoundV2(S, cnts, epsPE) {
-  if (!Number.isFinite(S) || S <= 2 || !Array.isArray(cnts) || cnts.length !== 4) return 2;
+  if (
+    !Number.isFinite(S) ||
+    S <= 2 ||
+    !Number.isFinite(epsPE) ||
+    epsPE <= 0 ||
+    epsPE >= 1 ||
+    !Array.isArray(cnts) ||
+    cnts.length !== 4
+  ) {
+    return 2;
+  }
   let err = 0;
   for (let c = 0; c < 4; c++) {
-    if (!cnts[c] || cnts[c] <= 0) return 2;
+    if (!Number.isFinite(cnts[c]) || cnts[c] <= 0) return 2;
     err += Math.sqrt((2 * Math.log(8 / epsPE)) / cnts[c]);
   }
   return Math.max(2, S - err);
@@ -350,7 +360,14 @@ export function simulateE91Session({
   if (cert.admitted && rawKeyBytes.length >= 64) {
     const rawArr = Uint8Array.from(rawKeyBytes.slice(0, Math.min(rawKeyBytes.length, 512)));
     const seedLen = Math.ceil((rawArr.length * 8 + 256 - 1) / 8);
-    const seedArr = crypto.randomBytes(seedLen);
+    const seedArr =
+      seed !== null
+        ? crypto
+            .createHash('shake256', { outputLength: seedLen })
+            .update('SecMesh-PQSI-v2|ToeplitzSeed|')
+            .update(String(seed))
+            .digest()
+        : crypto.randomBytes(seedLen);
     const keyBytes = toeplitzExtract(rawArr, seedArr, 32);
     // Emit ONLY non-secret public fingerprint (SHA3-256 of domain||key) — NEVER raw key!
     extractedKeyFingerprint = crypto
@@ -361,6 +378,7 @@ export function simulateE91Session({
       .slice(0, 32);
     keyBytes.fill(0);
     rawArr.fill(0);
+    seedArr.fill(0);
   }
 
   return {

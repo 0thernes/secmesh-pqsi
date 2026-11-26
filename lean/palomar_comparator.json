@@ -28,7 +28,8 @@
     "SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier",
     "SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure",
     "SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation",
-    "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo"
+    "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo",
+    "SecMeshPQSI.Palomar.t7c_fuchs_vandegraaff_microcrypt_efi"
   ],
   "definition_names": [],
   "permitted_axioms": [

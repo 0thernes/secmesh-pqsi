@@ -174,7 +174,7 @@ def test_differential_node_suite_and_report():
         text=True,
         check=True,
     )
-    assert "Node.js Suite Summary: 18/18 passed" in proc.stdout
+    assert "Node.js Suite Summary: 19/19 passed" in proc.stdout
     assert RESULTS_REPORT.exists()
     data = json.loads(RESULTS_REPORT.read_text(encoding="utf-8"))
     for key in [
@@ -184,6 +184,7 @@ def test_differential_node_suite_and_report():
         "T4_qgtl_chern_ghz_bb144",
         "T5_fips203_and_bandwidth",
         "T6_ising_and_cryptosymbology",
+        "T7_monogamy_and_commitment_nogo",
         "empirical_preregistered_ab",
     ]:
         assert data[key]["status"] == "PASS"
@@ -238,7 +239,7 @@ def test_lean_zero_forbidden_tokens_and_axioms():
     # Collapse multi-line bracketed lists
     normalized = re.sub(r",\s*\n\s*", ", ", axioms_txt)
     decl_lines = [ln.strip() for ln in normalized.splitlines() if ln.strip().startswith("'SecMeshPQSI.")]
-    assert len(decl_lines) >= 60, f"Expected >= 60 audited declarations, got {len(decl_lines)}"
+    assert len(decl_lines) >= 63, f"Expected >= 63 audited declarations, got {len(decl_lines)}"
     for ln in decl_lines:
         if "does not depend on any axioms" in ln:
             continue
@@ -248,7 +249,9 @@ def test_lean_zero_forbidden_tokens_and_axioms():
         assert used <= allowed, f"Disallowed axiom(s) {used - allowed} in {ln}"
     assert "SecMeshPQSI.Solution.prove_all_secmesh_theorems" in normalized
     assert "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo" in normalized
+    assert "SecMeshPQSI.Palomar.t7c_fuchs_vandegraaff_microcrypt_efi" in normalized
     assert "SecMeshPQSI.AdversarialTests.adv_compress1_fails_at_plus_832" in normalized
+    assert "SecMeshPQSI.AdversarialTests.adv_fuchs_vdg_pythagorean_tight" in normalized
 
 
 def test_adversarial_definition_counterexamples_and_kernel_reject():
@@ -346,8 +349,27 @@ def test_version_sync_and_no_stale_mega_atlas_ids():
     assert f'release_version: "{ver}"' in (REPO_ROOT / "lean" / "formalization.yaml").read_text(encoding="utf-8")
 
     # Ensure previously corrected stale Mega Atlas IDs never regress in active claim/limitation docs
-    stale_ids = ("QC-034", "CS-031", "CS-050", "CS-054")
+    # Note: CS-031 is legitimately cited for Quantum Microcrypt/EFI (T7c), never Fiat-Shamir (CS-030)!
+    stale_ids = ("QC-034", "CS-050", "CS-054")
     for rel in ("LIMITATIONS.md", "CLAIMS.md", "paper/main.tex"):
         txt = (REPO_ROOT / rel).read_text(encoding="utf-8")
         for sid in stale_ids:
             assert sid not in txt, f"Stale Mega Atlas ID {sid} regressed in {rel}"
+        assert "CS-031" not in txt or "Fiat" not in txt.split("CS-031")[1][:40]
+
+
+def test_zero_placeholders_and_t7c_fuchs_vandegraaff():
+    """Verify zero template placeholder tokens leak into tracked docs and T7c Pythagorean tightness holds."""
+    ph_re = re.compile(r"\{\{[A-Z0-9_]+\}\}")
+    for rel in ("README.md", "CLAIMS.md", "LIMITATIONS.md", "HARDENING_LOG.md", "CODE_OF_CONDUCT.md"):
+        txt = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert not ph_re.search(txt), f"Template placeholder token found in {rel}"
+    # T7c Fuchs-van de Graaff (3,4,5) Pythagorean saturation & complex Gram conservation
+    r, s = (3, 1), (1, 3)
+    m_val = sum(x * x for x in r)
+    tv2 = sum(abs(x * x - y * y) for x, y in zip(r, s, strict=True))
+    b_fid = sum(x * y for x, y in zip(r, s, strict=True))
+    ov = sum(min(x * x, y * y) for x, y in zip(r, s, strict=True))
+    assert m_val == 10 and ov == 2 and b_fid == 6 and tv2 == 16
+    assert ov <= b_fid <= m_val and 2 * m_val <= tv2 + 2 * b_fid
+    assert tv2 * tv2 + 4 * b_fid * b_fid == 4 * m_val * m_val

@@ -7,9 +7,9 @@
     "component": {
       "type": "application",
       "name": "secmesh-pqsi",
-      "version": "2.4.0",
+      "version": "2.5.0",
       "licenses": [{ "license": { "id": "Apache-2.0" } }],
-      "purl": "pkg:github/0thernes/secmesh-pqsi@2.4.0"
+      "purl": "pkg:github/0thernes/secmesh-pqsi@2.5.0"
     }
   },
   "components": [

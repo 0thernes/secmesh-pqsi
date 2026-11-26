@@ -65,7 +65,7 @@ uv pip install --python .venv/bin/python -r requirements.lock.txt
 .venv/bin/mypy python/secmesh_verify scripts/check_citations.py scripts/check_readme_axioms.py --ignore-missing-imports
 .venv/bin/python scripts/check_citations.py --online
 ```
-Expected: `14 passed` (including live Lean kernel negative rejection check & automated version/Atlas sync guard), `README axiom check PASS`, `All checks passed!`, `Success: no issues found`, `42/42` citations HTTP 200 (`32/32` DOIs Crossref-verified not retracted), and exact report SHA-256 matching `results/exact_verification_report.json`.
+Expected: `15 passed` (including live Lean kernel negative rejection check, zero-placeholder check, `T7c` Pythagorean tightness & automated version/Atlas sync guard), `README axiom check PASS`, `All checks passed!`, `Success: no issues found`, `44/44` citations HTTP 200 (`33/33` Crossref non-retracted DOIs + `1` DataCite DOI), and exact report SHA-256 matching `results/exact_verification_report.json`.
 
 ### 5. Compile Both White Papers & Verify `MANIFEST.sha256`
 ```bash
@@ -78,5 +78,5 @@ sha256sum -c MANIFEST.sha256
 
 | Date | Environment | Scope Verified | Result |
 | --- | --- | --- | --- |
-| 2026-11-25 | Windows 11 (GCC 16.1.0, Node 25.8.2 / OpenSSL 3.5.5, Lean 4.35.0, Python 3.12.10, Tectonic 0.17.0) + Ubuntu Linux CI | `v2.4.0` clean-room self-replication: C11 (61/61 + 500 fuzz), Node (18/18 + 5 live Eshkol AD modules), Lean 6-kernel CI / 5-kernel Windows replay (27 theorems + 4 adversarial counterexamples, 60 decls, 3,638/3,694 decls), Python exact + pytest (14/14), README axiom guard, live citations + Crossref retractions (42/42 HTTP 200, 32/32 DOIs not retracted), WP1 (18 pp.) + WP2 (5 pp.) + 5 figures + arXiv tarball | PASS (independent external second-person replication open) |
+| 2026-11-25 | Windows 11 (GCC 16.1.0, Node 25.8.2 / OpenSSL 3.5.5, Lean 4.35.0, Python 3.12.10, Tectonic 0.17.0) + Ubuntu Linux CI | `v2.5.0` clean-room self-replication: C11 (64/64 + 500 fuzz), Node (19/19 + 5 live Eshkol AD modules), Lean 6-kernel CI / 5-kernel Windows replay (28 theorems + 5 adversarial witnesses, 63 decls, 3,713/3,764 decls), Python exact + pytest (15/15), README axiom guard, live citations + Crossref retractions (44/44 HTTP 200, 33/33 Crossref DOIs not retracted + 1 DataCite DOI), WP1 + WP2 + 5 figures + arXiv tarball | PASS (independent external second-person replication open) |
 
