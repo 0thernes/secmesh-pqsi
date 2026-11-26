@@ -46,7 +46,8 @@ export function createRosetteBundle({
   };
   const receiptHash = sha256Hex(canonicalJson(receipt));
 
-  const allPassed = checks.every(c => c.passed === true);
+  const allPassed =
+    Array.isArray(checks) && checks.length > 0 && checks.every(c => c && c.passed === true);
   const verification = {
     schema: 'rosette-wire/verification/v1',
     compositionId,
@@ -76,6 +77,8 @@ export function verifyRosetteBundleDir(dir) {
     verification.compositionSha256 === cHash &&
     verification.receiptSha256 === rHash &&
     verification.verdict === 'VERIFIED' &&
-    verification.checks.every(c => c.passed === true);
+    Array.isArray(verification.checks) &&
+    verification.checks.length > 0 &&
+    verification.checks.every(c => c && c.passed === true);
   return { ok, cHash, rHash, verdict: verification.verdict };
 }

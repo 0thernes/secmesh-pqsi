@@ -1,6 +1,6 @@
 # SecMesh-PQSI
 
-> Clean-room Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) cryptographic mesh defense engine (`v2.2.0`) rebuilt atop Tsotchke's stack, backed by 27 zero-Mathlib Lean 4.35.0 theorems verified across all 6 distinct proof kernels via `lake comparator --paranoid` and two companion AMS-LaTeX white papers.
+> Clean-room Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) cryptographic mesh defense engine (`v2.3.0`) rebuilt atop Tsotchke's stack, backed by 27 zero-Mathlib Lean 4.35.0 theorems verified across all 6 distinct proof kernels via `lake comparator --paranoid` and two companion AMS-LaTeX white papers.
 
 ## Core Entrypoints
 - [README.md](README.md): Overview, verbatim `#print axioms` 5-second proof, quickstart, and honest scope.

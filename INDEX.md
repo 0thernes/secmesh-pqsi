@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Complete Repository Index & Table of Contents (`INDEX.md`)
 
-**Repository:** `secmesh-pqsi v2.2.0` · **Total Indexed Files:** `160` · **Total Text Lines:** `21,191`
+**Repository:** `secmesh-pqsi v2.3.0` · **Total Indexed Files:** `160` · **Total Text Lines:** `21,405`
 
 | Path | Bytes | Lines |
 | --- | ---: | ---: |
@@ -20,18 +20,18 @@
 | `.gitignore` | 506 | 42 |
 | `.zenodo.json` | 1,384 | 33 |
 | `AGENTS.md` | 5,748 | 65 |
-| `app/blueprint.html` | 18,810 | 246 |
-| `app/index.html` | 17,413 | 327 |
-| `CHANGELOG.md` | 13,577 | 70 |
+| `app/blueprint.html` | 19,450 | 254 |
+| `app/index.html` | 19,643 | 365 |
+| `CHANGELOG.md` | 15,852 | 80 |
 | `CITATION.cff` | 1,470 | 33 |
 | `CLAIMS.md` | 7,183 | 33 |
 | `CLAUDE.md` | 11 | 1 |
 | `CODE_OF_CONDUCT.md` | 5,612 | 83 |
 | `CONTRIBUTING.md` | 1,367 | 14 |
 | `DEVIATIONS.md` | 1,838 | 16 |
-| `dist/arxiv_submission.tar.gz` | 215,791 | — |
-| `dist/Donahue_2026_secmesh_pqsi_architecture.pdf` | 146,695 | — |
-| `dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf` | 470,132 | — |
+| `dist/arxiv_submission.tar.gz` | 215,919 | — |
+| `dist/Donahue_2026_secmesh_pqsi_architecture.pdf` | 146,619 | — |
+| `dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf` | 468,097 | — |
 | `docs/adr/0001-dual-survivability-hybrid-architecture.md` | 962 | 6 |
 | `docs/adr/0002-zero-mathlib-lean4-palomar-tcb.md` | 994 | 6 |
 | `docs/adr/0003-honest-qkd-simulation-boundary.md` | 824 | 6 |
@@ -50,11 +50,11 @@
 | `docs/preregistration.md` | 2,420 | 27 |
 | `docs/privacy.md` | 729 | 5 |
 | `docs/reviews/01-10-pass-review.md` | 4,355 | 18 |
-| `docs/run-log.md` | 2,271 | 15 |
+| `docs/run-log.md` | 2,393 | 15 |
 | `docs/threat-model.md` | 2,101 | 19 |
 | `docs/tsotchke-stack-map.md` | 6,406 | 56 |
-| `docs/verification.md` | 2,864 | 15 |
-| `ERRATA.md` | 3,318 | 14 |
+| `docs/verification.md` | 2,951 | 15 |
+| `ERRATA.md` | 4,276 | 15 |
 | `eshkol/bandwidth_opt.esk` | 1,357 | 27 |
 | `eshkol/chern_ising_ad.esk` | 2,087 | 48 |
 | `eshkol/finite_key_ad.esk` | 2,378 | 56 |
@@ -62,7 +62,7 @@
 | `examples/quickstart_demo.mjs` | 3,957 | 57 |
 | `examples/README.md` | 505 | 9 |
 | `GEMINI.md` | 13 | 1 |
-| `HARDENING_LOG.md` | 25,383 | 133 |
+| `HARDENING_LOG.md` | 28,403 | 146 |
 | `justfile` | 1,859 | 44 |
 | `lean/Challenge.lean` | 12,543 | 296 |
 | `lean/comparator.json` | 1,517 | 34 |
@@ -87,12 +87,12 @@
 | `lean/VerifyAxioms.lean` | 4,779 | 78 |
 | `LICENSE` | 10,655 | 190 |
 | `LICENSE-DOCS` | 1,237 | 22 |
-| `LIMITATIONS.md` | 5,909 | 36 |
-| `llms-full.txt` | 6,885 | 42 |
+| `LIMITATIONS.md` | 6,100 | 36 |
+| `llms-full.txt` | 7,001 | 42 |
 | `llms.txt` | 2,082 | 24 |
 | `native/include/secmesh_pqsi.h` | 12,189 | 239 |
 | `native/Makefile` | 1,665 | 52 |
-| `native/src/secmesh_cli.c` | 11,469 | 246 |
+| `native/src/secmesh_cli.c` | 12,469 | 272 |
 | `native/src/secmesh_entropy.c` | 9,789 | 266 |
 | `native/src/secmesh_it_crypto.c` | 14,192 | 357 |
 | `native/src/secmesh_quantum_geo.c` | 19,682 | 488 |
@@ -118,36 +118,36 @@
 | `native/third_party/moonlab/LICENSE-MOONLAB` | 1,070 | 21 |
 | `native/third_party/moonlab/UPSTREAM_COMMIT.txt` | 93 | 1 |
 | `native/third_party/moonlab/utils/secure_memory.h` | 2,977 | 106 |
-| `node/src/eshkol-ad-runtime.mjs` | 8,203 | 220 |
-| `node/src/finite-key-v2.mjs` | 11,610 | 356 |
-| `node/src/mesh-guardian-v2.mjs` | 9,535 | 279 |
+| `node/src/eshkol-ad-runtime.mjs` | 8,675 | 238 |
+| `node/src/finite-key-v2.mjs` | 12,147 | 381 |
+| `node/src/mesh-guardian-v2.mjs` | 9,860 | 289 |
 | `node/src/pqsi-handshake.mjs` | 18,671 | 472 |
-| `node/src/rosette-receipt.mjs` | 2,979 | 81 |
+| `node/src/rosette-receipt.mjs` | 3,119 | 84 |
 | `node/src/secmesh-cli.mjs` | 6,922 | 161 |
-| `node/tests/test_secmesh_v2.mjs` | 16,516 | 352 |
+| `node/tests/test_secmesh_v2.mjs` | 18,175 | 393 |
 | `package.json` | 757 | 24 |
-| `paper/engineering/secmesh_architecture.tex` | 21,521 | 207 |
+| `paper/engineering/secmesh_architecture.tex` | 21,410 | 207 |
 | `paper/figures/fig1_finite_key_contrast.pdf` | 45,441 | — |
 | `paper/figures/fig2_di_entropy_duality.pdf` | 56,238 | — |
 | `paper/figures/fig3_qgt_concurrence_surplus.pdf` | 35,873 | — |
 | `paper/figures/fig4_kn_pq_bandwidth_ceilings.pdf` | 25,484 | — |
 | `paper/figures/fig5_chern_concurrence_ising_barrier.pdf` | 44,225 | — |
-| `paper/main.tex` | 63,445 | 639 |
+| `paper/main.tex` | 63,694 | 640 |
 | `paper/refs.bib` | 14,010 | 425 |
 | `pyproject.toml` | 937 | 40 |
 | `python/secmesh_verify/exact_audit.py` | 26,061 | 637 |
 | `python/secmesh_verify/make_figures.py` | 12,308 | 305 |
-| `python/tests/test_all.py` | 14,082 | 334 |
-| `README.md` | 13,574 | 137 |
-| `REPLICATION.md` | 4,903 | 82 |
+| `python/tests/test_all.py` | 15,438 | 353 |
+| `README.md` | 13,612 | 137 |
+| `REPLICATION.md` | 5,002 | 82 |
 | `repo-standard.schema.json` | 5,417 | 245 |
-| `repo.yaml` | 10,869 | 118 |
+| `repo.yaml` | 10,924 | 118 |
 | `requirements.lock.txt` | 529 | 30 |
 | `results/exact_verification_report.json` | 3,379 | 117 |
 | `results/lean_axioms.txt` | 6,372 | 74 |
 | `results/six_kernel_audit.txt` | 3,124 | 32 |
 | `REUSE.toml` | 1,112 | 53 |
-| `ROADMAP.md` | 3,224 | 15 |
+| `ROADMAP.md` | 3,751 | 16 |
 | `rosette/latest-audit/composition.json` | 396 | 19 |
 | `rosette/latest-audit/receipt.json` | 986 | 37 |
 | `rosette/latest-audit/verification.json` | 660 | 25 |

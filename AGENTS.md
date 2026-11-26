@@ -5,7 +5,7 @@ This file is the single canonical instruction set for all coding and research ag
 
 ## 1. Repository Purpose & Integrity Rules
 
-`secmesh-pqsi` (`v2.2.0`) is a clean-room cryptographic refactoring of `BoogerCheeseOnRye/SecMesh@aff7dc6` rebuilt atop Tsotchke's MIT/Apache-2.0 stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`) into a Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) mesh defense engine, backed by **27 zero-Mathlib Lean 4.35.0 theorems** verified across **all 6 distinct kernel implementations** (`lake comparator --paranoid`) and **two companion AMS-LaTeX white papers**.
+`secmesh-pqsi` (`v2.3.0`) is a clean-room cryptographic refactoring of `BoogerCheeseOnRye/SecMesh@aff7dc6` rebuilt atop Tsotchke's MIT/Apache-2.0 stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`) into a Post-Quantum (PQ) and Post-Super-Intelligence (PSI = information-theoretic) mesh defense engine, backed by **27 zero-Mathlib Lean 4.35.0 theorems** verified across **all 6 distinct kernel implementations** (`lake comparator --paranoid`) and **two companion AMS-LaTeX white papers**.
 
 ### Non-Negotiable Integrity Boundaries
 - **Zero fabrication / zero sycophancy:** Every reported theorem, test count, byte count, latency, and hash MUST come from an actual run of current files in this repo.
@@ -27,10 +27,10 @@ This file is the single canonical instruction set for all coding and research ag
 ## 3. Repository Layout
 
 - `native/`: C11 Moonlab cryptographic core (`third_party/moonlab/`, `include/`, `src/`, `tests/test_native_core.c`, `Makefile`).
-- `node/`: Node.js 25 / OpenSSL 3.5.5 hybrid PQ+PSI handshake, Finite-Key v2, RFC-6479 bounded sliding-window anti-replay CW-128 Hardened Guardian v2, portable Eshkol AD runtime (`eshkol-ad-runtime.mjs`), Rosette-Wire receipts, CLI, and 16-test differential suite.
+- `node/`: Node.js 25 / OpenSSL 3.5.5 hybrid PQ+PSI handshake, Finite-Key v2, RFC-6479 bounded sliding-window anti-replay CW-128 Hardened Guardian v2, portable Eshkol AD runtime (`eshkol-ad-runtime.mjs`), Rosette-Wire receipts, CLI, and 17-test differential suite.
 - `eshkol/`: Four Eshkol v1.3.6 automatic differentiation modules (`finite_key_ad.esk`, `qgt_geodesic.esk`, `bandwidth_opt.esk`, `chern_ising_ad.esk`).
 - `lean/`: Zero-Mathlib Lean 4.35.0 proofs (15 files, 27 theorems + 4 adversarial counterexamples: `SecMeshPQSI/*.lean`, `Challenge.lean`, `Solution.lean`, `PalomarChallenge.lean`, `PalomarSolution.lean`, `VerifyAxioms.lean`, `formalization.yaml`, `palomar_comparator.json`).
-- `python/`: Exact-arithmetic audit (`secmesh_verify/exact_audit.py`), vector figure generator (`make_figures.py`), and `tests/test_all.py` (13 tests).
+- `python/`: Exact-arithmetic audit (`secmesh_verify/exact_audit.py`), vector figure generator (`make_figures.py`), and `tests/test_all.py` (14 tests).
 - `paper/`: AMS-LaTeX White Paper I (`main.tex`), White Paper II (`engineering/secmesh_architecture.tex`), verified bibliography (`refs.bib`, 42/42 HTTP 200 & 32/32 DOIs not retracted), and 5 vector figures (`figures/*.pdf`).
 - `dist/`: Frozen release PDFs (`Donahue_2026_secmesh_pqsi_formal_foundations.pdf`, `Donahue_2026_secmesh_pqsi_architecture.pdf`) and standalone `arxiv_submission.tar.gz`.
 - `app/`: Interactive client-side SecMesh-PQSI Defense Console (`index.html`) and Lean Proof Blueprint DAG (`blueprint.html`, deployed to GitHub Pages).
@@ -42,7 +42,7 @@ This file is the single canonical instruction set for all coding and research ag
 # Native C11 core (58/58 tests, -Wall -Wextra -Werror)
 make -C native test
 
-# Node.js 25 differential, interop, anti-replay & live Eshkol AD suite (16/16 tests)
+# Node.js 25 differential, interop, anti-replay & live Eshkol AD suite (17/17 tests)
 node node/tests/test_secmesh_v2.mjs
 
 # Zero-Mathlib Lean 4.35.0 full build, strict axiom allowlist & README drift check

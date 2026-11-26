@@ -124,7 +124,25 @@ export function evaluateEshkolSource(src) {
     ['newline', () => { stdoutLines.push(curLine); curLine = ''; }],
   ]);
 
+  let evalSteps = 0;
+  let evalDepth = 0;
+  const MAX_EVAL_STEPS = 100000;
+  const MAX_EVAL_DEPTH = 256;
+
   function evalExpr(expr, scope) {
+    if (++evalSteps > MAX_EVAL_STEPS) throw new Error('Eshkol evaluator step budget exceeded');
+    if (++evalDepth > MAX_EVAL_DEPTH) {
+      evalDepth--;
+      throw new Error('Eshkol evaluator recursion depth exceeded');
+    }
+    try {
+      return evalExprInner(expr, scope);
+    } finally {
+      evalDepth--;
+    }
+  }
+
+  function evalExprInner(expr, scope) {
     if (typeof expr === 'number' || typeof expr === 'boolean') return expr;
     if (expr && typeof expr === 'object' && 'str' in expr) return expr.str;
     if (expr && typeof expr === 'object' && 'sym' in expr) {

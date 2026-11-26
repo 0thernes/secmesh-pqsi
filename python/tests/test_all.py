@@ -174,7 +174,7 @@ def test_differential_node_suite_and_report():
         text=True,
         check=True,
     )
-    assert "Node.js Suite Summary: 16/16 passed" in proc.stdout
+    assert "Node.js Suite Summary: 17/17 passed" in proc.stdout
     assert RESULTS_REPORT.exists()
     data = json.loads(RESULTS_REPORT.read_text(encoding="utf-8"))
     for key in [
@@ -332,3 +332,22 @@ def test_eshkol_modules_balanced_sexprs():
                         assert depth >= 0, f"Unmatched ')' in {ef.name}"
                 i += 1
         assert depth == 0 and not in_str, f"Unbalanced S-expressions in {ef.name}"
+
+
+def test_version_sync_and_no_stale_mega_atlas_ids():
+    """Mechanically enforce single-source VERSION parity across all manifests and zero stale Mega Atlas IDs."""
+    ver = (REPO_ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    assert json.loads((REPO_ROOT / "package.json").read_text(encoding="utf-8"))["version"] == ver
+    assert json.loads((REPO_ROOT / ".zenodo.json").read_text(encoding="utf-8"))["version"] == ver
+    assert json.loads((REPO_ROOT / "sbom.cdx.json").read_text(encoding="utf-8"))["metadata"]["component"]["version"] == ver
+    assert f'version = "{ver}"' in (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert f'version: "{ver}"' in (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    assert f'version = "{ver}"' in (REPO_ROOT / "lean" / "lakefile.toml").read_text(encoding="utf-8")
+    assert f'release_version: "{ver}"' in (REPO_ROOT / "lean" / "formalization.yaml").read_text(encoding="utf-8")
+
+    # Ensure previously corrected stale Mega Atlas IDs never regress in active claim/limitation docs
+    stale_ids = ("QC-034", "CS-031", "CS-050", "CS-054")
+    for rel in ("LIMITATIONS.md", "CLAIMS.md", "paper/main.tex"):
+        txt = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        for sid in stale_ids:
+            assert sid not in txt, f"Stale Mega Atlas ID {sid} regressed in {rel}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Alexander S. Donahue
-// Runnable end-to-end demonstration of SecMesh-PQSI v2.2.0
+// Runnable end-to-end demonstration of SecMesh-PQSI v2.3.0
 
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -17,7 +17,7 @@ const nativeBin = existsSync(resolve(root, 'native/build/secmesh_core.exe'))
   ? resolve(root, 'native/build/secmesh_core.exe')
   : resolve(root, 'native/build/secmesh_core');
 
-console.log('=== SecMesh-PQSI v2.2.0 Quickstart Demo ===\n');
+console.log('=== SecMesh-PQSI v2.3.0 Quickstart Demo ===\n');
 
 // 1. Live Lattice-Hedged PQSI Handshake
 const alpha = generatePeerIdentity('alpha-demo', { latticeHedged: true });

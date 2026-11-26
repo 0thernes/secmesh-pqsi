@@ -20,7 +20,7 @@
 
 ---
 
-**SecMesh-PQSI** (`v2.2.0`) is a clean-room cryptographic refactoring of [`BoogerCheeseOnRye/SecMesh@aff7dc6`](https://github.com/BoogerCheeseOnRye/SecMesh) rebuilt atop Tsotchke's MIT/Apache-2.0 cryptographic, representation-theoretic, and quantum-geometry stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`, `quantum_rng`, `classical_rng`; complete live-verified 27-repo audit in [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md)) into a rigorously audited **Post-Quantum + Post-Super-Intelligence (information-theoretic)** defense architecture.
+**SecMesh-PQSI** (`v2.3.0`) is a clean-room cryptographic refactoring of [`BoogerCheeseOnRye/SecMesh@aff7dc6`](https://github.com/BoogerCheeseOnRye/SecMesh) rebuilt atop Tsotchke's MIT/Apache-2.0 cryptographic, representation-theoretic, and quantum-geometry stack (`moonlab`, `quantum_geometric_tensor`, `libirrep`, `spin_based_neural_network`, `eshkol`, `rosette-wire`, `pq-consensus-bandwidth`, `quantum_rng`, `classical_rng`; complete live-verified 27-repo audit in [`docs/tsotchke-stack-map.md`](docs/tsotchke-stack-map.md)) into a rigorously audited **Post-Quantum + Post-Super-Intelligence (information-theoretic)** defense architecture.
 
 - **Author:** Alexander S. Donahue ([ORCID `0009-0006-8168-9648`](https://orcid.org/0009-0006-8168-9648), Independent Researcher, Spokane, WA, USA)
 - **White Paper I (Formal Foundations):** [PDF (`dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf`)](dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf) · [LaTeX](paper/main.tex) · [arXiv Tarball](dist/arxiv_submission.tar.gz)
@@ -66,7 +66,7 @@ $ cd lean && lake build && lake env lean VerifyAxioms.lean
 | **T5 — FIPS 203 ML-KEM & $K_N$ Ceilings** | $q = 3329$ prime & $\zeta = 17$ primitive 256-th NTT root, zero-overflow Montgomery reduction across $|a| < 2^{15}\cdot 3329$, sharp `Compress_1` margin $|e|\le 831$ (tight at $+832$), complete-graph $K_N$ ceiling optimality & `< 1.75%` IT-hedge overhead (`+112 B`). | [`lean/SecMeshPQSI/LatticeBandwidth.lean`](lean/SecMeshPQSI/LatticeBandwidth.lean) |
 | **T6 — Ising Expander Barrier & Cryptosymbology** | Discrete Laplacian PSD, exact Ising spin-flip cut bijection, Cheeger expander contagion work barrier $W_{\min}(k) \ge 2k(J_{\min}\phi_0 + h_{\min})$; Simmons deterministic zero-capacity, $2^k$ kleptographic bijection & threshold-hedged XOR dual-closure. | [`lean/SecMeshPQSI/SpinDefenseCryptosymbology.lean`](lean/SecMeshPQSI/SpinDefenseCryptosymbology.lean) |
 | **T7 — Toner CHSH Monogamy & Commitment No-Go** | First-principles Toner quantum CHSH monogamy $S_{AB}^2 + S_{AE}^2 \le 8$ (trapping any unbounded eavesdropper below $2$ whenever $S_{AB} > 2$) + CKW Berry-monopole isolation; exact Hiding–Binding Conservation Law $\mathrm{TV}(P_0,P_1)+\mathrm{Overlap}(P_0,P_1)=1$ proving unconditional commitment impossibility and hybrid PQ+PSI necessity. | [`lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean`](lean/SecMeshPQSI/MonogamyCommitmentNoGo.lean) |
-| **C11 + Node 25 + Eshkol AD Engine** | **58/58** C11 Moonlab tests (`-Wall -Wextra -Werror`, ASan/UBSan + 500/500 fuzz, Shamir duplicate-$x$/`NaN`/LE64 hardening), **16/16** Node 25 tests (bit-exact C11 ↔ OpenSSL 3.5.5 ML-KEM-768 interop, RFC-6479 bounded sliding-window anti-replay CW-128 Guardian v2, live execution of all 4 Eshkol v1.3.6 AD modules to `<1e-12`, Rosette-Wire receipts), **13/13** pytest (incl. negative Lean kernel rejection), **42/42** HTTP-200 citations (**32/32** DOIs Crossref-verified not retracted), pre-registered 30-seed paired benchmark (`p_Holm = 3.73e-9`, bounded bootstrap 95% CIs). | [`native/`](native/), [`node/`](node/), [`eshkol/`](eshkol/), [`python/`](python/) |
+| **C11 + Node 25 + Eshkol AD Engine** | **58/58** C11 Moonlab tests (`-Wall -Wextra -Werror`, ASan/UBSan + 500/500 fuzz, strict hex/`NaN`/Shamir/LE64 hardening), **17/17** Node 25 tests (bit-exact C11 ↔ OpenSSL 3.5.5 ML-KEM-768 interop, RFC-6479 bounded sliding-window CW-128 + IP-map DoS cap, live execution of all 4 Eshkol v1.3.6 AD modules to `<1e-12` with DoS budget, non-empty Rosette-Wire receipts), **14/14** pytest (incl. negative Lean kernel rejection & manifest/Atlas sync), **42/42** HTTP-200 citations (**32/32** DOIs Crossref-verified not retracted), pre-registered 30-seed paired benchmark (`p_Holm = 3.73e-9`, bounded bootstrap 95% CIs). | [`native/`](native/), [`node/`](node/), [`eshkol/`](eshkol/), [`python/`](python/) |
 
 ---
 
@@ -76,7 +76,7 @@ $ cd lean && lake build && lake env lean VerifyAxioms.lean
 # 1. Build & test the native C11 Moonlab cryptographic core (58/58 tests)
 make -C native test
 
-# 2. Run Node.js 25 differential, ML-KEM interop, anti-replay CW-128 & live Eshkol AD suite (16/16 tests)
+# 2. Run Node.js 25 differential, ML-KEM interop, anti-replay CW-128 & live Eshkol AD suite (17/17 tests)
 node node/tests/test_secmesh_v2.mjs
 
 # 3. Run the interactive quickstart demo & emit a Rosette-Wire audit bundle
@@ -87,7 +87,7 @@ node node/src/secmesh-cli.mjs audit
 cd lean && lake build && lake env lean VerifyAxioms.lean
 cd .. && python scripts/check_readme_axioms.py
 
-# 5. Run exact Python verification, pytest (13/13), ruff, mypy & citation+retraction check (42/42)
+# 5. Run exact Python verification, pytest (14/14), ruff, mypy & citation+retraction check (42/42)
 python python/secmesh_verify/exact_audit.py
 pytest python/tests/test_all.py -v
 python scripts/check_citations.py

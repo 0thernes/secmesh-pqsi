@@ -1,6 +1,6 @@
 # Multi-Kernel Lean 4.35.0 Clean-Room Verification Audit (All 6 Distinct Kernel Implementations)
 Date: 2026-11-25
-Version: secmesh-pqsi v2.2.0
+Version: secmesh-pqsi v2.3.0
 Toolchain: leanprover/lean4:v4.35.0 (zero Mathlib, zero external Lake dependencies)
 Core Linters: autoImplicit=false, relaxedAutoImplicit=false, linter.unusedVariables=true, linter.deprecated=true
 Source inventory: 15 .lean files:

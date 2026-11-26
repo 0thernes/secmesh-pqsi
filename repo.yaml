@@ -33,8 +33,8 @@ items:
   A05: {status: done, evidence: "app/index.html interactive console & paper/figures/*.pdf"}
   A06: {status: done, evidence: "LICENSE (Apache-2.0), LICENSE-DOCS (CC-BY-4.0), REUSE.toml, native/third_party/moonlab/LICENSE-MOONLAB (MIT)"}
   A07: {status: done, evidence: "CHANGELOG.md"}
-  A08: {status: done, evidence: "VERSION 2.2.0 synced with CHANGELOG.md, CITATION.cff, .zenodo.json, package.json, pyproject.toml, formalization.yaml"}
-  A09: {status: done, evidence: "native/tests/test_native_core.c (58/58), node/tests/test_secmesh_v2.mjs (16/16), python/tests/test_all.py (13/13)"}
+  A08: {status: done, evidence: "VERSION 2.3.0 synced & pytest-enforced across CHANGELOG.md, CITATION.cff, .zenodo.json, package.json, pyproject.toml, sbom.cdx.json, lean/lakefile.toml, formalization.yaml"}
+  A09: {status: done, evidence: "native/tests/test_native_core.c (58/58), node/tests/test_secmesh_v2.mjs (17/17), python/tests/test_all.py (14/14)"}
   A10: {status: done, evidence: ".github/workflows/ci.yml (informational Ubuntu + Windows matrix)"}
   A11: {status: done, evidence: ".github/workflows/release.yml triggered on v* tags"}
   A12: {status: done, evidence: ".gitignore"}
@@ -75,7 +75,7 @@ items:
   B02: {status: done, evidence: "lean/lean-toolchain, requirements.lock.txt, pyproject.toml, package.json, UPSTREAM_COMMIT.txt"}
   B03: {status: done, evidence: "Deterministic seeded Node/Python runs, exact integer Lean proofs, Rosette-Wire canonical SHA-256 bundles"}
   B04: {status: done, evidence: "CLAIMS.md numbered claims ledger with 4 status tiers"}
-  B05: {status: done, evidence: "58 C11 + 16 Node + 13 Python pytest tests covering C1-C14"}
+  B05: {status: done, evidence: "58 C11 + 17 Node + 14 Python pytest tests covering C1-C14"}
   B06: {status: done, evidence: "Negative/adversarial tests: FO tamper reject, SP 800-90B stuck-at reject, Parked Eve reject, CW-128 forge & RFC-6479 stale-window replay reject, Compress_1 e=+832 failure & live Lean kernel false-claim rejection, Shamir duplicate-x/x=0/overflow/n<t+2b refusal, NaN/asymmetric-Ising/NULL guards"}
   B07: {status: done, evidence: "Regression tests for all 10 legacy SecMesh v1 defects in node/tests/test_secmesh_v2.mjs and python/tests/test_all.py"}
   B08: {status: done, evidence: "results/lean_axioms.txt, results/exact_verification_report.json, rosette/latest-audit/, MANIFEST.sha256"}
@@ -115,4 +115,4 @@ items:
   B42: {status: done, evidence: "CLAIMS.md What Would Prove Us Wrong section"}
   B43: {status: done, evidence: "REPLICATION.md"}
   B44: {status: partial, note: "Clean-room self-replication verified on Windows + live Ubuntu CI; independent external second-person replication open"}
-  B45: {status: done, evidence: "docs/reviews/01-10-pass-review.md and HARDENING_LOG.md (8 full cycles); external journal peer review pending"}
+  B45: {status: done, evidence: "docs/reviews/01-10-pass-review.md and HARDENING_LOG.md (9 full cycles); external journal peer review pending"}

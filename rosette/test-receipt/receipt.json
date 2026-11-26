@@ -2,7 +2,7 @@
   "schema": "rosette-wire/receipt/v1",
   "compositionId": "unit-test-v2",
   "compositionSha256": "73c5ffbb4bb8a6472eada1ca09d78d7c6538e7e1b43eb7b328ee6c34e2e402c9",
-  "timestampUtc": "2026-11-25T23:13:36.396Z",
+  "timestampUtc": "2026-11-26T01:18:46.798Z",
   "runtime": {
     "node": "v25.8.2",
     "openssl": "3.5.5",

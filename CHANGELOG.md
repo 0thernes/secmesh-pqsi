@@ -2,6 +2,16 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] — 2026-11-25
+
+### Fixed (Cycle 9 Full-Page Visual PDF, CLI/Node Security, Web App Parity & Mega Atlas Hygiene)
+- **Guardian v2 Unbounded Rate-Limiter IP Map DoS (`hole`, `H9.01`):** Capped `rates` Map in `node/src/mesh-guardian-v2.mjs` at `4,096` tracked source IPs with expired-window pruning and fail-closed flood refusal.
+- **C11 CLI Strict Hex Decoding & Float/Unsigned Wrap Guards (`bug`, `H9.02`):** Replaced permissive `sscanf(..., "%2x", ...)` in `native/src/secmesh_cli.c:hex_to_bytes` (which accepted leading whitespace, signs, and trailing non-hex chars) with strict nibble parsing, and added `isfinite` / `[0,1]` QBER bounds checks preventing negative `llround` → `uint64_t` wrap-around and invalid JSON (`nan`/`inf`).
+- **`LIMITATIONS.md` Stale Mega Atlas ID Fix (`error`, `H9.03`):** Corrected leftover `v1.0.0` Atlas IDs in `LIMITATIONS.md:30` (`CS-028` → `CS-030` for Fiat–Shamir, `QC-034` → `QC-004` for qLDPC decoding) and added an automated pytest guard (`test_version_sync_and_no_stale_mega_atlas_ids`, `14/14` pytest) preventing both stale Atlas IDs and cross-manifest version drift forever.
+- **Live GitHub Pages `app/index.html` & `app/blueprint.html` Upgrade (`error`/`gap`, `H9.04`):** Updated both live pages from stale `v2.0` / `25 Theorems` to `v2.3.0` / `27 Theorems · 6 Kernels · 60 Decls`, wired `T7a`/`T7b` + `AdversarialTests (0 ax)` into the interactive SVG DAG in `app/blueprint.html`, and added an interactive **Theorem `T7a` Toner CHSH Monogamy & `T7b` Hiding–Binding Conservation Explorer** card to `app/index.html`.
+- **White Paper I Page 1 & Page 3 Parity (`error`, `H9.05`):** Visual audit of all 18 WP1 pages caught `14 files` → `15 files` in the Page 1 Abstract and aligned Table 1 1-to-1 with `CLAIMS.md` (`C1`–`C14`).
+- **Node Finite-Key `NaN`/Negative Guards, Rosette Empty-Check Refusal & Eshkol DoS Cap (`bug`/`hole`, `H9.06`–`H9.08`):** Hardened `finite-key-v2.mjs` against `NaN` / negative QBER inputs, fixed vacuous `[].every(...) === true` fail-open in `rosette-receipt.mjs`, added step (`100,000`) and depth (`256`) DoS budgets to `eshkol-ad-runtime.mjs`, synced `lean/lakefile.toml` to `2.3.0`, raised `check_readme_axioms.py` threshold to `>= 60`, and expanded Node suite to **`17/17`**.
+
 ## [2.2.0] — 2026-11-25
 
 ### Added (Playbook v1.3 Adversarial Counterexamples & Automated Retraction Audits)

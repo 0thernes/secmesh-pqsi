@@ -27,7 +27,7 @@ export function binEntropy(p) {
  * Matches Tsotchke Moonlab qrng_di_min_entropy_from_chsh().
  */
 export function minEntropyDI(S) {
-  if (S <= 2) return 0;
+  if (!Number.isFinite(S) || S <= 2) return 0;
   if (S >= TSIRELSON) return 1;
   const inside = Math.max(0, 2 - (S * S) / 4);
   return Math.max(0, Math.min(1, 1 - Math.log2(1 + Math.sqrt(inside))));
@@ -39,7 +39,7 @@ export function minEntropyDI(S) {
  * Strictly dominates minEntropyDI(S) on (2, 2*sqrt(2)) (Theorem T1c).
  */
 export function vonNeumannEntropyDI(S) {
-  if (S <= 2) return 0;
+  if (!Number.isFinite(S) || S <= 2) return 0;
   if (S >= TSIRELSON) return 1;
   const inside = Math.max(0, (S / 2) ** 2 - 1);
   const p = (1 + Math.sqrt(inside)) / 2;
@@ -75,7 +75,18 @@ function bernoulliKlNats(p, q) {
  *   P(Bin(m, q) <= m * qberHat) <= exp(-m * D_KL(qberHat || q)) <= epsQBER
  */
 export function qberUpperBound(errors, sampleSize, epsQBER) {
-  if (sampleSize <= 0) return { qberHat: 1, qberUB: 0.5 };
+  if (
+    !Number.isFinite(errors) ||
+    !Number.isFinite(sampleSize) ||
+    !Number.isFinite(epsQBER) ||
+    sampleSize <= 0 ||
+    errors < 0 ||
+    errors > sampleSize ||
+    epsQBER <= 0 ||
+    epsQBER >= 1
+  ) {
+    return { qberHat: 1, qberUB: 0.5 };
+  }
   const qberHat = errors / sampleSize;
   if (qberHat >= 0.5) return { qberHat, qberUB: 0.5 };
   const rhs = Math.log(1 / epsQBER) / sampleSize;
@@ -108,7 +119,21 @@ export function evaluateFiniteKeyV2({
   mode = 'di_min_entropy',
   minKeyBits = 256,
 }) {
-  if (!Number.isFinite(epsTotal) || epsTotal <= 0 || epsTotal >= 1 || nKey <= 0) {
+  if (
+    !Number.isFinite(S) ||
+    !Number.isFinite(epsTotal) ||
+    !Number.isFinite(ecEfficiency) ||
+    !Number.isFinite(nKey) ||
+    !Number.isFinite(qberSample) ||
+    !Number.isFinite(qberErrors) ||
+    epsTotal <= 0 ||
+    epsTotal >= 1 ||
+    nKey <= 0 ||
+    qberSample < 0 ||
+    qberSample > nKey ||
+    qberErrors < 0 ||
+    qberErrors > qberSample
+  ) {
     return { admitted: false, certBits: 0, sLB: 2, qberHat: 1, qberUB: 0.5 };
   }
   const epsPE = epsTotal / 5;

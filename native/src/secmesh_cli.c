@@ -18,13 +18,22 @@ static void print_hex(const uint8_t *buf, size_t len) {
     for (size_t i = 0; i < len; i++) printf("%02x", buf[i]);
 }
 
+static int hex_nibble(char c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return -1;
+}
+
 static int hex_to_bytes(const char *hex, uint8_t *out, size_t max_len) {
+    if (!hex || !out) return -1;
     size_t hlen = strlen(hex);
     if ((hlen & 1u) || (hlen / 2u) > max_len) return -1;
     for (size_t i = 0; i < hlen / 2u; i++) {
-        unsigned int v = 0;
-        if (sscanf(hex + 2 * i, "%2x", &v) != 1) return -1;
-        out[i] = (uint8_t)v;
+        int hi = hex_nibble(hex[2 * i]);
+        int lo = hex_nibble(hex[2 * i + 1]);
+        if (hi < 0 || lo < 0) return -1;
+        out[i] = (uint8_t)((hi << 4) | lo);
     }
     return (int)(hlen / 2u);
 }
@@ -101,6 +110,11 @@ static int cmd_finite_key(int argc, char **argv) {
     in.eps_total     = (argc > 5) ? atof(argv[5]) : 1e-6;
     in.use_di_min_ent = (argc > 6) ? atoi(argv[6]) : 1;
     in.ec_efficiency  = 1.16;
+    if (!isfinite(in.chsh_s) || !isfinite(qber_in) || qber_in < 0.0 || qber_in > 1.0 ||
+        !isfinite(in.eps_total) || in.eps_total <= 0.0 || in.eps_total >= 1.0) {
+        fprintf(stderr, "Invalid finite-key numeric arguments\n");
+        return 2;
+    }
 
     /* Balanced 3-basis E91 split: 4/9 in CHSH cells (1/9 each), 1/9 in (0,0) key cell */
     uint64_t per_cell = n_total / 9ULL;
@@ -128,6 +142,10 @@ static int cmd_qgt(int argc, char **argv) {
     double theta = (argc > 2) ? atof(argv[2]) : 1.0471975511965976; /* pi/3 */
     double phi   = (argc > 3) ? atof(argv[3]) : 0.7853981633974483; /* pi/4 */
     double alpha = (argc > 4) ? atof(argv[4]) : 0.7853981633974483; /* pi/4 = singlet */
+    if (!isfinite(theta) || !isfinite(phi) || !isfinite(alpha)) {
+        fprintf(stderr, "Invalid QGT numeric arguments\n");
+        return 2;
+    }
     secmesh_qgt_result_t r;
     secmesh_qgt_entangled_manifold(theta, phi, alpha, &r);
     printf("{\"op\":\"qgt_entangled\",\"theta\":%.12f,\"phi\":%.12f,\"alpha\":%.12f,"
@@ -192,6 +210,10 @@ static int cmd_entropy_status(void) {
 static int cmd_chern_law(int argc, char **argv) {
     double alpha = (argc > 2) ? atof(argv[2]) : 0.7853981633974483; /* pi/4 */
     uint32_t nq  = (argc > 3) ? (uint32_t)strtoul(argv[3], NULL, 10) : 8u;
+    if (!isfinite(alpha) || nq == 0u) {
+        fprintf(stderr, "Invalid chern-law arguments\n");
+        return 2;
+    }
     secmesh_chern_ghz_result_t r;
     secmesh_chern_concurrence_ghz(alpha, nq, &r);
     printf("{\"op\":\"chern_concurrence_ghz\",\"alpha\":%.12f,\"n_qubits\":%u,"
@@ -212,6 +234,10 @@ static int cmd_ising_barrier(int argc, char **argv) {
     double jv   = (argc > 4) ? atof(argv[4]) : 1.0;
     double phi  = (argc > 5) ? atof(argv[5]) : 2.0;
     double hv   = (argc > 6) ? atof(argv[6]) : 0.7;
+    if (!isfinite(jv) || !isfinite(phi) || !isfinite(hv) || jv < 0.0 || phi < 0.0 || hv < 0.0) {
+        fprintf(stderr, "Invalid ising-barrier arguments\n");
+        return 2;
+    }
     secmesh_ising_barrier_t b;
     secmesh_ising_eval_expander_barrier(n, k, jv, phi, hv, &b);
     printf("{\"op\":\"ising_expander_barrier\",\"n_nodes\":%u,\"compromised_k\":%u,"

@@ -110,6 +110,7 @@ export function createHardenedGuardian({
     recent: [],
   };
   const rates = new Map();
+  const MAX_TRACKED_IPS = 4096;
   const seenCwSeqs = createReplayWindow(4096n);
   const activeTcpSockets = new Set();
   let liveConns = 0;
@@ -127,9 +128,18 @@ export function createHardenedGuardian({
 
   const allowRate = (src) => {
     const now = Date.now();
-    let arr = rates.get(src);
-    if (!arr) { arr = []; rates.set(src, arr); }
     const win = now - 1000;
+    let arr = rates.get(src);
+    if (!arr) {
+      if (rates.size >= MAX_TRACKED_IPS) {
+        for (const [ip, ts] of rates) {
+          if (ts.length === 0 || ts[ts.length - 1] <= win) rates.delete(ip);
+        }
+        if (rates.size >= MAX_TRACKED_IPS) return false; // fail-closed under distributed IP flood
+      }
+      arr = [];
+      rates.set(src, arr);
+    }
     while (arr.length && arr[0] <= win) arr.shift();
     if (arr.length >= rateLimitPerSec) return false;
     arr.push(now);

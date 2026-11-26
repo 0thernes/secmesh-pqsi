@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecMesh-PQSI v2.0 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
+<title>SecMesh-PQSI v2.3.0 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
 <style>
   :root {
     --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
@@ -43,9 +43,9 @@
 <body>
 <header>
   <div>
-    <h1>⬡ SecMesh-PQSI v2.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
+    <h1>⬡ SecMesh-PQSI v2.3.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
     <div style="margin-top:0.3rem">
-      <span class="badge good">Lean 4.35 · 25 Theorems · 6 Kernels</span>
+      <span class="badge good">Lean 4.35 · 27 Theorems · 6 Kernels · 60 Decls</span>
       <span class="badge">Moonlab FIPS 203 + QGTL + libirrep + BB144</span>
       <span class="badge"><a href="blueprint.html" style="color:inherit;text-decoration:none">Interactive Proof Blueprint →</a></span>
       <span class="badge warn">Browser Mode: Client-Side Analytic Simulator (No Physical QKD)</span>
@@ -134,10 +134,33 @@
       <tbody id="bwRows"></tbody>
     </table>
   </section>
+
+  <!-- 4. Theorem T7a Toner CHSH Monogamy & T7b Hiding-Binding Conservation Explorer -->
+  <section class="card wide">
+    <h2>4. Theorem T7a Toner Quantum CHSH Monogamy &amp; T7b Commitment Conservation</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem">
+      <div>
+        <label for="inSAB">Alice–Bob CHSH |S_AB| <span id="lblSAB">2.600</span></label>
+        <input id="inSAB" type="range" min="0" max="2.8284" step="0.01" value="2.60">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="lbl">Max Eve |S_AE| (T7a)</div><div id="kSAE" class="val good">—</div></div>
+          <div class="kpi"><div class="lbl">Eve Trapped &lt; 2?</div><div id="kEveTrap" class="val good">—</div></div>
+        </div>
+      </div>
+      <div>
+        <label for="inTV">Commitment Statistical Hiding TV(P₀, P₁) <span id="lblTV">0.100</span></label>
+        <input id="inTV" type="range" min="0" max="1.0" step="0.01" value="0.10">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="lbl">Forced Equivocation Overlap (T7b)</div><div id="kOverlap" class="val warn">—</div></div>
+          <div class="kpi"><div class="lbl">Conservation TV + Overlap</div><div id="kConsT7b" class="val violet">1.0000</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  SecMesh-PQSI v2.0 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, Rosette-Wire &amp; pq-consensus-bandwidth stack.
+  SecMesh-PQSI v2.3.0 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, spin_based_neural_network, Rosette-Wire &amp; pq-consensus-bandwidth stack.
 </footer>
 
 <script>
@@ -316,9 +339,24 @@ function update() {
     const totalMB = (edges * p.rt) / 1e6;
     return `<tr><td>${p.name}</td><td>${p.oneWay.toLocaleString()}</td><td>${p.rt.toLocaleString()}</td><td>${totalMB.toFixed(2)} MB</td><td>${ceil.toLocaleString()}</td><td>${p.pq}</td><td>${p.psi}</td></tr>`;
   }).join('');
+
+  // T7a Toner CHSH Monogamy & T7b Commitment Conservation
+  const sAB = parseFloat(document.getElementById('inSAB').value);
+  const maxSAE = Math.sqrt(Math.max(0, 8 - sAB * sAB));
+  document.getElementById('lblSAB').textContent = sAB.toFixed(3);
+  document.getElementById('kSAE').textContent = maxSAE.toFixed(4);
+  const trapEl = document.getElementById('kEveTrap');
+  trapEl.textContent = sAB > 2.0 ? 'YES (Classical)' : 'NO (Bell ≤ 2)';
+  trapEl.className = 'val ' + (sAB > 2.0 ? 'good' : 'bad');
+
+  const tv = parseFloat(document.getElementById('inTV').value);
+  const overlap = Math.max(0, 1 - tv);
+  document.getElementById('lblTV').textContent = tv.toFixed(3);
+  document.getElementById('kOverlap').textContent = overlap.toFixed(4);
+  document.getElementById('kConsT7b').textContent = (tv + overlap).toFixed(4);
 }
 
-for (const id of ['inS', 'inN', 'inQ', 'inAlpha', 'inTheta', 'inMbps', 'inPeers']) {
+for (const id of ['inS', 'inN', 'inQ', 'inAlpha', 'inTheta', 'inMbps', 'inPeers', 'inSAB', 'inTV']) {
   document.getElementById(id).addEventListener('input', update);
 }
 update();

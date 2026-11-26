@@ -27,7 +27,7 @@ import {
   sealRecord,
   openRecord,
 } from '../src/pqsi-handshake.mjs';
-import { evaluateEshkolFile } from '../src/eshkol-ad-runtime.mjs';
+import { evaluateEshkolFile, evaluateEshkolSource } from '../src/eshkol-ad-runtime.mjs';
 import {
   TSIRELSON,
   P_ANTI_EXACT,
@@ -347,6 +347,47 @@ await test('Security: Bounded RFC-6479 CW-128 Sliding Replay Window rejects stal
   // Stale below-window sequence (seq=5 <= 20 - 8 = 12) MUST be rejected even after eviction!
   const stale = sealCwFrame(r, padSeed, 5n, Buffer.from('MSG-5'));
   assert.equal(verifyCwFrame(stale, r, padSeed, win).reason, 'cw-replay-reject');
+});
+
+await test('Security Cycle 9: Strict CLI hex/NaN guards, fail-closed finite-key, Rosette non-empty checks & Eshkol DoS cap', () => {
+  // 1. Native C11 CLI must reject non-hex / whitespace-padded hex in mlkem-encaps (H9.02)
+  assert.throws(() => {
+    execFileSync(NATIVE_BIN, ['mlkem-encaps', ' 0'.repeat(1184), '00'.repeat(32)], { stdio: 'pipe' });
+  });
+  assert.throws(() => {
+    execFileSync(NATIVE_BIN, ['mlkem-encaps', 'aZ'.repeat(1184), '00'.repeat(32)], { stdio: 'pipe' });
+  });
+  // 2. Native C11 CLI must reject negative or NaN QBER (H9.02)
+  assert.throws(() => {
+    execFileSync(NATIVE_BIN, ['finite-key', '2.828', '450000', '-0.5', '1e-6', '1'], { stdio: 'pipe' });
+  });
+  // 3. Node finite-key fails closed on NaN CHSH and negative qberErrors (H9.06)
+  assert.equal(minEntropyDI(Number.NaN), 0);
+  assert.equal(vonNeumannEntropyDI(Number.NaN), 0);
+  const badFk = evaluateFiniteKeyV2({
+    S: 2.828,
+    cnts: [50000, 50000, 50000, 50000],
+    nKey: 50000,
+    qberErrors: -1,
+    qberSample: 10000,
+    epsTotal: 1e-6,
+  });
+  assert.equal(badFk.admitted, false);
+  assert.equal(badFk.certBits, 0);
+  // 4. Rosette-Wire bundle refuses empty checks[] array (H9.07)
+  const emptyBundle = createRosetteBundle({
+    compositionId: 'empty-check-reject-test',
+    components: ['test'],
+    inputs: {},
+    outputs: {},
+    checks: [],
+    outDir: null,
+  });
+  assert.equal(emptyBundle.verification.verdict, 'REFUSED');
+  // 5. Eshkol AD runtime enforces recursion depth / step budget DoS cap (H9.08)
+  assert.throws(() => {
+    evaluateEshkolSource('(define (loop x) (loop (+ x 1))) (loop 0)');
+  }, /budget|depth/);
 });
 
 console.log(`=== Node.js Suite Summary: ${passed}/${passed} passed ===`);

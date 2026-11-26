@@ -2,7 +2,7 @@
 
 Author: Alexander S. Donahue (Independent Researcher, Spokane, WA, USA; ORCID 0009-0006-8168-9648; 0_0@0thernes.art)
 License: Apache-2.0 (code), MIT (vendored native/third_party/moonlab), CC-BY-4.0 (manuscripts & docs)
-Version: 2.2.0 (2026-11-25)
+Version: 2.3.0 (2026-11-25)
 
 ## 1. Summary of 27 Machine-Checked Lean 4.35.0 Theorems
 - T1a (`t1a_v1_tsirelson_violation`, 0 axioms): Legacy SecMesh v1 `CELL_P=[0.146,0.854]` gives expected `S = 354/125 = 2.832 > 2*sqrt(2)` (`354^2 - 8*125^2 = 316`).
@@ -38,5 +38,5 @@ All 6 distinct Lean 4.35.0 kernel implementations in Ubuntu CI (`lake comparator
 
 ## 3. Executable Verification Summary
 - Native C11 (`native/build/test_native_core`): 58/58 passed (`-std=c11 -D_DEFAULT_SOURCE -O2 -Wall -Wextra -Werror`, GCC 16.1.0, incl. Shamir duplicate-`x`/`x=0`/DFS-cap, LE64 portability, NULL/`NaN`/asymmetric-Ising guards) + 500/500 standalone fuzz inputs passed.
-- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 16/16 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop, live 25,007 B lattice-hedged PQSI handshake, RFC-6479 bounded sliding-window anti-replay CW-128 & collision-free UDP Guardian v2, `T6b` XOR closure, and live forward-mode dual-number AD execution of all 4 Eshkol `.esk` modules via `node/src/eshkol-ad-runtime.mjs`.
-- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `scripts/check_readme_axioms.py`, `ruff`, `mypy`, `check_citations.py --online`): 13/13 pytest passed (incl. live Lean kernel false-claim rejection), 0 ruff errors, 0 mypy errors, 42/42 live citations HTTP 200 (32/32 DOIs Crossref-verified not retracted).
+- Node.js 25 (`node/tests/test_secmesh_v2.mjs`): 17/17 passed, including bit-exact C11 Moonlab <-> OpenSSL 3.5.5 FIPS 203 ML-KEM-768 interop, live 25,007 B lattice-hedged PQSI handshake, RFC-6479 bounded sliding-window anti-replay CW-128 & bounded IP rate-limit Guardian v2, strict CLI hex/`NaN` refusal, non-empty Rosette receipts, `T6b` XOR closure, and live forward-mode dual-number AD execution (with step/depth DoS caps) of all 4 Eshkol `.esk` modules via `node/src/eshkol-ad-runtime.mjs`.
+- Python (`pytest python/tests/test_all.py`, `exact_audit.py`, `scripts/check_readme_axioms.py`, `ruff`, `mypy`, `check_citations.py --online`): 14/14 pytest passed (incl. live Lean kernel false-claim rejection & manifest/Atlas sync guard), 0 ruff errors, 0 mypy errors, 42/42 live citations HTTP 200 (32/32 DOIs Crossref-verified not retracted).

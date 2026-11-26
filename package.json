@@ -1,6 +1,6 @@
 {
   "name": "secmesh-pqsi",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Post-Quantum & Post-Super-Intelligence (Information-Theoretic) Cryptographic Mesh Defense Suite with Six-Kernel Lean 4.35 Proofs",
   "type": "module",
   "license": "Apache-2.0",

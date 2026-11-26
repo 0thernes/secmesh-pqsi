@@ -39,8 +39,8 @@ def normalize_axioms(text: str) -> dict[str, str]:
 
 def validate_entries(entries: dict[str, str], readme_entries: dict[str, str]) -> list[str]:
     errors: list[str] = []
-    if len(entries) < 56:
-        errors.append(f"expected >= 56 declarations in {AXIOMS_FILE}, got {len(entries)}")
+    if len(entries) < 60:
+        errors.append(f"expected >= 60 declarations in {AXIOMS_FILE}, got {len(entries)}")
     for decl, rest in entries.items():
         if rest == "does not depend on any axioms":
             continue

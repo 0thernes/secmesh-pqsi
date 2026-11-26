@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecMesh-PQSI v2.0 — Lean 4.35 Formal Proof Blueprint &amp; Dependency Graph</title>
+<title>SecMesh-PQSI v2.3.0 — Lean 4.35 Formal Proof Blueprint &amp; Dependency Graph</title>
 <style>
   :root {
     --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
@@ -37,9 +37,9 @@
 <body>
 <header>
   <div>
-    <h1>⬡ SecMesh-PQSI v2.0 — Zero-Mathlib Lean 4.35.0 Formal Proof Blueprint</h1>
+    <h1>⬡ SecMesh-PQSI v2.3.0 — Zero-Mathlib Lean 4.35.0 Formal Proof Blueprint</h1>
     <div style="margin-top:0.25rem">
-      <span class="pill">25 / 25 Theorems Proved</span>
+      <span class="pill">27 / 27 Theorems + 4 Adversarial Counterexamples (60 Audited Decls)</span>
       <span class="pill">All 6 Kernels (Palomar Comparator)</span>
       <span class="pill zero">0 Mathlib · 0 Proof Sorry · 0 native_decide</span>
     </div>
@@ -84,6 +84,9 @@
         <path d="M 390 315 L 720 315"/>
         <path d="M 860 315 L 945 235"/>
         <path d="M 155 385 L 945 248"/>
+        <path d="M 465 385 L 945 252"/>
+        <path d="M 700 385 L 945 256"/>
+        <path d="M 885 385 L 945 260"/>
       </g>
       <!-- Family T1 -->
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/FiniteKey.lean">
@@ -179,6 +182,11 @@
         <rect x="490" y="362" width="210" height="46" rx="8" fill="#0f2922" stroke="#34d399" stroke-width="2"/>
         <text x="595" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">T7b Commitment No-Go</text>
         <text x="595" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">TV(P₀,P₁) + Overlap = 1</text>
+      </a>
+      <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/SecMeshPQSI/AdversarialTests.lean">
+        <rect x="725" y="362" width="160" height="46" rx="8" fill="#0d2238" stroke="#38bdf8" stroke-width="2"/>
+        <text x="805" y="382" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">AdversarialTests (0 ax)</text>
+        <text x="805" y="398" text-anchor="middle" fill="#8ea0ba" font-size="10">4 Sharp Counterexamples</text>
       </a>
       <!-- Master Conjunction -->
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/Solution.lean">
