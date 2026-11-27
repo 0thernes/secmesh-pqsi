@@ -2,6 +2,13 @@
 
 All notable changes to `secmesh-pqsi` follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
+## [3.0.1] — 2026-11-26
+
+### Fixed (2026-11-26 Statement Audit Integration, Ubuntu `dudect` Timing Harness & Blocking Linters)
+- **Ubuntu Linux `dudect` Constant-Time Harness Serialization (`native/tests/test_const_time.c`):** Eliminated x86_64 store-buffer bleed and `b0`/`b1` page-aliasing asymmetry that triggered a false-positive `|t| = 12.451` on `secmesh_ct_memeq(512B)` on Ubuntu CI (`45913454804`) despite verified branchless assembly (`movzbl/xor/or/sub/shr`). Upgraded `now_ticks()` to `mfence; lfence; rdtsc`, added `_Alignas(64)` identical-address branchless setup (`rhs[0] ^= (0 - cls)`), Fisher–Yates balanced schedule, and full 4-primitive warmup (**4/4 PASS** on both Windows and Linux).
+- **2026-11-26 Statement Audit Merge (`README.md`, `CLAIMS.md`, `ERRATA.md`, `LIMITATIONS.md`, `CITATION.cff`, `lean/formalization.yaml`, `paper/brief/secmesh_pqsi_nist_brief.tex`, `app/`):** Merged `origin/main` commits `e0892ed`..`2c18c57` cleanly into the Levels 1–3 release line and aligned the 3-page NIST Executive Brief, `.zenodo.json`, `ROADMAP.md`, and web console with `FORMAL_INVARIANT_SUITE` scope ("6 kernel runs across 5 distinct implementations", Jakob–Bergou / Sjöqvist continuous complementarity on `T4d`, Toner–Verstraete 2006 on `T7a`, van de Graaf spelling, FIPS 203 `Compress_1` offset note, topical Mega Atlas links).
+- **Blocking Python Linters & Build Hygiene (`.github/workflows/ci.yml`, `.gitignore`, `sbom.cdx.json`):** Removed `|| true` from `ruff` and `mypy` CI steps (closing `ERRATA.md` Tooling item 1), added `paper/brief/build/` to `.gitignore`, untracked accidental `paper/brief/build/secmesh_pqsi_nist_brief.pdf`, and synced `sbom.cdx.json` `purl` + all 8 version manifests to `3.0.1`.
+
 ## [3.0.0] — 2026-11-26
 
 ### Added ("Invincible Onion Artichoke" — Complete Levels 1, 2 & 3 Deployable Cryptographic Stack)

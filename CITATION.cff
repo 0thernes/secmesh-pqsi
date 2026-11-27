@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use SecMesh-PQSI, its Lean 4.35 proofs, or companion white papers, please cite this work as below."
 title: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations and Cryptographic Defense Engine for Post-Quantum and Post-Super-Intelligence Meshes"
-version: "3.0.0"
-date-released: "2026-11-25"
+version: "3.0.1"
+date-released: "2026-11-26"
 type: software
 license: Apache-2.0
 repository-code: "https://github.com/0thernes/secmesh-pqsi"
@@ -28,6 +28,12 @@ abstract: >-
   Clean-room cryptographic refactoring of legacy SecMesh (aff7dc6) rebuilt atop
   Tsotchke's MIT/Apache-2.0 stack (moonlab, QGTL, libirrep, spin_based_neural_network,
   Eshkol, Rosette-Wire, pq-consensus-bandwidth) into a Post-Quantum and
-  Post-Super-Intelligence (information-theoretic) defense suite, backed by 27
-  zero-Mathlib Lean 4.35.0 theorems verified across all six distinct proof kernels
-  via lake comparator --paranoid and two companion AMS-LaTeX white papers.
+  Post-Super-Intelligence (information-theoretic) defense suite, with two companion
+  AMS-LaTeX white papers. It includes 28 zero-Mathlib Lean 4.35.0 theorem statements,
+  checked in 6 kernel runs (5 distinct implementations) via lake comparator --paranoid.
+  The Lean statements are elementary integer, Boolean and polynomial identities and
+  inequalities behind known results (Shamir sharing, Reed-Solomon decoding, ML-KEM
+  parameter arithmetic, the Jakob-Bergou complementarity identity, the final
+  Cauchy-Schwarz step of Toner-Verstraete CHSH monogamy, classical Fuchs-van de Graaf
+  bounds); their quantum, probabilistic and protocol readings are paper-level. The
+  Lean Compress_1 model differs from FIPS 203 at x = 832 (see ERRATA.md).

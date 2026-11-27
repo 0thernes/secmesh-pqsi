@@ -24,7 +24,7 @@ Reproduced by `./native/build/secmesh_core bandwidth 100000000 1.0` and `node ex
 | Node.js 25 Differential + Interop + Anti-Replay + Eshkol AD (`test_secmesh_v2.mjs`) | `~1.3 s` | `19/19` |
 | Python Exact Audit + Pytest (`exact_audit.py` + `pytest`) | `~3.2 s` | `15/15` |
 | Zero-Mathlib Lean 4.35.0 Clean Build (`lake build`, 18 jobs) | `~25 s` | `28/28` theorems + `5` adv. |
-| Six-Kernel Palomar Replay (5 local Windows + all 6 Ubuntu CI `lake comparator --paranoid`) | `~45 s` | `3,713 / 3,764` decls |
+| Multi-Kernel Palomar Replay (5 local Windows implementations + 6 Ubuntu CI `lake comparator --paranoid` runs with 5 distinct implementations) | `~45 s` | `3,713 / 3,764` decls (local); CI run 45745957907 logged `3,713` and `3,771` |
 
 ## 3. Pre-Registered 30-Seed Simulated Mesh Defense Summary
 

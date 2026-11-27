@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecMesh-PQSI v3.0.0 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
+<title>SecMesh-PQSI v3.0.1 — Post-Quantum &amp; Post-Super-Intelligence Defense Console</title>
 <style>
   :root {
     --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
@@ -45,10 +45,10 @@
 <body>
 <header>
   <div>
-    <h1>⬡ SecMesh-PQSI v3.0.0 — Cryptographic Defense &amp; Formal Verification Console</h1>
+    <h1>⬡ SecMesh-PQSI v3.0.1 — Cryptographic Defense &amp; Formal Verification Console</h1>
     <div style="margin-top:0.3rem">
-      <span class="badge good">Lean 4.35 · 28 Theorems · 6 Kernels · 63 Decls</span>
-      <span class="badge">Moonlab FIPS 203 + QGTL + libirrep + BB144</span>
+      <span class="badge good">Lean 4.35 · 28 Invariant Statements · 6 Kernel Runs (5 Impls) · 63 Decls</span>
+      <span class="badge">Levels 1–3 Onion-Artichoke + Moonlab FIPS 203 + QGTL + BB144</span>
       <span class="badge"><a href="blueprint.html" style="color:inherit;text-decoration:none">Interactive Proof Blueprint →</a></span>
       <span class="badge warn">Browser Mode: Client-Side Analytic Simulator (No Physical QKD)</span>
     </div>
@@ -61,7 +61,7 @@
 <main>
   <section class="card wide">
     <div class="notice">
-      <strong>Epistemic Honesty Boundary:</strong> This browser console evaluates exact closed-form mathematics (Composable Finite-Key DI-QKD Gate v2 vs. defective legacy SecMesh v1, QGTL Concurrence Surplus Theorem T4b, Topological Chern–Concurrence–Entropy Law T4d, Ising Cheeger Expander Barrier T6a, and K<sub>N</sub> Post-Quantum Wire-Bandwidth Ceilings T5d). Real cryptographic key exchange (X25519 + ML-KEM-768 + Ed25519 + ML-DSA-65 + SLH-DSA-128s + anti-replay GF(2<sup>128</sup>) Carter–Wegman IT-MAC) runs in the native C11 and Node.js 25 CLI engines; software simulation never substitutes for physical photonic QKD hardware.
+      <strong>Epistemic Honesty Boundary (2026-11-26 Statement Audit):</strong> This browser console evaluates exact closed-form mathematics (Composable Finite-Key DI-QKD Gate v2 vs. defective legacy SecMesh v1, QGTL Concurrence Surplus T4b, Jakob–Bergou Curvature–Concurrence Complementarity T4d, Ising Laplacian / Contagion Work T6a, and K<sub>N</sub> Post-Quantum Wire-Bandwidth Ceilings T5d). Lean 4.35 checks elementary integer/Boolean/polynomial cores (<code>FORMAL_INVARIANT_SUITE</code>); physical and protocol readings are paper-level (see <code>CLAIMS.md</code> and <code>ERRATA.md</code>). Live Levels 1–3 cryptography (6-algo Argon2id vault, PQ Double-Ratchet, 3-hop onion router, UDP L3 mesh VPN) runs in the native C11 and Node.js 25 CLI engines; software simulation never substitutes for physical photonic QKD hardware.
     </div>
   </section>
 
@@ -88,9 +88,9 @@
     <canvas id="cvEnt" aria-label="Pironio DI min-entropy vs Acin-Pironio von Neumann entropy curve"></canvas>
   </section>
 
-  <!-- 2. QGTL Concurrence Surplus & Chern-Entropy Witness (Theorems T4b & T4d) -->
+  <!-- 2. QGTL Concurrence Surplus & Curvature-Concurrence Complementarity (T4b & T4d) -->
   <section class="card">
-    <h2>2. QGTL Surplus &amp; Chern–Monopole Witness (T4b / T4d)</h2>
+    <h2>2. QGTL Surplus &amp; Curvature–Concurrence Complementarity (T4b / T4d)</h2>
     <label for="inAlpha">Entanglement Angle α (0=Separable, π/4=Singlet) <span id="lblAlpha">0.785</span></label>
     <input id="inAlpha" type="range" min="0" max="0.7854" step="0.01" value="0.7854">
 
@@ -139,9 +139,9 @@
     </div>
   </section>
 
-  <!-- 4. Theorem T7a Toner CHSH Monogamy, T7b Commitment Conservation & T7c Fuchs-van de Graaff EFI -->
+  <!-- 4. Toner-Verstraete CHSH Monogamy (T7a), TV+Overlap=1 (T7b) & Classical Fuchs-van de Graaf (T7c) -->
   <section class="card wide">
-    <h2>4. Theorems T7a Toner Monogamy, T7b Commitment Conservation &amp; T7c Quantum Microcrypt EFI</h2>
+    <h2>4. Paper-Level Explorers: Toner–Verstraete Monogamy (T7a), TV+Overlap (T7b) &amp; Fuchs–van de Graaf (T7c)</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%, 260px),1fr));gap:1rem">
       <div>
         <label for="inSAB">Alice–Bob CHSH |S_AB| <span id="lblSAB">2.600</span></label>
@@ -152,10 +152,10 @@
         </div>
       </div>
       <div>
-        <label for="inTV">Commitment Statistical Hiding TV(P₀, P₁) <span id="lblTV">0.100</span></label>
+        <label for="inTV">Statistical Distance TV(P₀, P₁) <span id="lblTV">0.100</span></label>
         <input id="inTV" type="range" min="0" max="1.0" step="0.01" value="0.10">
         <div class="kpi-grid">
-          <div class="kpi"><div class="lbl">Forced Overlap (T7b)</div><div id="kOverlap" class="val warn">—</div></div>
+          <div class="kpi"><div class="lbl">Overlap (T7b)</div><div id="kOverlap" class="val warn">—</div></div>
           <div class="kpi"><div class="lbl">Fuchs–vdG B_max (T7c)</div><div id="kFvdgMax" class="val accent" style="color:var(--accent)">—</div></div>
           <div class="kpi"><div class="lbl">T7b TV + Overlap</div><div id="kConsT7b" class="val violet">1.0000</div></div>
         </div>
@@ -165,7 +165,7 @@
 </main>
 
 <footer>
-  SecMesh-PQSI v3.0.0 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, spin_based_neural_network, Rosette-Wire &amp; pq-consensus-bandwidth stack.
+  SecMesh-PQSI v3.0.1 · Apache-2.0 (Code) / CC-BY-4.0 (Manuscripts) · Built on Tsotchke's Moonlab, QGTL, Eshkol, libirrep, spin_based_neural_network, Rosette-Wire &amp; pq-consensus-bandwidth stack.
 </footer>
 
 <script>

@@ -25,6 +25,7 @@ lean/.lake/
 # LaTeX intermediate build artifacts (keep dist/*.pdf and paper/figures/*.pdf)
 paper/build/
 paper/engineering/build/
+paper/brief/build/
 *.aux
 *.log
 *.out

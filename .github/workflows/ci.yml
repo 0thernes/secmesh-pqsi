@@ -87,8 +87,8 @@ jobs:
           python python/secmesh_verify/exact_audit.py
           pytest python/tests/test_all.py -v
           python scripts/check_readme_axioms.py
-          ruff check python scripts/check_citations.py scripts/check_readme_axioms.py || true
-          mypy python/secmesh_verify scripts/check_citations.py scripts/check_readme_axioms.py --ignore-missing-imports || true
+          ruff check python scripts/check_citations.py scripts/check_readme_axioms.py
+          mypy python/secmesh_verify scripts/check_citations.py scripts/check_readme_axioms.py --ignore-missing-imports
           python scripts/check_citations.py
 
   lean4-multi-kernel:

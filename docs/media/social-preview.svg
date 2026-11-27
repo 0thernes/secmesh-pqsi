@@ -14,9 +14,9 @@
   <rect x="64" y="64" width="1152" height="6" rx="3" fill="url(#acc)"/>
   <text x="64" y="160" fill="#f8fafc" font-family="ui-sans-serif,system-ui,Segoe UI,sans-serif" font-size="64" font-weight="700">SecMesh-PQSI</text>
   <text x="64" y="218" fill="#94a3b8" font-family="ui-sans-serif,system-ui,Segoe UI,sans-serif" font-size="28">Post-Quantum &amp; Post-Super-Intelligence Mesh Cryptography</text>
-  <text x="64" y="290" fill="#e2e8f0" font-family="ui-monospace,Consolas,monospace" font-size="22">27 Zero-Mathlib Lean 4.35 Theorems  ·  6 Independent Proof Kernels  ·  0 Warnings</text>
+  <text x="64" y="290" fill="#e2e8f0" font-family="ui-monospace,Consolas,monospace" font-size="22">28 Zero-Mathlib Lean 4.35 Statements  ·  6 Kernel Runs (5 Implementations)</text>
   <text x="64" y="334" fill="#10b981" font-family="ui-monospace,Consolas,monospace" font-size="22">C11 Moonlab FIPS 203 ML-KEM-768 ↔ OpenSSL 3.5.5 Bit-Exact Interop  ·  CW-128 Anti-Replay</text>
-  <text x="64" y="378" fill="#60a5fa" font-family="ui-monospace,Consolas,monospace" font-size="22">Chern–Concurrence c²+C²=1 · Toner Monogamy S_AB²+S_AE²≤8 · Bravyi [[144,12,12]]</text>
+  <text x="64" y="378" fill="#60a5fa" font-family="ui-monospace,Consolas,monospace" font-size="15">Identity c²+C²=1 (Jakob–Bergou relation) · Cauchy–Schwarz step of Toner–Verstraete S_AB²+S_AE²≤8 · gross-code orthogonality</text>
   <rect x="64" y="450" width="260" height="58" rx="10" fill="#0f2922" stroke="#10b981" stroke-width="2"/>
   <text x="194" y="487" text-anchor="middle" fill="#6ee7b7" font-family="ui-monospace,Consolas,monospace" font-size="20" font-weight="600">64/64 C11 + Fuzz</text>
   <rect x="348" y="450" width="260" height="58" rx="10" fill="#0f2238" stroke="#3b82f6" stroke-width="2"/>

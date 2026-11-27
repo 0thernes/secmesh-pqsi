@@ -2,10 +2,15 @@
  * Copyright (c) 2026 Alexander S. Donahue
  *
  * Dudect-Style Empirical Constant-Time Timing Audit (Reparaz et al., CHES 2017)
- * Measures high-resolution execution timing between Class 0 (fixed all-zero secret)
- * and Class 1 (fresh random secret) with randomized interleaving and outlier cropping,
- * computing Welch's t-statistic for SecMesh-PQSI's branchless C11 crypto primitives:
- *   1. secmesh_ct_memeq (32B secret tag comparison)
+ * Measures high-resolution execution timing between Class 0 and Class 1 using:
+ *   - Balanced Fisher-Yates shuffled class schedule (zero end-tail bias)
+ *   - 64-byte aligned, identical-address branchless setup before timing
+ *   - Full store+load serialization (mfence; lfence; rdtsc on x86_64) so setup
+ *     stores never bleed into the timed measurement window
+ *   - Percentile cropping (2%..90%) stripping OS preemption / turbo spikes
+ *
+ * Audited branchless C11 primitives:
+ *   1. secmesh_ct_memeq (512B secret tag comparison: equal vs mismatch at byte 0)
  *   2. secmesh_gf128_mul (branchless GF(2^128) universal hash field multiply)
  *   3. secmesh_cw_mac_compute (128B Carter-Wegman IT-MAC)
  *   4. moonlab_mlkem768_encaps (FIPS 203 ML-KEM-768 encapsulation)
@@ -29,7 +34,8 @@
 static uint64_t now_ticks(void) {
 #if defined(__x86_64__) || defined(_M_X64)
     uint32_t lo = 0, hi = 0;
-    __asm__ __volatile__("lfence\nrdtsc" : "=a"(lo), "=d"(hi) :: "memory");
+    /* mfence drains prior setup stores (e.g., memcpy) before lfence+rdtsc */
+    __asm__ __volatile__("mfence\nlfence\nrdtsc" : "=a"(lo), "=d"(hi) :: "memory");
     return ((uint64_t)hi << 32) | (uint64_t)lo;
 #elif defined(_WIN32)
     LARGE_INTEGER li;
@@ -54,7 +60,6 @@ static double welch_t_cropped(uint64_t *c0, size_t n0, uint64_t *c1, size_t n1) 
     qsort(c1, n1, sizeof(uint64_t), cmp_u64);
     size_t k0 = (n0 * 90u) / 100u;
     size_t k1 = (n1 * 90u) / 100u;
-    /* Skip bottom 2% and top 10% to strip CPU turbo warmup & OS interrupts */
     size_t s0 = (n0 * 2u) / 100u;
     size_t s1 = (n1 * 2u) / 100u;
     double m0 = 0.0, m1 = 0.0, v0 = 0.0, v1 = 0.0;
@@ -85,6 +90,18 @@ static void fill_prng(uint64_t *s, uint8_t *buf, size_t len) {
     for (size_t i = 0; i < len; i++) buf[i] = (uint8_t)(xorshift64(s) & 0xFFu);
 }
 
+static void build_balanced_schedule(uint8_t *sched, size_t per_class, uint64_t *rng) {
+    size_t total = per_class * 2u;
+    for (size_t i = 0; i < per_class; i++) sched[i] = 0u;
+    for (size_t i = per_class; i < total; i++) sched[i] = 1u;
+    for (size_t i = total - 1u; i > 0; i--) {
+        size_t j = (size_t)(xorshift64(rng) % (i + 1u));
+        uint8_t tmp = sched[i];
+        sched[i] = sched[j];
+        sched[j] = tmp;
+    }
+}
+
 static volatile uint8_t g_sink = 0;
 
 int main(void) {
@@ -92,36 +109,41 @@ int main(void) {
     const size_t N_KEM  = 800;
     uint64_t *t0 = (uint64_t *)calloc(N_FAST, sizeof(uint64_t));
     uint64_t *t1 = (uint64_t *)calloc(N_FAST, sizeof(uint64_t));
-    if (!t0 || !t1) return 2;
+    uint8_t *sched = (uint8_t *)calloc(N_FAST * 2u, sizeof(uint8_t));
+    if (!t0 || !t1 || !sched) return 2;
 
     uint64_t rng = 0x20261126CAFEBABEULL;
     int failures = 0;
 
-    /* Warmup */
-    uint8_t wa[32], wb[32], wo[16];
-    memset(wa, 0x5A, sizeof wa);
-    memset(wb, 0xA5, sizeof wb);
-    for (int i = 0; i < 2000; i++) {
-        secmesh_gf128_mul(wo, wa, wb);
-        g_sink ^= wo[0];
+    /* Warmup all audited primitives to stabilize CPU frequency & instruction cache */
+    {
+        _Alignas(64) uint8_t wa[512], wb[512], wo[16];
+        memset(wa, 0x5A, sizeof wa);
+        memset(wb, 0xA5, sizeof wb);
+        for (int i = 0; i < 3000; i++) {
+            g_sink ^= (uint8_t)secmesh_ct_memeq(wa, wb, sizeof wa);
+            secmesh_gf128_mul(wo, wa, wb);
+            g_sink ^= wo[0];
+        }
     }
 
-    /* 1. secmesh_ct_memeq(512B): equal vs mismatch at byte 0 (same aligned rhs buffer) */
+    /* 1. secmesh_ct_memeq(512B): equal vs mismatch at byte 0 (identical addresses, branchless setup) */
     {
         size_t i0 = 0, i1 = 0;
-        uint8_t a[512], b0[512], b1[512], rhs[512];
-        fill_prng(&rng, a, sizeof a);
-        memcpy(b0, a, sizeof a);
-        memcpy(b1, a, sizeof a);
-        b1[0] ^= 0xFF;
-        while (i0 < N_FAST || i1 < N_FAST) {
-            int cls = (i0 < N_FAST && (i1 >= N_FAST || (xorshift64(&rng) & 1u) == 0)) ? 0 : 1;
-            memcpy(rhs, cls ? b1 : b0, sizeof rhs);
+        _Alignas(64) uint8_t a[512];
+        _Alignas(64) uint8_t rhs[512];
+        build_balanced_schedule(sched, N_FAST, &rng);
+        for (size_t k = 0; k < N_FAST * 2u; k++) {
+            uint8_t cls = sched[k];
+            uint8_t flip = (uint8_t)(0u - cls); /* 0x00 if cls==0, 0xFF if cls==1 */
+            fill_prng(&rng, a, sizeof a);
+            memcpy(rhs, a, sizeof rhs);
+            rhs[0] ^= flip;
             uint64_t s = now_ticks();
             int r = secmesh_ct_memeq(a, rhs, sizeof a);
             uint64_t e = now_ticks();
             g_sink ^= (uint8_t)r;
-            if (cls == 0) t0[i0++] = e - s; else t1[i1++] = e - s;
+            if (cls == 0u) t0[i0++] = e - s; else t1[i1++] = e - s;
         }
         double t = welch_t_cropped(t0, N_FAST, t1, N_FAST);
         int pass = fabs(t) < 10.0; /* CI noisy-VM safe bound; ideal < 4.5 */
@@ -129,21 +151,25 @@ int main(void) {
         if (!pass) failures++;
     }
 
-    /* 2. secmesh_gf128_mul: all-zero secret vs random secret (equal work before rdtsc) */
+    /* 2. secmesh_gf128_mul: all-zero secret vs random secret (branchless identical-address setup) */
     {
         size_t i0 = 0, i1 = 0;
-        uint8_t a[16], z[16], r[16], sec[16], out[16];
-        memset(z, 0, 16);
+        _Alignas(64) uint8_t a[16];
+        _Alignas(64) uint8_t r[16];
+        _Alignas(64) uint8_t sec[16];
+        _Alignas(64) uint8_t out[16];
         fill_prng(&rng, a, 16);
-        while (i0 < N_FAST || i1 < N_FAST) {
-            int cls = (i0 < N_FAST && (i1 >= N_FAST || (xorshift64(&rng) & 1u) == 0)) ? 0 : 1;
+        build_balanced_schedule(sched, N_FAST, &rng);
+        for (size_t k = 0; k < N_FAST * 2u; k++) {
+            uint8_t cls = sched[k];
+            uint8_t mask = (uint8_t)(0u - cls);
             fill_prng(&rng, r, 16);
-            memcpy(sec, cls ? r : z, 16);
+            for (size_t j = 0; j < 16; j++) sec[j] = (uint8_t)(r[j] & mask);
             uint64_t s = now_ticks();
             secmesh_gf128_mul(out, a, sec);
             uint64_t e = now_ticks();
             g_sink ^= out[0];
-            if (cls == 0) t0[i0++] = e - s; else t1[i1++] = e - s;
+            if (cls == 0u) t0[i0++] = e - s; else t1[i1++] = e - s;
         }
         double t = welch_t_cropped(t0, N_FAST, t1, N_FAST);
         int pass = fabs(t) < 10.0;
@@ -151,24 +177,31 @@ int main(void) {
         if (!pass) failures++;
     }
 
-    /* 3. secmesh_cw_mac_compute(128B): all-zero key vs random key (equal work before rdtsc) */
+    /* 3. secmesh_cw_mac_compute(128B): all-zero key vs random key (branchless identical-address setup) */
     {
         size_t i0 = 0, i1 = 0;
-        uint8_t msg[128], rz[16], bz[16], rr[16], br[16], cur_r[16], cur_b[16], tag[16];
-        memset(rz, 0, 16);
-        memset(bz, 0, 16);
+        _Alignas(64) uint8_t msg[128];
+        _Alignas(64) uint8_t rr[16];
+        _Alignas(64) uint8_t br[16];
+        _Alignas(64) uint8_t cur_r[16];
+        _Alignas(64) uint8_t cur_b[16];
+        _Alignas(64) uint8_t tag[16];
         fill_prng(&rng, msg, sizeof msg);
-        while (i0 < N_FAST || i1 < N_FAST) {
-            int cls = (i0 < N_FAST && (i1 >= N_FAST || (xorshift64(&rng) & 1u) == 0)) ? 0 : 1;
+        build_balanced_schedule(sched, N_FAST, &rng);
+        for (size_t k = 0; k < N_FAST * 2u; k++) {
+            uint8_t cls = sched[k];
+            uint8_t mask = (uint8_t)(0u - cls);
             fill_prng(&rng, rr, 16);
             fill_prng(&rng, br, 16);
-            memcpy(cur_r, cls ? rr : rz, 16);
-            memcpy(cur_b, cls ? br : bz, 16);
+            for (size_t j = 0; j < 16; j++) {
+                cur_r[j] = (uint8_t)(rr[j] & mask);
+                cur_b[j] = (uint8_t)(br[j] & mask);
+            }
             uint64_t s = now_ticks();
             secmesh_cw_mac_compute(tag, cur_r, cur_b, msg, sizeof msg);
             uint64_t e = now_ticks();
             g_sink ^= tag[0];
-            if (cls == 0) t0[i0++] = e - s; else t1[i1++] = e - s;
+            if (cls == 0u) t0[i0++] = e - s; else t1[i1++] = e - s;
         }
         double t = welch_t_cropped(t0, N_FAST, t1, N_FAST);
         int pass = fabs(t) < 10.0;
@@ -176,24 +209,31 @@ int main(void) {
         if (!pass) failures++;
     }
 
-    /* 4. moonlab_mlkem768_encaps: fixed all-zero seed vs random seed (equal work before rdtsc) */
+    /* 4. moonlab_mlkem768_encaps: fixed all-zero seed vs random seed (branchless identical-address setup) */
     {
-        uint8_t d[32], z[32], ek[MLKEM768_PUBLICKEYBYTES], dk[MLKEM768_SECRETKEYBYTES];
-        uint8_t m0[32], m1[32], cur_m[32], ct[MLKEM768_CIPHERTEXTBYTES], ss[32];
+        _Alignas(64) uint8_t d[32];
+        _Alignas(64) uint8_t z[32];
+        _Alignas(64) uint8_t ek[MLKEM768_PUBLICKEYBYTES];
+        _Alignas(64) uint8_t dk[MLKEM768_SECRETKEYBYTES];
+        _Alignas(64) uint8_t m1[32];
+        _Alignas(64) uint8_t cur_m[32];
+        _Alignas(64) uint8_t ct[MLKEM768_CIPHERTEXTBYTES];
+        _Alignas(64) uint8_t ss[32];
         fill_prng(&rng, d, 32);
         fill_prng(&rng, z, 32);
-        memset(m0, 0, 32);
         moonlab_mlkem768_keygen(ek, dk, d, z);
         size_t i0 = 0, i1 = 0;
-        while (i0 < N_KEM || i1 < N_KEM) {
-            int cls = (i0 < N_KEM && (i1 >= N_KEM || (xorshift64(&rng) & 1u) == 0)) ? 0 : 1;
+        build_balanced_schedule(sched, N_KEM, &rng);
+        for (size_t k = 0; k < N_KEM * 2u; k++) {
+            uint8_t cls = sched[k];
+            uint8_t mask = (uint8_t)(0u - cls);
             fill_prng(&rng, m1, 32);
-            memcpy(cur_m, cls ? m1 : m0, 32);
+            for (size_t j = 0; j < 32; j++) cur_m[j] = (uint8_t)(m1[j] & mask);
             uint64_t s = now_ticks();
             moonlab_mlkem768_encaps(ct, ss, ek, cur_m);
             uint64_t e = now_ticks();
             g_sink ^= ss[0];
-            if (cls == 0) t0[i0++] = e - s; else t1[i1++] = e - s;
+            if (cls == 0u) t0[i0++] = e - s; else t1[i1++] = e - s;
         }
         double t = welch_t_cropped(t0, N_KEM, t1, N_KEM);
         int pass = fabs(t) < 10.0;
@@ -203,6 +243,7 @@ int main(void) {
         secmesh_secure_zero(ss, sizeof ss);
     }
 
+    free(sched);
     free(t0);
     free(t1);
     printf("Constant-Time Audit Summary: %d failures (sink=0x%02x)\n", failures, (unsigned)g_sink);

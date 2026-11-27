@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecMesh-PQSI v3.0.0 — Lean 4.35 Formal Proof Blueprint &amp; Dependency Graph</title>
+<title>SecMesh-PQSI v3.0.1 — Lean 4.35 Formal Proof Blueprint &amp; Dependency Graph</title>
 <style>
   :root {
     --bg: #070b12; --panel: #0f1624; --border: #1f2e47;
@@ -43,11 +43,11 @@
 <body>
 <header>
   <div>
-    <h1>⬡ SecMesh-PQSI v3.0.0 — Zero-Mathlib Lean 4.35.0 Formal Proof Blueprint</h1>
+    <h1>⬡ SecMesh-PQSI v3.0.1 — Zero-Mathlib Lean 4.35.0 Formal Invariant Blueprint</h1>
     <div style="margin-top:0.25rem">
-      <span class="pill">28 / 28 Theorems + 5 Adversarial Counterexamples (63 Audited Decls)</span>
-      <span class="pill">All 6 Kernels (Palomar Comparator)</span>
-      <span class="pill zero">0 Mathlib · 0 Proof Sorry · 0 native_decide</span>
+      <span class="pill">28 / 28 Invariant Statements + 5 Adversarial Witnesses (63 Audited Decls)</span>
+      <span class="pill">6 Kernel Runs / 5 Distinct Impls (Palomar Comparator)</span>
+      <span class="pill zero">0 Mathlib · 0 Proof Sorry (excl. stubs) · 0 native_decide</span>
     </div>
   </div>
   <nav class="nav" aria-label="Blueprint navigation">
@@ -197,15 +197,18 @@
       <!-- Master Conjunction -->
       <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/lean/Solution.lean">
         <rect x="950" y="175" width="150" height="86" rx="10" fill="#0b2e26" stroke="#34d399" stroke-width="2.5"/>
-        <text x="1025" y="205" text-anchor="middle" fill="#34d399" font-size="12.5" font-weight="700">All 28 Theorems</text>
+        <text x="1025" y="205" text-anchor="middle" fill="#34d399" font-size="12.5" font-weight="700">All 28 Statements</text>
         <text x="1025" y="224" text-anchor="middle" fill="#e6edf7" font-size="10.5">Palomar Comparator</text>
-        <text x="1025" y="242" text-anchor="middle" fill="#8ea0ba" font-size="10">6 / 6 Kernels PASS</text>
+        <text x="1025" y="242" text-anchor="middle" fill="#8ea0ba" font-size="10">6 Runs (5 Kernels)</text>
       </a>
     </svg>
   </section>
 
   <section class="card">
-    <h2>Complete 28-Theorem Inventory &amp; Axiom Footprints</h2>
+    <h2>Complete 28-Statement Inventory &amp; Axiom Footprints (<code>FORMAL_INVARIANT_SUITE</code>)</h2>
+    <p style="font-size:0.82rem;color:var(--muted);margin:0 0 0.75rem">
+      <strong>2026-11-26 Statement Audit Scope:</strong> Lean checks elementary integer, Boolean, and polynomial identities and inequalities behind known cryptographic and quantum-information results; physical, probabilistic, and protocol readings are paper-level (see <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/CLAIMS.md">CLAIMS.md</a> and <a href="https://github.com/0thernes/secmesh-pqsi/blob/main/ERRATA.md">ERRATA.md</a>).
+    </p>
     <div class="filter-bar">
       <input id="bpSearch" type="search" placeholder="Filter theorems by ID, Lean name, module, or topic (e.g. T7c, Microcrypt, ML-KEM)..." aria-label="Filter theorems">
       <button type="button" class="filter-btn active" data-ax="ALL">All (28)</button>
@@ -231,30 +234,30 @@ const DATA = [
   ['T1b', 't1b_hoeffding_range2_factor4', 'FiniteKey.lean', 'PCQ', 'Range-2 Hoeffding 4× exponent fix; legacy tail > 1/50 vs claimed 2.5e-7.'],
   ['T1c', 't1c_di_quarter_circle_duality', 'FiniteKey.lean', 'PCQ', 'Exact u²+v²=1 duality and strict gap H_min^DI(2.5) < H_vN^DI(2.5).'],
   ['T1d', 't1d_denoise_majority_bias_and_fragility', 'FiniteKey.lean', '0', '8-bit deNoise yields 93/256 ones, 163/256 zeros, 70/256 weight-4 fragility.'],
-  ['T1e', 't1e_composable_epsilon_conservation', 'FiniteKey.lean', 'PQ', '5-lane additive union bound vs legacy v1 double-spending of ε_s.'],
-  ['T2a', 't2a_shannon_otp_perfect_secrecy', 'InfoTheoretic.lean', 'Q', 'Unique key bijection m ⊕ k = c over {0,1}^n (unconditional secrecy).'],
-  ['T2b', 't2b_hybrid_dual_survivability', 'InfoTheoretic.lean', 'PQ', 'k-factor XOR combiner survives collapse of all but any single factor.'],
-  ['T2c1', 't2c1_toeplitz_exact_2_universal', 'InfoTheoretic.lean', 'PCQ', 'Constructive back-substitution proof of binary Toeplitz exact 2-universality.'],
-  ['T2c2', 't2c2_cauchy_schwarz_lhl', 'InfoTheoretic.lean', 'PCQ', 'Integer Cauchy–Schwarz core of Renner Leftover Hash Lemma.'],
-  ['T2d', 't2d_carter_wegman_poly_bound', 'InfoTheoretic.lean', 'PCQ', 'Nonzero deg ≤ d polynomial has ≤ d roots over any SimpleField F.'],
-  ['T3a', 't3a_shamir_threshold_and_secrecy', 'ThresholdPIR.lean', 'PCQ', 'Shamir (t,n) unique t-recovery and (t-1)-collusion zero mutual information.'],
-  ['T3b', 't3b_byzantine_singleton_tightness', 'ThresholdPIR.lean', 'PCQ', 'Unique Byzantine decoding at n ≥ t+2b and Singleton tightness at n = t+2b-1.'],
-  ['T3c', 't3c_pir_byzantine_capacity_gap', 'ThresholdPIR.lean', 'PCQ', 'CS-053 PIR: N ≥ K+T+2B threshold and strict T² > 0 Banawan–Ulukus gap.'],
-  ['T4a', 't4a_qgt_psd_lagrange_and_trace', 'QuantumGeometry.lean', 'PCQ', 'General D-dim complex QGT Hermitian PSD Lagrange and trace bounds.'],
-  ['T4b', 't4b_qgt_concurrence_surplus_identity', 'QuantumGeometry.lean', 'PCQ', 'Exact ring identity det(g) − Ω²/4 = (C²/4) sin²(θ/2) bridging QGTL ↔ CHSH.'],
-  ['T4c1', 't4c1_general_bb_commutation', 'QuantumGeometry.lean', '0', 'General group-algebra AB = BA ⇒ H_X H_Z^T = 0 (mod 2) CSS orthogonality.'],
-  ['T4c2', 't4c2_bravyi_gross_bb144_certified', 'QuantumGeometry.lean', 'PCQ', 'Bravyi [[144,12,12]] Gross BB qLDPC: 5,184 CSS checks & exact row weight 6.'],
-  ['T4d', 't4d_chern_concurrence_entropy_conservation', 'QuantumGeometry.lean', 'PCQ', 'Chern–Concurrence–Entropy law c_eff²+C²=1; H_min(S_max)=1−log₂(1+|c_eff|).'],
-  ['T4e', 't4e_libirrep_ghz_heisenberg_qfi_scaling', 'QuantumGeometry.lean', 'PCQ', 'libirrep spin-j GHZ Heisenberg QFI: N²τ > N ⇔ Nτ > 1 & 4j(j+1)=N(N+2).'],
-  ['T5a', 't5a_fips203_ntt_prime_and_root', 'LatticeBandwidth.lean', 'PQ', 'q=3329 prime, 13·256+1, primitive 256-th NTT root ζ=17.'],
-  ['T5b', 't5b_montgomery_reduction_exact', 'LatticeBandwidth.lean', 'PCQ', 'Zero-overflow Montgomery reduction across |a| < 32768·3329.'],
-  ['T5c', 't5c_mlkem_compress1_margin', 'LatticeBandwidth.lean', 'PQ', 'Exact FIPS 203 Compress_1 zero-error radius |e| ≤ 831 (tight at +832).'],
-  ['T5d', 't5d_kn_mesh_bandwidth_and_hedge_overhead', 'LatticeBandwidth.lean', 'PCQ', 'Complete-graph K_N ceiling optimality & +112 B (<1.75%) IT-hedge overhead.'],
-  ['T6a', 't6a_ising_laplacian_psd_and_cheeger_barrier', 'SpinDefenseCryptosymbology.lean', 'PCQ', 'Discrete Laplacian PSD, Ising cut bijection & Cheeger contagion barrier.'],
-  ['T6b', 't6b_cryptosymbology_subliminal_and_threshold_closure', 'SpinDefenseCryptosymbology.lean', 'PQ', 'Deterministic 0-capacity, 2^k kleptography & threshold-hedged XOR closure.'],
-  ['T7a', 't7a_toner_chsh_monogamy_and_eve_isolation', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Toner quantum CHSH monogamy S_AB²+S_AE² ≤ 8 & CKW Berry-monopole Eve isolation.'],
-  ['T7b', 't7b_hiding_binding_conservation_nogo', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Exact TV(P₀,P₁)+Overlap=1 proving unconditional commitment impossibility & hybrid necessity.'],
-  ['T7c', 't7c_fuchs_vandegraaff_microcrypt_efi', 'MonogamyCommitmentNoGo.lean', 'PCQ', 'Fuchs–van de Graaff 1−B ≤ TV & TV²+B² ≤ 1, pure-state D_tr²+F=1, and Quantum Microcrypt/EFI (CS-031/QC-022) fidelity ceiling.'],
+  ['T1e', 't1e_composable_epsilon_conservation', 'FiniteKey.lean', 'PQ', '5-lane ε-budget arithmetic vs legacy v1 double-spending (first conjunct is P → P).'],
+  ['T2a', 't2a_shannon_otp_perfect_secrecy', 'InfoTheoretic.lean', 'Q', 'Boolean-vector OTP key uniqueness m ⊕ k = c (probabilistic secrecy paper-level, Shannon 1949).'],
+  ['T2b', 't2b_hybrid_dual_survivability', 'InfoTheoretic.lean', 'PQ', 'k-factor Boolean XOR combiner factor uniqueness (probabilistic reading paper-level).'],
+  ['T2c1', 't2c1_toeplitz_exact_2_universal', 'InfoTheoretic.lean', 'PCQ', 'Constructive Toeplitz pivot-window bijection over Boolean vectors (collision prob paper-level).'],
+  ['T2c2', 't2c2_cauchy_schwarz_lhl', 'InfoTheoretic.lean', 'PCQ', 'Integer Cauchy–Schwarz core behind Leftover Hash Lemma.'],
+  ['T2d', 't2d_carter_wegman_poly_bound', 'InfoTheoretic.lean', 'PCQ', 'Nonzero deg ≤ d polynomial has ≤ d roots over any SimpleField F (d/2^128 bound paper-level).'],
+  ['T3a', 't3a_shamir_threshold_and_secrecy', 'ThresholdPIR.lean', 'PCQ', 'Over SimpleField: t-point recovery of f(0) and (t-1)-share consistency with every secret (Shamir 1979).'],
+  ['T3b', 't3b_byzantine_singleton_tightness', 'ThresholdPIR.lean', 'PCQ', 'Reed–Solomon unique decoding at n ≥ t+2b; arithmetic d=2b at n=t+2b-1 (no counterexample built).'],
+  ['T3c', 't3c_pir_byzantine_capacity_gap', 'ThresholdPIR.lean', 'PCQ', 'Arithmetic comparison of two K=1 PIR rate formulas (T² > 0; Banawan–Ulukus 2019 vs Tajeddine et al. 2018; topical CS-053 link only).'],
+  ['T4a', 't4a_qgt_psd_lagrange_and_trace', 'QuantumGeometry.lean', 'PCQ', 'Cauchy–Schwarz-type bounds for Gaussian-integer vector sums (QGT PSD reading paper-level).'],
+  ['T4b', 't4b_qgt_concurrence_surplus_identity', 'QuantumGeometry.lean', 'PCQ', 'Scaled ring identity read on paper as det(g) − Ω²/4 = (C²/4) sin²(θ/2).'],
+  ['T4c1', 't4c1_general_bb_commutation', 'QuantumGeometry.lean', '0', 'Exported statement assumes its conclusion (general circEntry_comm is internal; see ERRATA.md).'],
+  ['T4c2', 't4c2_bravyi_gross_bb144_certified', 'QuantumGeometry.lean', 'PCQ', 'Explicit 72×144 Bravyi gross-code matrices: 5,184 GF(2) CSS checks = 0 & row weight 6 (k=12 in C11/Python; d=12 cited).'],
+  ['T4d', 't4d_chern_concurrence_entropy_conservation', 'QuantumGeometry.lean', 'PCQ', 'Integer double-angle identity (c_a²−s_a²)²+(2c_as_a)²=(c_a²+s_a²)² (Jakob–Bergou 2003 / Sjöqvist 2000; continuous, not topological).'],
+  ['T4e', 't4e_libirrep_ghz_heisenberg_qfi_scaling', 'QuantumGeometry.lean', 'PCQ', 'Integer threshold equivalence N²τ > N ⇔ Nτ > 1 & 4j(j+1)=N(N+2) (GHZ QFI reading paper-level).'],
+  ['T5a', 't5a_fips203_ntt_prime_and_root', 'LatticeBandwidth.lean', 'PQ', 'q=3329 prime, 13·256+1, multiplicative order 256 for ζ=17 mod 3329.'],
+  ['T5b', 't5b_montgomery_reduction_exact', 'LatticeBandwidth.lean', 'PCQ', 'Signed Montgomery reduction exact for |a| < 32768·3329.'],
+  ['T5c', 't5c_mlkem_compress1_margin', 'LatticeBandwidth.lean', 'PQ', 'Margin |e| ≤ 831 for Lean mlkemCompress1 (offset 1665 vs FIPS 203 1664 at x=832; tight at b=1, e=+832; ERRATA.md).'],
+  ['T5d', 't5d_kn_mesh_bandwidth_and_hedge_overhead', 'LatticeBandwidth.lean', 'PCQ', 'Complete-graph K_N edge count, floor-division ceiling & +112 B (<1.75%) hedge arithmetic.'],
+  ['T6a', 't6a_ising_laplacian_psd_and_cheeger_barrier', 'SpinDefenseCryptosymbology.lean', 'PCQ', 'Discrete Laplacian PSD = Ising cut energy & work bound from two assumed bounds (no Cheeger inequality proved).'],
+  ['T6b', 't6b_cryptosymbology_subliminal_and_threshold_closure', 'SpinDefenseCryptosymbology.lean', 'PQ', 'Boolean/XOR counting facts (Simmons subliminal & kleptography readings paper-level).'],
+  ['T7a', 't7a_toner_chsh_monogamy_and_eve_isolation', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Final Cauchy–Schwarz step of Toner–Verstraete (2006) S_AB²+S_AE² ≤ 8 (quantum reduction & CKW assumed).'],
+  ['T7b', 't7b_hiding_binding_conservation_nogo', 'MonogamyCommitmentNoGo.lean', 'PQ', 'Finite-distribution identity TV(P₀,P₁)+Overlap=1 (Mayers 1997 / Lo–Chau 1997 quantum no-go cited, paper-level).'],
+  ['T7c', 't7c_fuchs_vandegraaff_microcrypt_efi', 'MonogamyCommitmentNoGo.lean', 'PCQ', 'Classical Fuchs–van de Graaf (1999) bounds for square-integer weights & complex Cauchy–Schwarz (EFI topical CS-031/QC-022 only).'],
 ];
 let activeAx = 'ALL';
 function renderRows() {
