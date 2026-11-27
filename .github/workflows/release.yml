@@ -12,7 +12,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Generate & verify SHA256SUMS
         run: |
           sha256sum dist/Donahue_2026_secmesh_pqsi_formal_foundations.pdf \
