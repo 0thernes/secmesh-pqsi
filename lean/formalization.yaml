@@ -73,7 +73,7 @@ sources:
     authors:
       - "National Institute of Standards and Technology"
     id: "https://doi.org/10.6028/NIST.FIPS.203"
-    type: "standard"
+    type: "other"
     relationship: "background"
     note: "Defines ML-KEM modulus q=3329, NTT root zeta=17, Montgomery arithmetic, and Compress_1."
   - title: "High-threshold and low-overhead fault-tolerant quantum memory"
