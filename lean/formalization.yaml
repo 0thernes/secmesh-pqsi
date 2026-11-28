@@ -33,15 +33,9 @@ project:
     assumed, the identity TV + Overlap = 1 for finite distributions, and classical
     Fuchs-van de Graaf bounds for square-integer weights.
   authors:
-    - name: "Alexander S. Donahue"
-      orcid: "0009-0006-8168-9648"
-      email: "0_0@0thernes.art"
-      affiliation: "Independent Researcher, Spokane, WA, USA"
+    - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
   responsible_maintainers:
-    - name: "Alexander S. Donahue"
-      github: "0thernes"
-      orcid: "0009-0006-8168-9648"
-      email: "0_0@0thernes.art"
+    - "Alexander Stephen Donahue (@0thernes, ORCID 0009-0006-8168-9648, 0_0@0thernes.art)"
   license: "Apache-2.0"
 
 classification:
@@ -60,7 +54,7 @@ classification:
 sources:
   - title: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"
     authors:
-      - "Alexander S. Donahue"
+      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
     id: "https://github.com/0thernes/secmesh-pqsi"
     type: "original-proof"
     relationship: "other"
@@ -71,36 +65,21 @@ sources:
       confirmed external assignment.
   - title: "Module-Lattice-Based Key-Encapsulation Mechanism Standard (FIPS 203)"
     authors:
-      - "National Institute of Standards and Technology"
+      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
     id: "https://doi.org/10.6028/NIST.FIPS.203"
     type: "other"
     relationship: "background"
     note: "Defines ML-KEM modulus q=3329, NTT root zeta=17, Montgomery arithmetic, and Compress_1."
   - title: "High-threshold and low-overhead fault-tolerant quantum memory"
     authors:
-      - "Sergey Bravyi"
-      - "Andrew W. Cross"
-      - "Jay M. Gambetta"
-      - "Dmitri Maslov"
-      - "Patrick Rall"
-      - "Theodore J. Yoder"
+      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
     id: "https://doi.org/10.1038/s41586-024-07107-7"
     type: "paper"
     relationship: "background"
     note: "Defines the [[144, 12, 12]] gross bivariate-bicycle qLDPC code; T4c2 checks CSS orthogonality and row weight 6 of its parity-check matrices (k and distance are not kernel-checked)."
   - title: "Random numbers certified by Bell's theorem"
     authors:
-      - "Stefano Pironio"
-      - "Antonio Acin"
-      - "Serge Massar"
-      - "A. Boyer de la Giroday"
-      - "Dzmitry N. Matsukevich"
-      - "Peter Maunz"
-      - "Steven Olmschenk"
-      - "David Hayes"
-      - "Le Luo"
-      - "T. Andrew Manning"
-      - "Christopher Monroe"
+      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
     id: "https://doi.org/10.1038/nature09008"
     type: "paper"
     relationship: "background"
