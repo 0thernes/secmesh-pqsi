@@ -1,212 +1,220 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 # SPDX-License-Identifier: Apache-2.0
-version: "v0.4"
-release_version: "3.0.1"
-
+version: v0.4
+release_version: 3.0.1
 project:
-  name: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"
-  description: >-
-    Zero-Mathlib Lean 4.35.0 formalization of 28 theorem statements across seven
-    families (T1-T7) plus 5 zero-axiom adversarial examples underlying the
-    SecMesh-PQSI hybrid cryptographic defense engine. All statements are elementary
-    integer, Boolean or polynomial facts behind known results; quantum, probabilistic
-    and protocol readings are paper-level and are not defined in Lean.
-    (T1) fixed-number arithmetic on defects of the legacy SecMesh v1 prototype;
-    (T2) combinatorial cores of the one-time pad, XOR combining, Toeplitz hashing,
-    an integer Cauchy-Schwarz inequality and the polynomial root bound behind
-    Carter-Wegman MACs (no probabilistic secrecy statement is formalized);
-    (T3) Shamir t-point uniqueness and (t-1)-share consistency, Reed-Solomon unique
-    decoding for n >= t + 2b (tightness only as the arithmetic d = 2b), and an
-    arithmetic comparison of two published K = 1 PIR rate formulas (Tajeddine et al.,
-    arXiv:1806.08006; no PIR object is formalized);
-    (T4) polynomial identities for a two-qubit family, including the integer form of
-    the Jakob-Bergou complementarity identity c_eff^2 + C^2 = 1 (arXiv:quant-ph/0302075),
-    and CSS orthogonality and row weight 6 of the explicit Bravyi et al. [[144,12,12]]
-    gross-code matrices (k = 12 by GF(2) rank outside Lean; distance 12 quoted);
-    (T5) ML-KEM parameter arithmetic (3329 prime, 17 of order 256, Montgomery
-    reduction) and a Compress_1 margin |e| <= 831 for a Lean model that differs from
-    FIPS 203 at x = 832, plus K_N bandwidth arithmetic;
-    (T6) Laplacian and Ising quadratic forms and Boolean counting facts (no Cheeger
-    inequality is proved); and
-    (T7) the final Cauchy-Schwarz step of Toner-Verstraete CHSH monogamy
-    (arXiv:quant-ph/0611001) with the quantum reduction and a CKW-type relation
-    assumed, the identity TV + Overlap = 1 for finite distributions, and classical
-    Fuchs-van de Graaf bounds for square-integer weights.
+  name: 'SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence
+    Mesh Cryptography'
+  description: Zero-Mathlib Lean 4.35.0 formalization of 28 theorem statements across seven families (T1-T7)
+    plus 5 zero-axiom adversarial examples underlying the SecMesh-PQSI hybrid cryptographic defense engine.
+    All statements are elementary integer, Boolean or polynomial facts behind known results; quantum,
+    probabilistic and protocol readings are paper-level and are not defined in Lean. (T1) fixed-number
+    arithmetic on defects of the legacy SecMesh v1 prototype; (T2) combinatorial cores of the one-time
+    pad, XOR combining, Toeplitz hashing, an integer Cauchy-Schwarz inequality and the polynomial root
+    bound behind Carter-Wegman MACs (no probabilistic secrecy statement is formalized); (T3) Shamir t-point
+    uniqueness and (t-1)-share consistency, Reed-Solomon unique decoding for n >= t + 2b (tightness only
+    as the arithmetic d = 2b), and an arithmetic comparison of two published K = 1 PIR rate formulas (Tajeddine
+    et al., arXiv:1806.08006; no PIR object is formalized); (T4) polynomial identities for a two-qubit
+    family, including the integer form of the Jakob-Bergou complementarity identity c_eff^2 + C^2 = 1
+    (arXiv:quant-ph/0302075), and CSS orthogonality and row weight 6 of the explicit Bravyi et al. [[144,12,12]]
+    gross-code matrices (k = 12 by GF(2) rank outside Lean; distance 12 quoted); (T5) ML-KEM parameter
+    arithmetic (3329 prime, 17 of order 256, Montgomery reduction) and a Compress_1 margin |e| <= 831
+    for a Lean model that differs from FIPS 203 at x = 832, plus K_N bandwidth arithmetic; (T6) Laplacian
+    and Ising quadratic forms and Boolean counting facts (no Cheeger inequality is proved); and (T7) the
+    final Cauchy-Schwarz step of Toner-Verstraete CHSH monogamy (arXiv:quant-ph/0611001) with the quantum
+    reduction and a CKW-type relation assumed, the identity TV + Overlap = 1 for finite distributions,
+    and classical Fuchs-van de Graaf bounds for square-integer weights.
   authors:
-    - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
+  - Alexander Stephen Donahue
   responsible_maintainers:
-    - "Alexander Stephen Donahue (@0thernes, ORCID 0009-0006-8168-9648, 0_0@0thernes.art)"
-  license: "Apache-2.0"
-
+  - Alexander Stephen Donahue
+  license: Apache-2.0
+  orcid: 0009-0006-8168-9648
 classification:
   arxiv:
-    - "cs.CR"
-    - "quant-ph"
-    - "cs.IT"
-    - "cs.LO"
+  - cs.CR
+  - quant-ph
+  - cs.IT
+  - cs.LO
   msc2020:
-    - "94A60"
-    - "81P94"
-    - "94A62"
-    - "94B05"
-    - "03B35"
-
+  - 94A60
+  - 81P94
+  - 94A62
+  - 94B05
+  - 03B35
 sources:
-  - title: "SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence Mesh Cryptography"
-    authors:
-      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
-    id: "https://github.com/0thernes/secmesh-pqsi"
-    type: "original-proof"
-    relationship: "other"
-    note: >-
-      Formalization and companion AMS-LaTeX white papers first presented in this
-      repository. The formalized statements are known results or engineering
-      arithmetic, not new mathematics. No external DOI, arXiv ID, or peer review is claimed prior to
-      confirmed external assignment.
-  - title: "Module-Lattice-Based Key-Encapsulation Mechanism Standard (FIPS 203)"
-    authors:
-      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
-    id: "https://doi.org/10.6028/NIST.FIPS.203"
-    type: "other"
-    relationship: "background"
-    note: "Defines ML-KEM modulus q=3329, NTT root zeta=17, Montgomery arithmetic, and Compress_1."
-  - title: "High-threshold and low-overhead fault-tolerant quantum memory"
-    authors:
-      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
-    id: "https://doi.org/10.1038/s41586-024-07107-7"
-    type: "paper"
-    relationship: "background"
-    note: "Defines the [[144, 12, 12]] gross bivariate-bicycle qLDPC code; T4c2 checks CSS orthogonality and row weight 6 of its parity-check matrices (k and distance are not kernel-checked)."
-  - title: "Random numbers certified by Bell's theorem"
-    authors:
-      - "Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)"
-    id: "https://doi.org/10.1038/nature09008"
-    type: "paper"
-    relationship: "background"
-    note: "Establishes the CHSH device-independent min-entropy bound H_min^DI(S) audited in T1c."
-
+- title: 'SecMesh-PQSI: Formal Algebraic and Information-Theoretic Foundations for Post-Quantum and Post-Super-Intelligence
+    Mesh Cryptography'
+  authors:
+  - Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)
+  id: https://github.com/0thernes/secmesh-pqsi
+  type: original-proof
+  relationship: other
+  note: Formalization and companion AMS-LaTeX white papers first presented in this repository. The formalized
+    statements are known results or engineering arithmetic, not new mathematics. No external DOI, arXiv
+    ID, or peer review is claimed prior to confirmed external assignment.
+- title: Module-Lattice-Based Key-Encapsulation Mechanism Standard (FIPS 203)
+  authors:
+  - Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)
+  id: https://doi.org/10.6028/NIST.FIPS.203
+  type: other
+  relationship: background
+  note: Defines ML-KEM modulus q=3329, NTT root zeta=17, Montgomery arithmetic, and Compress_1.
+- title: High-threshold and low-overhead fault-tolerant quantum memory
+  authors:
+  - Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)
+  id: https://doi.org/10.1038/s41586-024-07107-7
+  type: paper
+  relationship: background
+  note: Defines the [[144, 12, 12]] gross bivariate-bicycle qLDPC code; T4c2 checks CSS orthogonality
+    and row weight 6 of its parity-check matrices (k and distance are not kernel-checked).
+- title: Random numbers certified by Bell's theorem
+  authors:
+  - Alexander Stephen Donahue (ORCID 0009-0006-8168-9648, Independent Researcher, Spokane, WA, USA)
+  id: https://doi.org/10.1038/nature09008
+  type: paper
+  relationship: background
+  note: Establishes the CHSH device-independent min-entropy bound H_min^DI(S) audited in T1c.
 related_formalizations: []
-
 status:
-  scope: >-
-    Zero-Mathlib Lean 4.35.0 formalization of all 28 theorem statements T1a-T7c
-    (integer, Boolean and polynomial identities and inequalities) plus concrete
-    non-vacuity witnesses (SecMeshPQSI/NonVacuity.lean, including SimpleField (Fin 5)).
-    sorry_count 0 excludes the 28 comparator challenge stubs in PalomarChallenge.lean.
-    Not formalized in Lean: quantum states, operators, entropy, Fisher information,
-    Berry curvature or Chern numbers, probability distributions as a type, PIR or
-    commitment schemes and EFI pairs (these readings are paper-level); the exported
-    T4c1 assumes its conclusion and T3b tightness is only d = 2b arithmetic (see
-    ERRATA.md); real-analytic transcendental logarithms/exponentials
-    (Bernoulli KL-Chernoff inversion and binary entropy numerical evaluations,
-    verified to 60-digit precision in Python and differentially against C11/Node),
-    side-channel timing/hardware leakage of C11/OpenSSL executables, computational
-    hardness conjectures (LWE/MLWE), or physical photonic Bell-test loophole closure.
+  scope: 'Zero-Mathlib Lean 4.35.0 formalization of all 28 theorem statements T1a-T7c (integer, Boolean
+    and polynomial identities and inequalities) plus concrete non-vacuity witnesses (SecMeshPQSI/NonVacuity.lean,
+    including SimpleField (Fin 5)). sorry_count 0 excludes the 28 comparator challenge stubs in PalomarChallenge.lean.
+    Not formalized in Lean: quantum states, operators, entropy, Fisher information, Berry curvature or
+    Chern numbers, probability distributions as a type, PIR or commitment schemes and EFI pairs (these
+    readings are paper-level); the exported T4c1 assumes its conclusion and T3b tightness is only d =
+    2b arithmetic (see ERRATA.md); real-analytic transcendental logarithms/exponentials (Bernoulli KL-Chernoff
+    inversion and binary entropy numerical evaluations, verified to 60-digit precision in Python and differentially
+    against C11/Node), side-channel timing/hardware leakage of C11/OpenSSL executables, computational
+    hardness conjectures (LWE/MLWE), or physical photonic Bell-test loophole closure.'
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
-    - "propext"
-    - "Classical.choice"
-    - "Quot.sound"
+  - propext
+  - Classical.choice
+  - Quot.sound
   main_results:
-    - declaration: "SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: []
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t2b_hybrid_dual_survivability"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t2c1_toeplitz_exact_2_universal"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t3a_shamir_threshold_and_secrecy"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t3b_byzantine_singleton_tightness"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t4d_chern_concurrence_entropy_conservation"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-    - declaration: "SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo"
-      file: "lean/PalomarSolution.lean"
-      sorry_count: 0
-      axioms: ["propext", "Quot.sound"]
-      comparator_config: "lean/palomar_comparator.json"
-
+  - declaration: SecMeshPQSI.Palomar.t1a_v1_tsirelson_violation
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms: []
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t2b_hybrid_dual_survivability
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t2c1_toeplitz_exact_2_universal
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t3a_shamir_threshold_and_secrecy
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t3b_byzantine_singleton_tightness
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t4b_qgt_concurrence_surplus_identity
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t4c2_bravyi_gross_bb144_certified
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t5b_montgomery_reduction_exact
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t4d_chern_concurrence_entropy_conservation
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t6a_ising_laplacian_psd_and_cheeger_barrier
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t6b_cryptosymbology_subliminal_and_threshold_closure
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t7a_toner_chsh_monogamy_and_eve_isolation
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
+  - declaration: SecMeshPQSI.Palomar.t7b_hiding_binding_conservation_nogo
+    file: lean/PalomarSolution.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    comparator_config: lean/palomar_comparator.json
 automation:
   methods:
-    - method: "manual"
-      notes: "Alexander S. Donahue conceived the project scope, directed the forensic audit of upstream SecMesh and Tsotchke stack integration, reviewed every theorem statement against cryptographic standards, and approved publication."
-    - method: "agent"
-      models:
-        - "Gemini (Antigravity)"
-      framework: "Antigravity"
-      notes: >-
-        Assisted with formal Lean 4.35 proof engineering, C11/Node/Python/Eshkol
-        implementation, differential testing, and manuscript drafting under human
-        supervision. All 28 theorem statements were checked in 6 kernel runs
-        (5 distinct implementations; results/six_kernel_audit.txt).
-
+  - method: manual
+    notes: Alexander S. Donahue conceived the project scope, directed the forensic audit of upstream SecMesh
+      and Tsotchke stack integration, reviewed every theorem statement against cryptographic standards,
+      and approved publication.
+  - method: agent
+    models:
+    - Gemini (Antigravity)
+    framework: Antigravity
+    notes: Assisted with formal Lean 4.35 proof engineering, C11/Node/Python/Eshkol implementation, differential
+      testing, and manuscript drafting under human supervision. All 28 theorem statements were checked
+      in 6 kernel runs (5 distinct implementations; results/six_kernel_audit.txt).
 fidelity:
-  divergences: >-
-    Transcendental real-number bounds (Hoeffding exponential, binary entropy h(p),
-    and trigonometric cos/sin) are formalized via exact integer/rational algebraic
-    identities and cleared-denominator inequalities (T1a, T1b, T1c, T4b) so the
-    Lean trusted computing base requires zero Mathlib dependencies; transcendental
-    numerical curves are cross-verified to 60-digit decimal precision in Python and
-    against C11/Node implementations.
-
+  divergences: Transcendental real-number bounds (Hoeffding exponential, binary entropy h(p), and trigonometric
+    cos/sin) are formalized via exact integer/rational algebraic identities and cleared-denominator inequalities
+    (T1a, T1b, T1c, T4b) so the Lean trusted computing base requires zero Mathlib dependencies; transcendental
+    numerical curves are cross-verified to 60-digit decimal precision in Python and against C11/Node implementations.
 review:
-  status: "self-assessed"
-  notes: >-
-    Not externally peer-reviewed. Machine-checked in 6 kernel runs (5 distinct
-    implementations) via lake comparator --paranoid on Ubuntu CI (Lean paranoid,
-    lean4lean, nanoda, con-leche --verified, con-ron --verified, Lean default; the
-    first and last are one kernel in two modes) and 5 distinct local Windows kernel
-    implementations (results/six_kernel_audit.txt) with 0 warnings, 0 sorry outside
-    the PalomarChallenge.lean comparator stubs, and concrete non-vacuity witnesses in
-    lean/SecMeshPQSI/NonVacuity.lean. An independent statement audit (2026-11-26,
-    https://github.com/0thernes/0thernes-research-archive/blob/main/docs/reviews/2026-11-26-statement-audit.md)
+  status: self-assessed
+  notes: Not externally peer-reviewed. Machine-checked in 6 kernel runs (5 distinct implementations) via
+    lake comparator --paranoid on Ubuntu CI (Lean paranoid, lean4lean, nanoda, con-leche --verified, con-ron
+    --verified, Lean default; the first and last are one kernel in two modes) and 5 distinct local Windows
+    kernel implementations (results/six_kernel_audit.txt) with 0 warnings, 0 sorry outside the PalomarChallenge.lean
+    comparator stubs, and concrete non-vacuity witnesses in lean/SecMeshPQSI/NonVacuity.lean. An independent
+    statement audit (2026-11-26, https://github.com/0thernes/0thernes-research-archive/blob/main/docs/reviews/2026-11-26-statement-audit.md)
     found that the theorem names overstate the Lean content; see CLAIMS.md and ERRATA.md.
